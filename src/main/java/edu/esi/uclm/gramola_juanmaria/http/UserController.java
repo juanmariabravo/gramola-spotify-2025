@@ -2,6 +2,7 @@ package edu.esi.uclm.gramola_juanmaria.http;
 
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -9,12 +10,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import edu.esi.uclm.gramola_juanmaria.services.UserService;
+
 @RestController
 @RequestMapping("users")
 public class UserController {
 
+    @Autowired
+    private UserService service; // Spring se encarga de instanciar el objeto ya que UserService es un @Service
+
     /* register es un servicio web que recibe un JSON con email, pwd1 y pwd2 */
-    @PostMapping("/register")
+    @PostMapping("/register") // podríamos especificar: (value="/register", consumes="application/json")
     public void register(@RequestBody Map<String, String> body) {
         String email = body.get("email");
         String pwd1 = body.get("pwd1");
@@ -32,5 +38,19 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Email inválido");
         }
 
+        this.service.register(email, pwd1);
+    }
+
+    /* login es un servicio web que recibe un JSON con email y pwd */
+    @PostMapping("/login")
+    public void login(@RequestBody Map<String, String> body) {
+        String email = body.get("email");
+        String pwd = body.get("pwd");
+
+        if (!email.contains("@") || !email.contains(".")) {
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Email inválido");
+        }
+
+        this.service.login(email, pwd);
     }
 }
