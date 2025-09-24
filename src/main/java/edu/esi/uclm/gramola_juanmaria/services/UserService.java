@@ -39,5 +39,12 @@ public class UserService {
 
         System.out.println("Usuario " + email + " ha hecho login con pwd: " + pwd);
     }
+    public void delete(String email) {
+        if (!this.users.containsKey(email)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "El email no está registrado");
+        }
+        this.users.remove(email);
 
+        System.out.println("Usuario " + email + " ha sido eliminado");
+    }
 }

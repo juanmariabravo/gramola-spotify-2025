@@ -4,9 +4,11 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -52,5 +54,10 @@ public class UserController {
         }
 
         this.service.login(email, pwd);
+    }
+
+    @DeleteMapping("/delete")
+    public void delete(@RequestParam String email) { // con @RequestParam se indica que el parámetro viene en la URL (URL/users/delete?email=...)
+        this.service.delete(email);
     }
 }
