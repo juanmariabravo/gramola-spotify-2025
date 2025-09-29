@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import edu.esi.uclm.gramola_juanmaria.model.Token;
 import edu.esi.uclm.gramola_juanmaria.model.User;
 
 @Service // Si quitamos esta anotación, no se podría inyectar el servicio en el controlador
@@ -20,12 +21,15 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "El email ya está registrado");
         }
         // si no existe el email, lo creamos y guardamos
-        User user = new User();
+        User user;
+        user = new User();
         user.setEmail(email);
         user.setPwd(pwd);
+        user.setCreationToken(new Token()); // generar un token nuevo
         users.put(email, user); // guardar en la colección con key=email y value=User
 
-        System.out.println("Registrando usuario: " + email + " con pwd: " + pwd);
+        System.out.println("http://localhost:8080/users/confirmToken/" + email + "&token=" + user.getCreationToken().getId());
+        // Este sería el enlace que se enviaría por email
     }
 
     public void login(String email, String pwd) {
@@ -46,5 +50,28 @@ public class UserService {
         this.users.remove(email);
 
         System.out.println("Usuario " + email + " ha sido eliminado");
+    }
+
+    public void confirmToken(String email, String token) {
+        User user = this.users.get(email);
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "El email no está registrado");
+        }
+
+        Token userToken = user.getCreationToken();
+        
+        if (!userToken.getId().equals(token)) {
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Token incorrecto");
+        }
+
+        if (userToken.getCreationTime() < System.currentTimeMillis()-30 * 60 * 1000) { // 30 minutos
+            throw new ResponseStatusException(HttpStatus.GONE, "El token ha expirado");
+        }
+
+        if (userToken.isUsed()) {
+            throw new ResponseStatusException(HttpStatus.GONE, "El token ya ha sido usado");
+        }
+
+        userToken.use(); // marcar el token como usado
     }
 }
