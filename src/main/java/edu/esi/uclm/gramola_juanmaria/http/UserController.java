@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -63,7 +64,7 @@ public class UserController {
     }
 
     @GetMapping("/confirmToken/{email}")
-    public void confirmToken(@RequestParam String email, @RequestParam String token) {
+    public void confirmToken(@PathVariable String email, @RequestParam String token) { // @PathVariable para email porque está en el path, @RequestParam para token porque está después del ?
         this.service.confirmToken(email, token);
     }
 }

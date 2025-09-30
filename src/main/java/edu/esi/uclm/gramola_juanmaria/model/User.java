@@ -5,6 +5,8 @@
 
 package edu.esi.uclm.gramola_juanmaria.model;
 
+import edu.esi.uclm.gramola_juanmaria.util.PasswordEncryptor;
+
 public class User {
 
     private String email;
