@@ -76,5 +76,8 @@ public class UserService {
         }
 
         userToken.use(); // marcar el token como usado
+
+        user.setConfirmed(true); // marcar el usuario como confirmado
+        System.out.println("Usuario " + email + " ha confirmado su email correctamente");
     }
 }
