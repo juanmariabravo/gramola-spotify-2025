@@ -6,12 +6,19 @@
 package edu.esi.uclm.gramola_juanmaria.model;
 
 import edu.esi.uclm.gramola_juanmaria.util.PasswordEncryptor;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
 
+@Entity
 public class User {
-
+    @Id // para que JPA sepa que email es la clave primaria
     private String email;
     private String pwd;
-    private Token token; // token de confirmación
+    // @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    // @JoinColumn(name = "creation_token_id")
+    @Transient // para que el token no se guarde en la base de datos (de momento)
+    private Token creationToken; // token de confirmación
     private boolean confirmed = false; // si el usuario ha confirmado su email
 
     public void setEmail(String email) {
@@ -28,11 +35,11 @@ public class User {
     }
 
     public void setCreationToken(Token token) {
-        this.token = token;
+        this.creationToken = token;
     }
 
     public Token getCreationToken() {
-        return this.token;
+        return this.creationToken;
     }
 
     public void setConfirmed(boolean b) {
