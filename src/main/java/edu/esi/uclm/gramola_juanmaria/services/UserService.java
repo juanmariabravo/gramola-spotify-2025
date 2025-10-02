@@ -1,12 +1,13 @@
 package edu.esi.uclm.gramola_juanmaria.services;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import edu.esi.uclm.gramola_juanmaria.dao.UserDao;
 import edu.esi.uclm.gramola_juanmaria.model.Token;
 import edu.esi.uclm.gramola_juanmaria.model.User;
 import edu.esi.uclm.gramola_juanmaria.util.PasswordEncryptor;
@@ -14,21 +15,28 @@ import edu.esi.uclm.gramola_juanmaria.util.PasswordEncryptor;
 @Service // Si quitamos esta anotación, no se podría inyectar el servicio en el controlador
 public class UserService {
 
-    private Map<String, User> users = new HashMap<>(); // email -> User // de momento lo guardamos en una colección en memoria
+    
+    @Autowired
+    UserDao userDao;
 
+    // (code_profesor) public String register(String bar, String email, String pwd, String client_id, String client_secret) {
     public void register(String email, String pwd) {
-        if (this.users.containsKey(email)) {
+        Optional<User> optUser = this.userDao.findById(email); // Optional<User> es una caja que puede contener un User o no. Hasta que no mires dentro, no sabes si está o no.
+        if (optUser.isEmpty()) {
+            // El email no está registrado, podemos crear el usuario
+            User user = new User();
+            user.setEmail(email);
+            user.setPwd(pwd); // Encriptar la contraseña antes de guardarla
+            user.setCreationToken(new Token()); // Crear un token de confirmación
+            this.userDao.save(user); // Guardar en la base de datos
+
+            // Devolver el token de confirmación
+            // (code_profesor) return user.getCreationToken().getId();
+            System.out.println("Usuario " + email + " registrado correctamente");
+        } else {
+            // El email ya está registrado
             throw new ResponseStatusException(HttpStatus.CONFLICT, "El email ya está registrado");
         }
-        // si no existe el email, lo creamos y guardamos
-        User user = new User();
-        user.setEmail(email);
-        user.setPwd(pwd); // Guardar la contraseña (el método setPwd la encripta)
-        user.setCreationToken(new Token()); // generar un token nuevo
-        users.put(email, user); // guardar en la colección con key=email y value=User
-
-        System.out.println("http://localhost:8080/users/confirmToken/" + email + "?token=" + user.getCreationToken().getId());
-        // Este sería el enlace que se enviaría por email
     }
 
     public void login(String email, String pwd) {
