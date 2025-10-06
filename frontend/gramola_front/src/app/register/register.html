@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrarte en Gramola SpESIfy</title>
+    <link rel="stylesheet" href="register.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="logo">SpESIfy</h1>
+        </header>
+        <div class="card">
+            <h2>Regístrate para empezar a escuchar</h2>
+            <form id="registerForm" class="form">
+                <div class="form-group">
+                    <label for="email">Dirección de correo electrónico</label>
+                    <input type="email" [(ngModel)]="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="pwd1">Contraseña</label>
+                    <input type="password" id="pwd1" [(ngModel)]="pwd1" name="pwd1" required>
+                </div>
+                <div class="form-group">
+                    <label for="pwd2">Repetir contraseña</label>
+                    <input type="password" id="pwd2" [(ngModel)]="pwd2" name="pwd2" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Siguiente</button>
+
+                <div class="separator">
+                    <span>o</span>
+                </div>
+
+                <button type="button" class="btn btn-secondary">
+                    <span class="btn-icon">G</span>
+                    Registrarte con Google
+                </button>
+                <button type="button" class="btn btn-secondary">
+                    <span class="btn-icon">A</span>
+                    Registrarte con Apple
+                </button>
+
+                <div class="login-link">
+                    <p>¿Ya tienes una cuenta? <a href="#">Iniciar sesión</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
