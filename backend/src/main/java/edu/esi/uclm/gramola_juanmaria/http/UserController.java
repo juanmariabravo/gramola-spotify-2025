@@ -49,6 +49,7 @@ public class UserController {
     }
 
     /* login es un servicio web que recibe un JSON con email y pwd */
+    @CrossOrigin(origins = "http://localhost:4200") // permitir llamadas desde el frontend en Angular
     @PostMapping("/login")
     public void login(@RequestBody Map<String, String> body) {
         String email = body.get("email");

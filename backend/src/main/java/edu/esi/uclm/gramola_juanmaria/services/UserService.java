@@ -33,6 +33,8 @@ public class UserService {
             // Devolver el token de confirmación
             // (code_profesor) return user.getCreationToken().getId();
             System.out.println("Usuario " + email + " registrado correctamente");
+            // Se enviaría un email con el token de confirmación, pero de momento imprimimos aquí el link
+            System.out.println("http://localhost:8080/users/confirm?email=" + email + "&token=" + user.getCreationToken().getId());
         } else {
             // El email ya está registrado
             throw new ResponseStatusException(HttpStatus.CONFLICT, "El email ya está registrado");
@@ -40,11 +42,15 @@ public class UserService {
     }
 
     public void login(String email, String pwd) {
-        if (!this.users.containsKey(email)) {
+        Optional<User> optUser = this.userDao.findById(email); // Optional<User> es una caja que puede contener un User o no. Hasta que no mires dentro, no sabes si está o no.
+        if (optUser.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "El email no está registrado");
         }
-        User user = this.users.get(email);
-        
+        User user = optUser.get(); // Sacar el User de la caja Optional
+        if (!user.isConfirmed()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El email no ha sido confirmado");
+        }
+
         // Verificar la contraseña encriptando la entrada y comparando
         String encryptedInputPassword = PasswordEncryptor.encrypt(pwd);
         if (!encryptedInputPassword.equals(user.getPwd())) {
@@ -64,11 +70,13 @@ public class UserService {
     }
 
     public void confirmToken(String email, String token) {
-        User user = this.users.get(email);
-        if (user == null) {
+
+        Optional<User> optUser = this.userDao.findById(email);
+        if (optUser.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "El email no está registrado");
         }
 
+        User user = optUser.get(); // Sacar el User de la caja Optionals
         Token userToken = user.getCreationToken();
         
         if (!userToken.getId().equals(token)) {
