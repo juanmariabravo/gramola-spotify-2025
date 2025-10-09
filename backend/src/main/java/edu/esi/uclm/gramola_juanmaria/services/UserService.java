@@ -1,5 +1,7 @@
 package edu.esi.uclm.gramola_juanmaria.services;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +36,13 @@ public class UserService {
             // (code_profesor) return user.getCreationToken().getId();
             System.out.println("Usuario " + email + " registrado correctamente");
             // Se enviaría un email con el token de confirmación, pero de momento imprimimos aquí el link
-            System.out.println("http://localhost:8080/users/confirm?email=" + email + "&token=" + user.getCreationToken().getId());
+            String base = "http://localhost:8080";
+            String confirmUrl = String.format("%s/users/confirm/%s?token=%s",
+                base,
+                URLEncoder.encode(email, StandardCharsets.UTF_8),
+                URLEncoder.encode(user.getCreationToken().getId(), StandardCharsets.UTF_8)
+            );
+            System.out.println(confirmUrl);
         } else {
             // El email ya está registrado
             throw new ResponseStatusException(HttpStatus.CONFLICT, "El email ya está registrado");
@@ -74,6 +82,11 @@ public class UserService {
         Optional<User> optUser = this.userDao.findById(email);
         if (optUser.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "El email no está registrado");
+        }
+
+        if (optUser.get().isConfirmed()) {
+            System.out.println("Usuario " + email + " ya está confirmado");
+            return;
         }
 
         User user = optUser.get(); // Sacar el User de la caja Optionals
