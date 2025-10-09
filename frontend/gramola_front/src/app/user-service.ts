@@ -10,8 +10,9 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
-  register(email : string, pwd1 : string, pwd2 : string) {
+  register(barName : string, email : string, pwd1 : string, pwd2 : string) {
     let info = {
+      barName : barName,
       email : email,
       pwd1 : pwd1, 
       pwd2 : pwd2

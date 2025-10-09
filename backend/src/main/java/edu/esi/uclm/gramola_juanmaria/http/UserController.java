@@ -1,5 +1,6 @@
 package edu.esi.uclm.gramola_juanmaria.http;
 
+import java.io.IOException;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ public class UserController {
     @CrossOrigin(origins = "http://localhost:4200") // permitir llamadas desde el frontend en Angular
     @PostMapping("/register") // podríamos especificar: (value="/register", consumes="application/json")
     public void register(@RequestBody Map<String, String> body) {
+        String barName = body.get("barName");
         String email = body.get("email");
         String pwd1 = body.get("pwd1");
         String pwd2 = body.get("pwd2");
@@ -45,7 +47,7 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Email inválido");
         }
 
-        this.service.register(email, pwd1);
+        this.service.register(barName, email, pwd1);
     }
 
     /* login es un servicio web que recibe un JSON con email y pwd */
@@ -68,8 +70,8 @@ public class UserController {
     }
 
     @GetMapping("/confirm/{email}")
-    public void confirmToken(@PathVariable String email, @RequestParam String token, HttpServletResponse response) { // throws IOException { // @PathVariable para email porque está en el path, @RequestParam para token porque está después del ?
+    public void confirmToken(@PathVariable String email, @RequestParam String token, HttpServletResponse response) throws IOException { // @PathVariable para email porque está en el path, @RequestParam para token porque está después del ?
         this.service.confirmToken(email, token);
-        // response.sendRedirect("http://localhost:4200/payment?token=" + token); // redirigir a la página de pago
+        response.sendRedirect("http://localhost:4200/payment?token=" + token); // redirigir a la página de pago
     }
 }

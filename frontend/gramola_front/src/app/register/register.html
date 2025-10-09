@@ -1,10 +1,14 @@
 <div class="container">
     <header class="header">
-        <h1 class="logo">Gramola <span style="color: blue;">ESI</span>potify</h1>
+        <h1 class="logo">Gramola <span style="color: blue;">E</span>S<span style="color: blue;">I</span>potify</h1>
     </header>
     <div class="card">
         <h2>Regístrate para empezar a escuchar</h2>
         <form id="registerForm" class="form">
+            <div class="form-group">
+                <label for="barName">Nombre del bar</label>
+                <input type="text" id="barName" [(ngModel)]="barName" name="barName" required>
+            </div>
             <div class="form-group">
                 <label for="email">Dirección de correo electrónico</label>
                 <input type="email" [(ngModel)]="email" name="email" required>

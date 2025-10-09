@@ -14,6 +14,7 @@ import { UserService } from '../user-service';
 })
 export class Register {
 
+  barName? : string
   email? : string
   pwd1? : string
   pwd2? : string
@@ -26,7 +27,7 @@ export class Register {
       return;
     }
 
-    this.service.register(this.email!, this.pwd1!, this.pwd2!).subscribe(
+    this.service.register(this.barName!, this.email!, this.pwd1!, this.pwd2!).subscribe(
       ok => {
         console.log('Registro exitoso', ok);
       },

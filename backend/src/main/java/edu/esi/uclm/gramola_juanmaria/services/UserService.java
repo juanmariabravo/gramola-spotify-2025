@@ -22,11 +22,12 @@ public class UserService {
     UserDao userDao;
 
     // (code_profesor) public String register(String bar, String email, String pwd, String client_id, String client_secret) {
-    public void register(String email, String pwd) {
+    public void register(String barName, String email, String pwd) {
         Optional<User> optUser = this.userDao.findById(email); // Optional<User> es una caja que puede contener un User o no. Hasta que no mires dentro, no sabes si está o no.
         if (optUser.isEmpty()) {
             // El email no está registrado, podemos crear el usuario
             User user = new User();
+            user.setBarName(barName);
             user.setEmail(email);
             user.setPwd(pwd); // Encriptar la contraseña antes de guardarla
             user.setCreationToken(new Token()); // Crear un token de confirmación

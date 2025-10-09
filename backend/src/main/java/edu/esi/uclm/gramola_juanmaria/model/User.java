@@ -17,13 +17,13 @@ import jakarta.persistence.OneToOne;
 public class User {
     @Id // para que JPA sepa que email es la clave primaria
     private String email;
+    private String barName;
     private String pwd;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "creation_token_id", referencedColumnName = "id", nullable = false)
     private Token creationToken; // token de confirmación
     private boolean confirmed = false; // si el usuario ha confirmado su email
 
-    // private String bar
     // private String gramola_cookie
     // private String clientId;
     // private String clientSecret;
@@ -59,6 +59,12 @@ public class User {
 
     public boolean isConfirmed() {
         return this.confirmed;
+    }
+    public String getBarName() {
+        return barName;
+    }
+    public void setBarName(String barName) {
+        this.barName = barName;
     }
 
 }
