@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = ' http://localhost:8080/users/register';
+  private apiUrl = 'http://localhost:8080/users/register';
 
   constructor(private http: HttpClient) {}
 
@@ -15,6 +15,7 @@ export class UserService {
       pwd1 : pwd1, 
       pwd2 : pwd2
     }
-    return this.http.post<any>(this.apiUrl, info);
+    const headers = { 'Content-Type': 'application/json', 'Accept': 'application/json' };
+    return this.http.post<any>(this.apiUrl, info, { headers });
   }
 }
