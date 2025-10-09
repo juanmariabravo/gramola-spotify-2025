@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import edu.esi.uclm.gramola_juanmaria.services.UserService;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("users")
@@ -64,7 +66,8 @@ public class UserController {
     }
 
     @GetMapping("/confirmToken/{email}")
-    public void confirmToken(@PathVariable String email, @RequestParam String token) { // @PathVariable para email porque está en el path, @RequestParam para token porque está después del ?
+    public void confirmToken(@PathVariable String email, @RequestParam String token, HttpServletResponse response) throws IOException { // @PathVariable para email porque está en el path, @RequestParam para token porque está después del ?
         this.service.confirmToken(email, token);
+        response.sendRedirect("http://localhost:4200/payment?token=" + token); // redirigir a la página de pago
     }
 }
