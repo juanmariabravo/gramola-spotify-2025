@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +27,7 @@ public class UserController {
     private UserService service; // Spring se encarga de instanciar el objeto ya que UserService es un @Service
 
     /* register es un servicio web que recibe un JSON con email, pwd1 y pwd2 */
+    @CrossOrigin(origins = "http://localhost:4200") // permitir llamadas desde el frontend en Angular
     @PostMapping("/register") // podríamos especificar: (value="/register", consumes="application/json")
     public void register(@RequestBody Map<String, String> body) {
         String email = body.get("email");
