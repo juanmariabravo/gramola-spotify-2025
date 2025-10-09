@@ -1,1 +1,349 @@
-/* You can add global styles to this file, and also import other style files */
+/* ===== ESTILOS UNIFICADOS PARA LOGIN Y REGISTER ===== */
+
+/* Reset y configuración base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Configuración del host para componentes Angular */
+:host {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+    background-color: #f6f6f6;
+}
+
+/* Estilos generales del body */
+body {
+    background-color: #f6f6f6;
+    color: #333333;
+    line-height: 1.6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+}
+
+/* Contenedor principal */
+.container {
+    width: 100%;
+    max-width: 450px;
+    padding: 20px;
+}
+
+/* Header y logo */
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.logo {
+    color: #1DB954;
+    font-size: 3rem;
+    font-weight: bold;
+    cursor: default;
+    user-select: none;
+    letter-spacing: -1px;
+}
+
+/* Tarjeta del formulario */
+.card {
+    background-color: #ffffff;
+    padding: 32px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1;
+}
+
+.card h2 {
+    text-align: center;
+    margin-bottom: 24px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #000000;
+}
+
+/* Grupos de formulario */
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #000000;
+}
+
+/* Campos de entrada */
+input[type="email"],
+input[type="password"],
+input[type="text"] {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: #ffffff;
+    color: #000000;
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="text"]:focus {
+    outline: none;
+    border-color: #1DB954;
+    box-shadow: 0 0 0 2px rgba(29, 185, 84, 0.2);
+}
+
+input::placeholder {
+    color: #888888;
+}
+
+/* Mensajes de error */
+.error-message {
+    color: #e22134;
+    font-size: 0.8rem;
+    margin-top: 5px;
+    padding: 5px 0;
+    animation: fadeIn 0.3s ease;
+}
+
+.error-message span {
+    display: block;
+}
+
+/* Inputs con error */
+input.ng-invalid.ng-touched {
+    border-color: #e22134 !important;
+}
+
+input.ng-invalid.ng-touched:focus {
+    box-shadow: 0 0 0 2px rgba(226, 33, 52, 0.2) !important;
+}
+
+/* Botones */
+.btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 500px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.btn-primary {
+    background-color: #1DB954;
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: #1ed760;
+    transform: scale(1.02);
+}
+
+.btn-primary:disabled {
+    background-color: #cccccc;
+    color: #666666;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: #333333;
+    border: 1px solid #878787;
+}
+
+.btn-secondary:hover {
+    border-color: #333333;
+    transform: scale(1.02);
+}
+
+.btn-icon {
+    margin-right: 8px;
+    font-weight: bold;
+}
+
+/* Separador */
+.separator {
+    text-align: center;
+    margin: 20px 0;
+    position: relative;
+    color: #535353;
+}
+
+.separator::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: #e0e0e0;
+}
+
+.separator span {
+    background-color: #ffffff;
+    padding: 0 15px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Enlaces de navegación */
+.login-link,
+.register-link {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+    position: relative;
+    z-index: 5;
+}
+
+.login-link p,
+.register-link p {
+    color: #000000;
+    margin: 0;
+}
+
+.link {
+    color: #1DB954;
+    text-decoration: none;
+    font-weight: 500;
+    cursor: pointer;
+    position: relative;
+    z-index: 10;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+.link:hover {
+    text-decoration: underline;
+    color: #1ed760;
+    background-color: rgba(29, 185, 84, 0.1);
+}
+
+/* Enlaces generales */
+a {
+    position: relative;
+    z-index: 100;
+}
+
+/* Opciones del formulario (específico para login) */
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+}
+
+.forgot-password {
+    color: #1DB954;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+    color: #1ed760;
+    background-color: rgba(29, 185, 84, 0.1);
+}
+
+/* Checkbox personalizado */
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-weight: 400;
+    user-select: none;
+}
+
+.checkbox-container input {
+    margin-right: 8px;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .container {
+        padding: 15px;
+    }
+
+    .card {
+        padding: 24px 20px;
+    }
+
+    .logo {
+        font-size: 2.5rem;
+    }
+
+    .card h2 {
+        font-size: 1.3rem;
+        margin-bottom: 20px;
+    }
+
+    .form-options {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .link {
+        padding: 6px 10px;
+    }
+}
+
+@media (max-width: 320px) {
+    .card {
+        padding: 20px 16px;
+    }
+
+    .logo {
+        font-size: 2.2rem;
+    }
+
+    input[type="email"],
+    input[type="password"],
+    input[type="text"] {
+        padding: 12px;
+    }
+        .btn {
+            padding: 12px;
+        }
+        }

@@ -7,9 +7,10 @@ import { UserService } from '../user-service';
 
 @Component({
   selector: 'app-register',
+  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './register.html',
-  styleUrl: './register.css'
+  styleUrls: ['./register.css']
 })
 export class Register {
 
