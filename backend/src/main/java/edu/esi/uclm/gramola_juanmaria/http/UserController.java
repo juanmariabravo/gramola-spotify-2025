@@ -70,6 +70,7 @@ public class UserController {
     @GetMapping("/confirmToken/{email}")
     public void confirmToken(@PathVariable String email, @RequestParam String token, HttpServletResponse response) { // throws IOException { // @PathVariable para email porque está en el path, @RequestParam para token porque está después del ?
         this.service.confirmToken(email, token);
+        System.out.println("Usuario " + email + " ha confirmado su email correctamente");
         // response.sendRedirect("http://localhost:4200/payment?token=" + token); // redirigir a la página de pago
     }
 }
