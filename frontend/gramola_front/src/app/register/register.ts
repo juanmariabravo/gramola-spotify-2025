@@ -21,6 +21,8 @@ export class Register {
 
   constructor(private service : UserService) { }
 
+  registroExitoso: boolean | null = null;
+
   registrar() {
     if (this.pwd1 != this.pwd2) {
       console.error('Las contraseñas no coinciden');
@@ -30,9 +32,11 @@ export class Register {
     this.service.register(this.barName!, this.email!, this.pwd1!, this.pwd2!).subscribe(
       ok => {
         console.log('Registro exitoso', ok);
+        this.registroExitoso = true;
       },
       error => {
         console.error('Error en el registro', error);
+        this.registroExitoso = false;
       }
     );
   }
