@@ -61,12 +61,12 @@ public class UserService {
     }
     
     public void delete(String email) {
-        if (!this.users.containsKey(email)) {
+        Optional<User> optUser = this.userDao.findById(email);
+        if (optUser.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "El email no está registrado");
         }
-        this.users.remove(email);
-
-        System.out.println("Usuario " + email + " ha sido eliminado");
+        this.userDao.deleteById(email);
+        System.out.println("Usuario " + email + " borrado correctamente");
     }
 
     public void confirmToken(String email, String token) {
