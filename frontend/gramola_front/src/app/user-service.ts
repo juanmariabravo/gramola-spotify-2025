@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class UserService {
   private apiUrl = 'http://localhost:8080/users/register';
+  private loginUrl = 'http://localhost:8080/users/login';
 
   constructor(private http: HttpClient) {}
 
@@ -17,5 +18,11 @@ export class UserService {
     }
     const headers = { 'Content-Type': 'application/json', 'Accept': 'application/json' };
     return this.http.post<any>(this.apiUrl, info, { headers });
+  }
+
+  login(email: string, password: string) {
+    const payload = { email, password };
+    const headers = { 'Content-Type': 'application/json', 'Accept': 'application/json' };
+    return this.http.post<any>(this.loginUrl, payload, { headers });
   }
 }
