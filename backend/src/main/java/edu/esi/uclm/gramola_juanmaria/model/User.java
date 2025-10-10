@@ -19,14 +19,15 @@ public class User {
     private String email;
     private String barName;
     private String pwd;
+    private String clientId;
+    private String clientSecret;
+    private boolean confirmed = false; // si el usuario ha confirmado su email
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "creation_token_id", referencedColumnName = "id", nullable = false)
     private Token creationToken; // token de confirmación
-    private boolean confirmed = false; // si el usuario ha confirmado su email
 
     // private String gramola_cookie
-    // private String clientId;
-    // private String clientSecret;
+
 
     public void setEmail(String email) {
         this.email = email;
@@ -65,6 +66,18 @@ public class User {
     }
     public void setBarName(String barName) {
         this.barName = barName;
+    }
+    public String getClientId() {
+        return clientId;
+    }
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+    public String getClientSecret() {
+        return clientSecret;
+    }
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
     }
 
 }

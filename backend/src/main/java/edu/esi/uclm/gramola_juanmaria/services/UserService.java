@@ -21,8 +21,7 @@ public class UserService {
     @Autowired
     UserDao userDao;
 
-    // (code_profesor) public String register(String bar, String email, String pwd, String client_id, String client_secret) {
-    public void register(String barName, String email, String pwd) {
+    public void register(String barName, String email, String pwd, String client_id, String client_secret) {
         Optional<User> optUser = this.userDao.findById(email); // Optional<User> es una caja que puede contener un User o no. Hasta que no mires dentro, no sabes si está o no.
         if (optUser.isEmpty()) {
             // El email no está registrado, podemos crear el usuario
@@ -30,6 +29,9 @@ public class UserService {
             user.setBarName(barName);
             user.setEmail(email);
             user.setPwd(pwd); // Encriptar la contraseña antes de guardarla
+            System.out.println("Password :" + user.getPwd());
+            user.setClientId(client_id);
+            user.setClientSecret(client_secret);
             user.setCreationToken(new Token()); // Crear un token de confirmación
             this.userDao.save(user); // Guardar en la base de datos
 
@@ -108,6 +110,7 @@ public class UserService {
         userToken.use(); // marcar el token como usado
 
         user.setConfirmed(true); // marcar el usuario como confirmado
+        this.userDao.save(user); // guardar los cambios en la base de datos
         System.out.println("Usuario " + email + " ha confirmado su email correctamente");
     }
 }

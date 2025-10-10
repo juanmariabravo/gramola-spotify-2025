@@ -26,7 +26,7 @@ public class UserController {
     @Autowired
     private UserService service; // Spring se encarga de instanciar el objeto ya que UserService es un @Service
 
-    /* register es un servicio web que recibe un JSON con email, pwd1 y pwd2 */
+    /* register es un servicio web que recibe un JSON con email, pwd1 y pwd2, barName, client_id y client_secret */
     @CrossOrigin(origins = "http://localhost:4200") // permitir llamadas desde el frontend en Angular
     @PostMapping("/register") // podríamos especificar: (value="/register", consumes="application/json")
     public void register(@RequestBody Map<String, String> body) {
@@ -34,6 +34,11 @@ public class UserController {
         String email = body.get("email");
         String pwd1 = body.get("pwd1");
         String pwd2 = body.get("pwd2");
+        String client_id = body.get("clientId");
+        String client_secret = body.get("clientSecret");
+        if (email == null || pwd1 == null || pwd2 == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Faltan parámetros");
+        }
 
         if (!pwd1.equals(pwd2)) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Las contraseñas no coinciden");
@@ -47,7 +52,7 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Email inválido");
         }
 
-        this.service.register(barName, email, pwd1);
+        this.service.register(barName, email, pwd1, client_id, client_secret);
     }
 
     /* login es un servicio web que recibe un JSON con email y pwd */
@@ -55,7 +60,10 @@ public class UserController {
     @PostMapping("/login")
     public void login(@RequestBody Map<String, String> body) {
         String email = body.get("email");
-        String pwd = body.get("pwd");
+        String pwd = body.get("password");
+        if (email == null || pwd == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Faltan parámetros");
+        }
 
         if (!email.contains("@") || !email.contains(".")) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Email inválido");
