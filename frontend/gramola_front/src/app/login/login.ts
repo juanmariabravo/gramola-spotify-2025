@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CommonModule } from '@angular/common'; // Importa CommonModule
+import { CommonModule } from '@angular/common';
 import { UserService } from '../user-service';
+import { SpotiService } from '../spoti-service';
 import { Router } from '@angular/router';
-
 
 @Component({
   selector: 'app-login',
@@ -14,12 +14,16 @@ import { Router } from '@angular/router';
 })
 export class Login {
 
-loginForm: FormGroup;
-  constructor(private fb: FormBuilder, private userService: UserService, private router: Router) {
-  this.loginForm = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(8)]]
-  });
+  loginForm: FormGroup;
+  scopes: string[] = ['user-read-private', 'user-read-email', 'playlist-read-private', 'playlist-read-collaborative', 'playlist-modify-public', 'playlist-modify-private', 'streaming', 'user-read-playback-state', 'user-modify-playback-state', 'user-read-currently-playing', 'app-remote-control', 'user-read-recently-played', 'user-top-read'];
+  
+
+  constructor(private fb: FormBuilder, private userService: UserService, private router: Router, private spotiService: SpotiService) {
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(8)]],
+      rememberMe: [false]
+    });
   }
 
   onSubmit() {
@@ -30,24 +34,41 @@ loginForm: FormGroup;
     }
 
     const { email, password } = this.loginForm.value;
-    console.log('Login form submitted');
-    console.log('Email:', email);
-    console.log('Password:', password);
 
     this.userService.login(email, password).subscribe({
-      next: (res) => {
-        console.log('Login success', res);
-        // if backend returns token, store it
-        if (res?.token) {
-          localStorage.setItem('auth_token', res.token);
-        }
-        // navigate to home or dashboard
-        this.router.navigateByUrl('/');
+      next: (response) => {
+        // store client id in the shared SpotiService and sessionStorage
+        this.spotiService.clientId = response;
+        sessionStorage.setItem('clientId', response);
+        this.getToken();
       },
-      error: (err) => {
-        console.error('Login error', err);
-        // TODO: show user-facing error message
+      error: (error) => {
+        console.error('Login error:', error);
+        alert('Login failed. Please check your credentials and try again.');
       }
     });
+  }
+  private getToken() {
+    let state = this.generateString()
+
+  let params = 'response_type=code';
+  params += `&client_id=${sessionStorage.getItem('clientId')}`;
+  params += `&scope=${encodeURIComponent(this.scopes.join(' '))}`;
+  params += `&redirect_uri=${this.spotiService.redirectUri}`;
+  params += `&state=${state}`;
+
+    sessionStorage.setItem("oauth_state", state);
+    let url = this.spotiService.authUrl + '?' + params;
+    window.location.href = url
+  }
+
+  private generateString(): string {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let code = '';
+    for (let i = 0; i < 16; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    sessionStorage.setItem("code", code);
+    return code;
   }
 }
