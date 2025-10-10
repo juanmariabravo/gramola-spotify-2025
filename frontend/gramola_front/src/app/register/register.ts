@@ -18,6 +18,8 @@ export class Register {
   email? : string
   pwd1? : string
   pwd2? : string
+  clientId? : string
+  clientSecret? : string
 
   constructor(private service : UserService) { }
 
@@ -29,7 +31,7 @@ export class Register {
       return;
     }
 
-    this.service.register(this.barName!, this.email!, this.pwd1!, this.pwd2!).subscribe(
+    this.service.register(this.barName!, this.email!, this.pwd1!, this.pwd2!, this.clientId!, this.clientSecret!).subscribe(
       ok => {
         console.log('Registro exitoso', ok);
         this.registroExitoso = true;

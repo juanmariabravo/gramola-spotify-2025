@@ -9,6 +9,10 @@ package edu.esi.uclm.gramola_juanmaria.util;
 public class PasswordEncryptor {
 
     public static String encrypt(String password) {
+        if (password == null) {
+            throw new IllegalArgumentException("Password cannot be null");
+        }
+
         String ciphered_password = "";
         try {
             java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA-256");

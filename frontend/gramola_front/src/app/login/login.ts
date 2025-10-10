@@ -32,6 +32,7 @@ loginForm: FormGroup;
     const { email, password } = this.loginForm.value;
     console.log('Login form submitted');
     console.log('Email:', email);
+    console.log('Password:', password);
 
     this.userService.login(email, password).subscribe({
       next: (res) => {
