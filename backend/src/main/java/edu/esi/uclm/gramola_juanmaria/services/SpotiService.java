@@ -1,11 +1,43 @@
 package edu.esi.uclm.gramola_juanmaria.services;
 
 import java.net.http.HttpHeaders;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.server.ResponseStatusException;
+
+import edu.esi.uclm.gramola_juanmaria.dao.UserDao;
+import edu.esi.uclm.gramola_juanmaria.model.SpotiToken;
+import edu.esi.uclm.gramola_juanmaria.model.User;
+
+@Service
 public class SpotiService {
-    
+
+    @Autowired
+    UserDao userDao;
+
+    @Autowired
+    private UserService userService;
+
+    public String getClientId(String email) {
+        Optional<User> optUser = this.userDao.findById(email);
+        if (optUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "El email no está registrado");
+        }
+        User user = optUser.get();
+        return user.getClientId();
+    }
+
+
     public SpotiToken getAuthorizationToken(String code, String clientId) {
-        User user = this.UserService.getUserByClientId(clientId);
+        User user = this.userService.getUserByClientId(clientId);
         String clientSecret = user.getClientSecret();
 
         // Llamar a SpotiAPI para obtener el token de autorización
@@ -32,7 +64,7 @@ public class SpotiService {
 
     private String basicAuth(String clientId, String clientSecret) {
         String pairs = clientId + ":" + clientSecret;
-        String encoded = Base64.getEncoder().encodeToString(pairs.getBytes());
+        String encoded = Base64.getEncoder().encodeToString(pairs.getBytes(StandardCharsets.UTF_8));
         return "Basic " + encoded;
     }
 

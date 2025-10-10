@@ -113,4 +113,8 @@ public class UserService {
         this.userDao.save(user); // guardar los cambios en la base de datos
         System.out.println("Usuario " + email + " ha confirmado su email correctamente");
     }
+
+    User getUserByClientId(String clientId) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }
