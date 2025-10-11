@@ -52,7 +52,7 @@ public class UserService {
         }
     }
 
-    public void login(String email, String pwd) {
+    public String login(String email, String pwd) {
         Optional<User> optUser = this.userDao.findById(email); // Optional<User> es una caja que puede contener un User o no. Hasta que no mires dentro, no sabes si está o no.
         if (optUser.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "El email no está registrado");
@@ -69,6 +69,8 @@ public class UserService {
         }
 
         System.out.println("Usuario " + email + " ha hecho login correctamente");
+        // Devolver clientId (puede ser null si no existe)
+        return user.getClientId();
     }
     
     public void delete(String email) {

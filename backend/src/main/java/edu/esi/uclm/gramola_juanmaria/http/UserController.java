@@ -58,7 +58,7 @@ public class UserController {
     /* login es un servicio web que recibe un JSON con email y pwd */
     @CrossOrigin(origins = "http://localhost:4200") // permitir llamadas desde el frontend en Angular
     @PostMapping("/login")
-    public void login(@RequestBody Map<String, String> body) {
+    public Map<String, String> login(@RequestBody Map<String, String> body) {
         String email = body.get("email");
         String pwd = body.get("password");
         if (email == null || pwd == null) {
@@ -69,7 +69,8 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Email inválido");
         }
 
-        this.service.login(email, pwd);
+        String clientId = this.service.login(email, pwd);
+        return Map.of("client_id", clientId);
     }
 
     @DeleteMapping("/delete")

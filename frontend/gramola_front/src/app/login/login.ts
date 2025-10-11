@@ -38,24 +38,24 @@ export class Login {
     this.userService.login(email, password).subscribe({
       next: (response) => {
         // store client id in the shared SpotiService and sessionStorage
-        this.spotiService.clientId = response;
-        sessionStorage.setItem('clientId', response);
+        this.spotiService.clientId = response.client_id;
+        sessionStorage.setItem('clientId', response.client_id);
         this.getToken();
       },
       error: (error) => {
         console.error('Login error:', error);
-        alert('Login failed. Please check your credentials and try again.');
       }
     });
   }
   private getToken() {
+    
     let state = this.generateString()
 
-  let params = 'response_type=code';
-  params += `&client_id=${sessionStorage.getItem('clientId')}`;
-  params += `&scope=${encodeURIComponent(this.scopes.join(' '))}`;
-  params += `&redirect_uri=${this.spotiService.redirectUri}`;
-  params += `&state=${state}`;
+    let params = 'response_type=code';
+    params += `&client_id=${sessionStorage.getItem('clientId')}`;
+    params += `&scope=${encodeURIComponent(this.scopes.join(' '))}`;
+    params += `&redirect_uri=${this.spotiService.redirectUri}`;
+    params += `&state=${state}`;
 
     sessionStorage.setItem("oauth_state", state);
     let url = this.spotiService.authUrl + '?' + params;

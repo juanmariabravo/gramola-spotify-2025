@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 })
 export class SpotiService {
   authUrl = 'https://accounts.spotify.com/authorize';
-  redirectUri = 'http://localhost:4200/music';
+  redirectUri = 'http://localhost:4200/callback';
   clientId: string = '';
   constructor() { }
 

@@ -25,5 +25,8 @@ export class Callback {
       this.router.navigateByUrl('/');
       return;
     }
+
+    console.log('Authorization code:', code);
+    console.log('State:', state);
   }
 }
