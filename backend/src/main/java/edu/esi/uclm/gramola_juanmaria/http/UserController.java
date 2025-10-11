@@ -27,7 +27,7 @@ public class UserController {
     private UserService service; // Spring se encarga de instanciar el objeto ya que UserService es un @Service
 
     /* register es un servicio web que recibe un JSON con email, pwd1 y pwd2, barName, client_id y client_secret */
-    @CrossOrigin(origins = "http://localhost:4200") // permitir llamadas desde el frontend en Angular
+    @CrossOrigin(origins = {"http://localhost:4200", "http://127.0.0.1:4200"}) // permitir llamadas desde el frontend en Angular
     @PostMapping("/register") // podríamos especificar: (value="/register", consumes="application/json")
     public void register(@RequestBody Map<String, String> body) {
         String barName = body.get("barName");

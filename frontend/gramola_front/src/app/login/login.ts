@@ -38,7 +38,7 @@ export class Login {
     this.userService.login(email, password).subscribe({
       next: (response) => {
         // store client id in the shared SpotiService and sessionStorage
-        this.spotiService.clientId = response.client_id;
+        //this.spotiService.clientId = response.client_id;
         sessionStorage.setItem('clientId', response.client_id);
         this.getToken();
       },
@@ -58,7 +58,7 @@ export class Login {
     params += `&state=${state}`;
 
     sessionStorage.setItem("oauth_state", state);
-    let url = this.spotiService.authUrl + '?' + params;
+    let url = this.spotiService.spoti_authUrl + '?' + params;
     window.location.href = url
   }
 

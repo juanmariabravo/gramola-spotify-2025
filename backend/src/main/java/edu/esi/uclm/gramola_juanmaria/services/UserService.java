@@ -82,6 +82,17 @@ public class UserService {
         System.out.println("Usuario " + email + " borrado correctamente");
     }
 
+    public User getUserByClientId(String clientId) {
+        // Usamos findTopByClientId para evitar excepciones si la base de datos contiene accidentalmente
+        // múltiples filas con el mismo clientId. Devolverá el primero encontrado.
+        Optional<User> optUser = this.userDao.findTopByClientId(clientId);
+        if (optUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "ClientId no registrado");
+        }
+        // NOTA: es recomendable limpiar duplicados en la BD y aplicar una restricción UNIQUE sobre clientId.
+        return optUser.get();
+    }
+
     public void confirmToken(String email, String token) {
 
         Optional<User> optUser = this.userDao.findById(email);
@@ -114,9 +125,5 @@ public class UserService {
         user.setConfirmed(true); // marcar el usuario como confirmado
         this.userDao.save(user); // guardar los cambios en la base de datos
         System.out.println("Usuario " + email + " ha confirmado su email correctamente");
-    }
-
-    User getUserByClientId(String clientId) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

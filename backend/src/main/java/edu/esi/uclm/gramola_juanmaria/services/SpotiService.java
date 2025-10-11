@@ -4,12 +4,13 @@ import java.util.Base64;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.server.ResponseStatusException;
 
 import edu.esi.uclm.gramola_juanmaria.dao.UserDao;
@@ -23,7 +24,11 @@ public class SpotiService {
     UserDao userDao;
 
     @Autowired
-    private UserService userService;
+    UserService userService;
+
+    RestClient restClient = RestClient.create();
+
+    private final String tokenUrl = "https://accounts.spotify.com/api/token";
 
     public String getClientId(String email) {
         Optional<User> optUser = this.userDao.findById(email);
@@ -48,7 +53,7 @@ public class SpotiService {
         // Realizar la solicitud a la API de Spotify
         String header = this.basicAuth(clientId, clientSecret);
 
-        String url = this.tokenUrl + "/api/token";
+        String url = this.tokenUrl;
         SpotiToken token = restClient.post()
             .uri(url)
             .header(HttpHeaders.AUTHORIZATION, header)
@@ -57,7 +62,7 @@ public class SpotiService {
             .retrieve()
             .body(SpotiToken.class);
 
-            user.setSpotiSimpleToken(token);
+            // user.setSpotiSimpleToken(token);
             return token;
         }
 

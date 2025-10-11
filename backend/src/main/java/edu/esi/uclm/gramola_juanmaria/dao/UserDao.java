@@ -7,5 +7,10 @@ import edu.esi.uclm.gramola_juanmaria.model.User;
 
 @Repository // para que Spring sepa que: la clave principal es String (email) y la entidad es User
 public interface UserDao extends JpaRepository<User, String> {
+
+	java.util.Optional<User> findByClientId(String clientId);
     
+	// Devuelve solo el primer usuario que coincida con clientId (evita excepción si hay duplicados)
+	java.util.Optional<User> findTopByClientId(String clientId);
+
 }

@@ -80,8 +80,4 @@ public class User {
         this.clientSecret = clientSecret;
     }
 
-    public void setSpotiSimpleToken(SpotiToken token) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }
