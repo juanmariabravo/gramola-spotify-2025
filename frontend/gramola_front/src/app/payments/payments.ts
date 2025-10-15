@@ -65,6 +65,11 @@ export class Payments implements OnInit {
       self.payWithCard(card);
     });
     form!.style.display = "block"
+    // ocultar el botón "Go to payment" al aparecer el formulario
+    const prepayBtn = document.getElementById("prepay-btn");
+    if (prepayBtn) {
+      prepayBtn.style.display = "none";
+    }
   }
 
   payWithCard(card: any) {
