@@ -6,7 +6,7 @@ import { Payments } from "./payments/payments";
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterModule, RouterOutlet, Payments],
+  imports: [CommonModule, RouterModule, RouterOutlet],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })

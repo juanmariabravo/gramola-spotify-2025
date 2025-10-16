@@ -61,8 +61,6 @@ public class SpotiService {
             .body(form)
             .retrieve()
             .body(SpotiToken.class);
-
-            // user.setSpotiSimpleToken(token);
             return token;
         }
 

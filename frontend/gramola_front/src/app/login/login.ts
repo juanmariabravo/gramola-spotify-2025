@@ -15,8 +15,8 @@ import { Router } from '@angular/router';
 export class Login {
 
   loginForm: FormGroup;
-  scopes: string[] = ['user-read-private', 'user-read-email', 'playlist-read-private', 'playlist-read-collaborative', 'playlist-modify-public', 'playlist-modify-private', 'streaming', 'user-read-playback-state', 'user-modify-playback-state', 'user-read-currently-playing', 'app-remote-control', 'user-read-recently-played', 'user-top-read'];
-  
+  scopes : string[] = ["user-read-private", "user-read-email", "playlist-read-private", "playlist-read-collaborative", "user-read-playback-state", "user-modify-playback-state", "user-read-currently-playing", "user-library-read", "user-library-modify", "user-read-recently-played", "user-top-read", "app-remote-control", "streaming"];
+
 
   constructor(private fb: FormBuilder, private userService: UserService, private router: Router, private spotiService: SpotiService) {
     this.loginForm = this.fb.group({
@@ -39,6 +39,7 @@ export class Login {
       next: (response) => {
         // store client id in the shared SpotiService and sessionStorage
         //this.spotiService.clientId = response.client_id;
+        //sessionStorage.setItem('mustPay', response.mustPay);
         sessionStorage.setItem('clientId', response.client_id);
         this.getToken();
       },

@@ -9,7 +9,7 @@ import { SpotiService } from '../spoti-service';
   styleUrl: './callback.css'
 })
 export class Callback {
-  constructor(private route: ActivatedRoute, private router: Router, private spotiService: SpotiService) {}
+  constructor(private route: ActivatedRoute, private router: Router, public spotiService: SpotiService) {}
 
   ngOnInit(): void {
     const qp = this.route.snapshot.queryParamMap;
@@ -23,7 +23,7 @@ export class Callback {
     }
     if (!code || !state) {
       alert('Missing code or state in callback');
-      this.router.navigateByUrl('/');
+      //this.router.navigateByUrl('/');
       return;
     }
 
@@ -48,7 +48,7 @@ export class Callback {
     }
 
     // Ask the backend for the Authorization Token
-    this.spotiService.getAuthorizationToken(code, clientId).subscribe({
+    this.spotiService.getAuthorizationToken(code).subscribe({ // antes: (code, clientId).subscribe({
       next: (data) => {
         console.log('Authorization token received:', data);
         this.spotiService.spotiToken = data.access_token;
