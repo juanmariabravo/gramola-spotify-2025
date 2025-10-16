@@ -6,7 +6,8 @@
             <div class="current-playing" *ngIf="currentTrack">
                 <div class="now-playing-indicator">▶️ REPRODUCIENDO AHORA</div>
                 <div class="current-track-info">
-                    <img [src]="'assets/default-album.png'" [alt]="currentTrack.album?.name" class="current-album-cover">
+                    <img [src]="currentTrack.album?.images?.[2]?.url || 'assets/default-album.png'" [alt]="currentTrack.album?.name"
+                        class="track-album-cover">
                     <div class="track-details">
                         <h3 class="track-title">{{currentTrack.name}}</h3>
                         <p class="track-artist">{{getArtists(currentTrack)}}</p>
@@ -30,7 +31,7 @@
         </div>
     </header>
 
-    <!-- Controles principales -->
+    <!-- Controles principales
     <section class="controls-section">
         <div class="control-group">
             <h3>Dispositivos Disponibles</h3>
@@ -46,25 +47,7 @@
                 {{deviceError}}
             </div>
         </div>
-    
-        <div class="control-group">
-            <h3>Playlists Disponibles</h3>
-            <div class="playlists-grid">
-                <div *ngFor="let playlist of playlists" class="playlist-card">
-                    <div class="playlist-image">
-                        <!-- Aquí iría la imagen de la playlist si estuviera disponible -->
-                        <div class="default-playlist-icon">🎵</div>
-                    </div>
-                    <div class="playlist-info">
-                        <h4 class="playlist-name">{{playlist.name}}</h4>
-                    </div>
-                </div>
-            </div>
-            <div *ngIf="playlistError" class="error-message">
-                {{playlistError}}
-            </div>
-        </div>
-    </section>
+    </section>-->
 
     <!-- Búsqueda de canciones -->
     <section class="search-section">
@@ -81,7 +64,6 @@
 
     <!-- Resultados de búsqueda -->
     <section class="search-results" *ngIf="tracks.length > 0">
-        <h3>Resultados de Búsqueda</h3>
         <div class="tracks-list">
             <div *ngFor="let track of tracks" class="track-card">
                 <div class="track-info">
@@ -110,8 +92,9 @@
         <div class="queue-list" *ngIf="queue.length > 0">
             <div *ngFor="let track of queue; let i = index" class="queue-item" [class.next-up]="i === 0">
                 <div class="queue-position">{{i + 1}}</div>
-                <img [src]="'assets/default-album.png'" [alt]="track.album?.name" class="queue-album-cover">
-                <div class="queue-track-info">
+                    <img [src]="track.album?.images?.[2]?.url || 'assets/default-album.png'" [alt]="track.album?.name"
+                        class="track-album-cover">
+                    <div class="queue-track-info">
                     <h4 class="track-title">{{track.name}}</h4>
                     <p class="track-artist">{{getArtists(track)}}</p>
                 </div>
