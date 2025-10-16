@@ -78,4 +78,17 @@ export class SpotiService {
     return this.http.get<any>(url, { headers });
   }
 
+  // Nuevo: obtener la cola real de reproducción desde Spotify (GET /me/player/queue)
+  /* de momento no se usa
+  getQueue(): Observable<any> {
+    if (!this.spotiToken) {
+      throw new Error('Spotify token is not set.');
+    }
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.spotiToken}`,
+      'Accept': 'application/json'
+    });
+    return this.http.get<any>(`${this.spotiV1Url}/me/player/queue`, { headers });
+  }
+  */
 }

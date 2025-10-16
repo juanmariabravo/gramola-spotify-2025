@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core'; //, OnDestroy } from '@angular/core'; para cola en tiempo real
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SpotiService } from '../spoti-service';
@@ -37,6 +37,8 @@ export class Music implements OnInit {
 
   currentTrack? : TrackObject
 
+  //private queuePollIntervalId?: any; // para cola en tiempo real
+
   deviceError? : string
   playlistError? : string
   currentPlaylistError? : string
@@ -49,7 +51,20 @@ barName: any;
     this.getDevices()
     this.getPlaylists()
     this.getCurrentPlayList()
+     /* obtener cola real de Spotify y mantenerla actualizada
+    this.getQueue();
+    this.queuePollIntervalId = setInterval(() => this.getQueue(), 8000); */
   }
+
+  /* para cola en tiempo real
+  ngOnDestroy(): void {
+    if (this.queuePollIntervalId) {
+      clearInterval(this.queuePollIntervalId);
+    }
+  }
+  */
+
+  
 
   getDevices() {
     this.resetErrors()
@@ -145,6 +160,38 @@ addToQueue(track: TrackObject) {
     }
   });
 }
+
+// Nuevo: solicita la cola real a Spotify y la asigna a this.queue
+/*  getQueue() {
+    this.resetErrors();
+    try {
+      this.spotiService.getQueue().subscribe({
+        next: (res) => {
+           // La respuesta de Spotify suele incluir una propiedad `queue` con los elementos.
+           // Si no existe, dejar la cola vacía.
+          const spotifyQueue = (res && (res.queue || res.items)) ? (res.queue || res.items) : [];
+           // Mapear a TrackObject si es necesario (la estructura suele ser track o item.track)
+          this.queue = spotifyQueue.map((qItem: any) => {
+            const t = qItem.track ? qItem.track : qItem;
+            return {
+              id: t.id,
+              name: t.name,
+              uri: t.uri,
+              album: t.album,
+              artists: t.artists,
+            } as TrackObject;
+          });
+        },
+        error: (err) => {
+          // No mostrar error intrusivo si 204 o similar; guardar mensaje para debugging
+          this.songError = err?.message || 'No se pudo obtener la cola de Spotify';
+        }
+      });
+    } catch (e: any) {
+      this.songError = e?.message || String(e);
+    }
+  }
+  */
 
   clearQueue() {
     this.queue = [];
