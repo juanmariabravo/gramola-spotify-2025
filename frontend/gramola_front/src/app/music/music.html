@@ -3,45 +3,99 @@
     <header class="music-header">
         <div class="bar-info">
             <h1 class="bar-name">{{barName}}</h1>
-            <p class="current-playing" *ngIf="currentSong">
-                🔴 En reproducción: <strong>{{currentSong.name}}</strong> - {{currentSong.artist}}
-            </p>
-            <p class="current-playing" *ngIf="!currentSong">
-                No hay ninguna canción reproduciéndose
-            </p>
-        </div>
-        <div class="queue-info">
-            <span class="queue-count">{{queue.length}} canciones en cola</span>
+            <div class="current-playing" *ngIf="currentTrack">
+                <div class="now-playing-indicator">▶️ REPRODUCIENDO AHORA</div>
+                <div class="current-track-info">
+                    <img [src]="'assets/default-album.png'" [alt]="currentTrack.album?.name" class="current-album-cover">
+                    <div class="track-details">
+                        <h3 class="track-title">{{currentTrack.name}}</h3>
+                        <p class="track-artist">{{getArtists(currentTrack)}}</p>
+                        <p class="track-album">{{currentTrack.album?.name}}</p>
+                    </div>
+                </div>
+                </div>
+                <div class="no-track" *ngIf="!currentTrack">
+                    <p>No se está reproduciendo ninguna canción</p>
+                </div>
+                </div>
+                <div class="device-info">
+                    <div class="device-status" *ngIf="currentDevice">
+                        <span class="device-icon">📱</span>
+                        <span class="device-name">{{currentDevice.name}}</span>
+                        <span class="device-type">({{currentDevice.type}})</span>
+                    </div>
+                    <div class="no-device" *ngIf="!currentDevice">
+                        <p>No hay dispositivos activos</p>
+                    </div>
         </div>
     </header>
 
+    <!-- Controles principales -->
+    <section class="controls-section">
+        <div class="control-group">
+            <h3>Dispositivos Disponibles</h3>
+            <div class="devices-list">
+                <div *ngFor="let device of devices" class="device-item" [class.active]="device.is_active">
+                    <span class="device-icon">{{getDeviceIcon(device.type)}}</span>
+                    <span class="device-name">{{device.name}}</span>
+                    <span class="device-type">{{device.type}}</span>
+                    <span *ngIf="device.is_active" class="active-badge">Activo</span>
+                </div>
+            </div>
+            <div *ngIf="deviceError" class="error-message">
+                {{deviceError}}
+            </div>
+        </div>
+    
+        <div class="control-group">
+            <h3>Playlists Disponibles</h3>
+            <div class="playlists-grid">
+                <div *ngFor="let playlist of playlists" class="playlist-card">
+                    <div class="playlist-image">
+                        <!-- Aquí iría la imagen de la playlist si estuviera disponible -->
+                        <div class="default-playlist-icon">🎵</div>
+                    </div>
+                    <div class="playlist-info">
+                        <h4 class="playlist-name">{{playlist.name}}</h4>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="playlistError" class="error-message">
+                {{playlistError}}
+            </div>
+        </div>
+    </section>
+
     <!-- Búsqueda de canciones -->
     <section class="search-section">
+        <h3>Buscar Canciones</h3>
         <div class="search-container">
-            <input type="text" [(ngModel)]="searchQuery" (keyup.enter)="searchSongs()"
-                placeholder="Buscar canciones, artistas..." class="search-input">
-            <button (click)="searchSongs()" class="search-btn">
-                🔍 Buscar
+            <input type="text" [(ngModel)]="searchQuery" (keyup.enter)="searchTracks()"
+                placeholder="Buscar canciones, artistas, álbumes..." class="search-input">
+            <button (click)="searchTracks()" class="search-btn">
+                <span class="search-icon">🔍</span>
+                Buscar
             </button>
         </div>
     </section>
 
     <!-- Resultados de búsqueda -->
-    <section class="search-results" *ngIf="searchResults.length > 0">
-        <h3>Resultados de búsqueda</h3>
-        <div class="results-grid">
-            <div *ngFor="let song of searchResults" class="song-card">
-                <div class="song-info">
-                    <img [src]="song.albumCover" [alt]="song.album" class="album-cover">
-                    <div class="song-details">
-                        <h4 class="song-title">{{song.name}}</h4>
-                        <p class="song-artist">{{song.artist}}</p>
-                        <p class="song-album">{{song.album}}</p>
-                        <p class="song-duration">{{song.duration}}</p>
+    <section class="search-results" *ngIf="tracks.length > 0">
+        <h3>Resultados de Búsqueda</h3>
+        <div class="tracks-list">
+            <div *ngFor="let track of tracks" class="track-card">
+                <div class="track-info">
+                    <img [src]="track.album?.images?.[2]?.url || 'assets/default-album.png'" [alt]="track.album?.name"
+                        class="track-album-cover">
+                    <div class="track-details">
+                        <h4 class="track-title">{{track.name}}</h4>
+                        <p class="track-artist">{{getArtists(track)}}</p>
+                        <p class="track-album">{{track.album?.name}}</p>
                     </div>
                 </div>
-                <button (click)="addToQueue(song)" class="add-btn" [disabled]="song.adding">
-                    {{song.adding ? 'Añadiendo...' : '➕ Añadir (' + price + '€)'}}
+                <button (click)="addToQueue(track)" class="add-to-queue-btn">
+                    <span class="add-icon">➕</span>
+                    Añadir a Cola
                 </button>
             </div>
         </div>
@@ -49,34 +103,35 @@
 
     <!-- Cola de reproducción -->
     <section class="queue-section">
-        <h3>Cola de reproducción</h3>
+        <div class="queue-header">
+            <h3>Cola de Reproducción</h3>
+            <span class="queue-count">{{queue.length}} canciones</span>
+        </div>
         <div class="queue-list" *ngIf="queue.length > 0">
-            <div *ngFor="let song of queue; let i = index" class="queue-item" [class.playing]="i === 0 && currentSong">
+            <div *ngFor="let track of queue; let i = index" class="queue-item" [class.next-up]="i === 0">
                 <div class="queue-position">{{i + 1}}</div>
-                <img [src]="song.albumCover" [alt]="song.album" class="queue-album-cover">
-                <div class="queue-song-info">
-                    <h4 class="queue-song-title">{{song.name}}</h4>
-                    <p class="queue-song-artist">{{song.artist}}</p>
+                <img [src]="'assets/default-album.png'" [alt]="track.album?.name" class="queue-album-cover">
+                <div class="queue-track-info">
+                    <h4 class="track-title">{{track.name}}</h4>
+                    <p class="track-artist">{{getArtists(track)}}</p>
                 </div>
-                <div class="queue-song-duration">{{song.duration}}</div>
-                <div class="queue-song-status">
-                    <span *ngIf="i === 0 && currentSong" class="playing-indicator">▶️ Reproduciendo</span>
-                    <span *ngIf="i === 0 && !currentSong" class="next-indicator">⏭️ Siguiente</span>
-                    <span *ngIf="i > 0" class="waiting-indicator">⏳ En espera</span>
+                <div class="queue-status">
+                    <span *ngIf="i === 0" class="next-up-label">PRÓXIMA</span>
+                    <span *ngIf="i > 0" class="waiting-label">En cola</span>
                 </div>
             </div>
         </div>
+        
         <div class="empty-queue" *ngIf="queue.length === 0">
-            <p>No hay canciones en la cola de reproducción</p>
-            <p class="empty-queue-hint">Busca canciones y añádelas para que suenen en el bar</p>
+            <div class="empty-icon">🎵</div>
+            <p>No hay canciones en la cola</p>
+            <p class="empty-hint">Busca canciones y añádelas para reproducirlas</p>
         </div>
     </section>
 
-    <!-- Información de pago -->
-    <section class="payment-info">
-        <div class="price-info">
-            <p>💳 Precio por canción: <strong>{{price}}€</strong></p>
-            <p class="payment-notice">Al añadir una canción, se procesará el pago automáticamente</p>
-        </div>
-    </section>
+    <!-- Mensajes de error -->
+    <div *ngIf="songError" class="error-banner">
+        <span class="error-icon">⚠️</span>
+        {{songError}}
     </div>
+</div>

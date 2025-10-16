@@ -6,9 +6,11 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class SpotiService {
+
   spoti_authUrl = 'https://accounts.spotify.com/authorize';
   apiUrl = 'http://localhost:8080/spoti';
   redirectUri = 'http://127.0.0.1:4200/callback';
+  spotiV1Url = 'https://api.spotify.com/v1';
   spotiToken: string = '';
   clientId?: string = '';
   //queue: TrackObject[] = [];
@@ -27,6 +29,53 @@ export class SpotiService {
       'Authorization': `Bearer ${this.spotiToken}`,
       'Accept': 'application/json'
     });
-    return this.http.get<any>('https://api.spotify.com/v1/me/player/currently-playing', { headers });
+    return this.http.get<any>(`${this.spotiV1Url}/me/player/currently-playing`, { headers });
   }
+
+  getDevices() : Observable<any> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.spotiToken}`
+    });
+
+    let url = `${this.spotiV1Url}/me/player/devices`;
+    return this.http.get<any>(url, { headers });
+  }
+
+  getPlaylists() : Observable<any> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.spotiToken}`
+    });
+
+    return this.http.get<any>(`${this.spotiV1Url}/me/playlists`, { headers });
+  }
+  getCurrentPlayList() : Observable<any> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.spotiToken}`
+    });
+    return this.http.get<any>(`${this.spotiV1Url}/me/player/currently-playing`, { headers });
+  }
+
+  getTracks(playlistId : string) : Observable<any> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.spotiToken}`
+    });
+    return this.http.get<any>(`${this.spotiV1Url}/playlists/${playlistId}/tracks`, { headers });
+  }
+
+  addToQueue(uri : string) : Observable<any> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.spotiToken}`
+    });
+    let url = `${this.spotiV1Url}/me/player/queue?uri=${encodeURIComponent(uri)}`;
+    return this.http.post<any>(url, null, { headers, responseType: 'text' as 'json' });
+  }
+
+  searchTracks(query : string) : Observable<any> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.spotiToken}`
+    });
+    let url = `${this.spotiV1Url}/search?q=${encodeURIComponent(query)}&type=track&limit=10`;
+    return this.http.get<any>(url, { headers });
+  }
+
 }

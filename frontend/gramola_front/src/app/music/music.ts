@@ -1,15 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { SpotiService } from '../spoti-service';
 
-interface Song {
-  id: string;
-  name: string;
-  artist: string;
-  album: string;
-  albumCover: string;
-  duration: string;
-  adding?: boolean;
+
+interface TrackObject {
+  id?: string;
+  name?: string;
+  uri?: string;
+  album?: { name: string; images: { url: string }[] };
+  artists?: { name: string }[];
+  // add other fields you use (artists, album, duration_ms, etc.)
+}
+
+interface PlayList {
+  id?: string;
+  name?: string;
+  // add other playlist fields you need
 }
 
 @Component({
@@ -19,93 +26,128 @@ interface Song {
   templateUrl: './music.html',
   styleUrls: ['./music.css']
 })
+
 export class Music implements OnInit {
-  barName: string = 'Bar La Esquina';
-  searchQuery: string = '';
-  price: number = 1.50;
-  currentSong: Song | null = null;
+
+  devices: any[] = [];
+  currentDevice: any;
+  playlists : PlayList[] = [];
+  queue : TrackObject[] = [];
+  tracks : TrackObject[] = [];
+
+  currentTrack? : TrackObject
+
+  deviceError? : string
+  playlistError? : string
+  currentPlaylistError? : string
+  songError? : string
+barName: any;
+
+  constructor(private spotiService : SpotiService) {}
+
+  ngOnInit(): void {
+    this.getDevices()
+    this.getPlaylists()
+    this.getCurrentPlayList()
+  }
+
+  getDevices() {
+    this.resetErrors()
+    this.spotiService.getDevices().subscribe({
+      next: (result) => {
+        this.devices = result.devices;
+        this.currentDevice = this.devices.find(d => d.is_active);
+        if (!this.currentDevice)
+          this.deviceError = "No hay ningún dispositivo conectado"
+      },
+      error: (err) => {
+        this.deviceError = err.message;
+      }
+    });
+  }
+
+  getPlaylists() {
+    this.resetErrors();
+    this.spotiService.getPlaylists().subscribe({
+      next: (result) => {
+        this.playlists = result.items;
+      },
+      error: (err) => {
+        this.playlistError = err.message;
+      }
+    });
+  }
+
+  getCurrentPlayList() {
+    this.resetErrors();
+    this.spotiService.getCurrentlyPlaying().subscribe({
+      next: (result) => {
+        if (result && result.item) {
+          this.currentTrack = result.item;
+        }
+      },
+      error: (err) => {
+        this.currentPlaylistError = err.message;
+      }
+    });
+
+  }
+
+  resetErrors() {
+    this.deviceError = undefined;
+    this.playlistError = undefined;
+    this.currentPlaylistError = undefined;
+    this.songError = undefined;
+  }
+
+  // Añade estas propiedades
+searchQuery: string = '';
+
+// Métodos adicionales
+getArtists(track: TrackObject): string {
+  return track.artists?.map(artist => artist.name).join(', ') || 'Artista desconocido';
+}
+
+getDeviceIcon(deviceType: string): string {
+  const icons: { [key: string]: string } = {
+    'computer': '💻',
+    'smartphone': '📱',
+    'tablet': '📟',
+    'speaker': '🔊',
+    'tv': '📺'
+  };
+  return icons[deviceType.toLowerCase()] || '📱';
+}
+
+searchTracks() {
+  if (!this.searchQuery.trim()) return;
   
-  searchResults: Song[] = [];
-  queue: Song[] = [];
+  this.resetErrors();
+  this.spotiService.searchTracks(this.searchQuery).subscribe({
+    next: (result) => {
+      this.tracks = result.tracks.items;
+    },
+    error: (err) => {
+      this.songError = err.message;
+    }
+  });
+}
 
-  ngOnInit() {
-    // Simular datos iniciales
-    this.loadInitialData();
+addToQueue(track: TrackObject) {
+  this.resetErrors();
+  this.spotiService.addToQueue(track.uri!).subscribe({
+    next: () => {
+      this.queue.unshift(track);
+      // Opcional: mostrar mensaje de éxito
+    },
+    error: (err) => {
+      this.songError = err.message;
+    }
+  });
+}
+
+  clearQueue() {
+    this.queue = [];
   }
 
-  loadInitialData() {
-    // Simular canción actual reproduciéndose
-    this.currentSong = {
-      id: '1',
-      name: 'Una noche sin ti',
-      artist: 'Los Rumberos',
-      album: 'Noches de Verano',
-      albumCover: 'https://via.placeholder.com/60',
-      duration: '3:45'
-    };
-
-    // Simular cola inicial
-    this.queue = [
-      {
-        id: '2',
-        name: 'Mucho mejor',
-        artist: 'La Banda',
-        album: 'Éxitos',
-        albumCover: 'https://via.placeholder.com/60',
-        duration: '4:20'
-      }
-    ];
-  }
-
-  searchSongs() {
-    if (!this.searchQuery.trim()) return;
-
-    // Simular búsqueda en API de Spotify
-    console.log('Buscando:', this.searchQuery);
-    
-    // Datos de ejemplo para demostración
-    this.searchResults = [
-      {
-        id: '3',
-        name: 'Whole lotta love',
-        artist: 'Led Zeppelin',
-        album: 'Led Zeppelin II',
-        albumCover: 'https://via.placeholder.com/60/FF6B6B/FFFFFF',
-        duration: '5:34'
-      },
-      {
-        id: '4',
-        name: 'Creep',
-        artist: 'Radiohead',
-        album: 'Pablo Honey',
-        albumCover: 'https://via.placeholder.com/60/4ECDC4/FFFFFF',
-        duration: '3:58'
-      },
-      {
-        id: '5',
-        name: this.searchQuery,
-        artist: 'Artista Ejemplo',
-        album: 'Álbum Demo',
-        albumCover: 'https://via.placeholder.com/60/45B7D1/FFFFFF',
-        duration: '4:12'
-      }
-    ];
-  }
-
-  addToQueue(song: Song) {
-    // Simular proceso de pago y añadir a cola
-    song.adding = true;
-    
-    setTimeout(() => {
-      this.queue.push({...song});
-      song.adding = false;
-      
-      // En una implementación real, aquí se procesaría el pago
-      console.log(`Canción "${song.name}" añadida a la cola. Pago de ${this.price}€ procesado.`);
-      
-      // Limpiar resultados de búsqueda después de añadir
-      this.searchResults = [];
-      this.searchQuery = '';
-    }, 1500);
-  }
 }
