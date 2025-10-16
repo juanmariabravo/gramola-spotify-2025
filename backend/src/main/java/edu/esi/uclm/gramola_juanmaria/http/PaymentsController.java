@@ -2,12 +2,12 @@ package edu.esi.uclm.gramola_juanmaria.http;
 
 import java.util.Map;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -39,12 +39,24 @@ public class PaymentsController {
     }
 
     @PostMapping("/confirm")
-        public String confirmPayment(HttpSession session, @RequestBody Map<String, Object> body) {
-        try {
-            // Implement payment confirmation logic here
-            return "Payment confirmed";
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+    public void confirm(HttpSession session, Map<String, Object> finalData) {
+        // de momento que devuelva 200 OK
+        System.out.println("Confirmando pago..." + finalData);
+        StripeTransaction transactionDetails = (StripeTransaction) session.getAttribute("transactionDetails");
+        JSONObject jso = new JSONObject(transactionDetails.getData());
+
+        String sentTransactionId = transactionDetails.getId();
+        String sentClientSecret = jso.getString("client_secret");
+
+        JSONObject finalDataJson = new JSONObject(finalData);
+        String userToken = finalDataJson.getString("token");
+        String receivedTransactionId = finalDataJson.getString("transactionId");
+        String receivedClientSecret = finalDataJson.getJSONObject("paymentIntent").getString("client_secret");
+
+        if (sentTransactionId.equals(receivedTransactionId) && sentClientSecret.equals(receivedClientSecret)) {
+            this.service.confirmTransaction(transactionDetails, userToken);
         }
+
+        session.removeAttribute("transactionDetails");
     }
 }

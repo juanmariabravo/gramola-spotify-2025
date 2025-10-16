@@ -12,5 +12,6 @@ public interface UserDao extends JpaRepository<User, String> {
     
 	// Devuelve solo el primer usuario que coincida con clientId (evita excepción si hay duplicados)
 	java.util.Optional<User> findTopByClientId(String clientId);
-
+	
+	java.util.Optional<User> findByCreationTokenId(String token);
 }

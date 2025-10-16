@@ -41,4 +41,19 @@ public class PaymentService {
         this.dao.save(st);
         return st;
     }
+
+    public void confirmTransaction(StripeTransaction transactionDetails, String userToken) {
+        // verificar que el token es correcto
+        if (this.userDao.findByCreationTokenId(userToken) == null) {
+            throw new IllegalArgumentException("Token de usuario no válido");
+        }
+        // marcar la transacción como completada
+        JSONObject jso = new JSONObject(transactionDetails.getData());
+        jso.put("status", "completed");
+        transactionDetails.setData(jso);
+        this.dao.save(transactionDetails);
+    }
 }
+
+    
+
