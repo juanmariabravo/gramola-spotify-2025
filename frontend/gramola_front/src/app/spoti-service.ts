@@ -1,16 +1,19 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SpotiService {
 
-  spoti_authUrl = 'https://accounts.spotify.com/authorize';
-  apiUrl = 'http://localhost:8080/spoti';
-  redirectUri = 'http://127.0.0.1:4200/callback';
-  spotiV1Url = 'https://api.spotify.com/v1';
+  // Use a safe any-cast for environment and provide sensible defaults to avoid TS2339
+  private _env: any = (environment as any) || {};
+  spoti_authUrl = this._env.spoti_authUrl || 'https://accounts.spotify.com/authorize';
+  apiUrl = (this._env.URL_API ? (this._env.URL_API + '/spoti') : 'http://localhost:8080/spoti');
+  redirectUri = this._env.redirectUri || 'http://127.0.0.1:4200/callback';
+  spotiV1Url = this._env.spotiV1Url || 'https://api.spotify.com/v1';
   spotiToken: string = '';
   clientId?: string = '';
   //queue: TrackObject[] = [];
@@ -79,7 +82,7 @@ export class SpotiService {
   }
 
   // Nuevo: obtener la cola real de reproducción desde Spotify (GET /me/player/queue)
-  /* de momento no se usa
+
   getQueue(): Observable<any> {
     if (!this.spotiToken) {
       throw new Error('Spotify token is not set.');
@@ -90,5 +93,4 @@ export class SpotiService {
     });
     return this.http.get<any>(`${this.spotiV1Url}/me/player/queue`, { headers });
   }
-  */
 }
