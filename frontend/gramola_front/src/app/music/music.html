@@ -31,7 +31,7 @@
         </div>
     </header>
 
-    <!-- Controles principales
+    <!-- Controles principales -->
     <section class="controls-section">
         <div class="control-group">
             <h3>Dispositivos Disponibles</h3>
@@ -47,7 +47,7 @@
                 {{deviceError}}
             </div>
         </div>
-    </section>-->
+    </section>
 
     <!-- Búsqueda de canciones -->
     <section class="search-section">
@@ -88,6 +88,8 @@
         <div class="queue-header">
             <h3>Cola de Reproducción</h3>
             <span class="queue-count">{{queue.length}} canciones</span>
+            <!-- botón para forzar recarga de la cola desde Spotify -->
+            <button class="reload-queue-btn" type="button" (click)="getQueue()">Recargar cola</button>
         </div>
         <div class="queue-list" *ngIf="queue.length > 0">
             <div *ngFor="let track of queue; let i = index" class="queue-item" [class.next-up]="i === 0">

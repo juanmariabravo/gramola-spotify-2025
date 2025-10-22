@@ -614,3 +614,62 @@
         grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     }
 }
+.reload-queue-btn {
+    padding: 10px 16px;
+    background: #ffffff;
+    color: #1DB954;
+    border: 2px solid #1DB954;
+    border-radius: 24px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.18s ease;
+    box-shadow: 0 2px 6px rgba(29, 185, 84, 0.08);
+    white-space: nowrap;
+}
+
+.reload-queue-btn:hover {
+    background: #1DB954;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(29, 185, 84, 0.18);
+}
+
+.reload-queue-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 10px rgba(29, 185, 84, 0.12);
+}
+
+.reload-queue-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #f3f3f3;
+    color: #9aa19a;
+    border-color: #e6e6e6;
+    box-shadow: none;
+}
+
+/* Optional small variant */
+.reload-queue-btn.small {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    border-radius: 18px;
+}
+
+/* Icon sizing inside the button */
+.reload-queue-btn .btn-icon {
+    font-size: 1.05rem;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .reload-queue-btn {
+        padding: 9px 12px;
+        font-size: 0.9rem;
+    }
+}

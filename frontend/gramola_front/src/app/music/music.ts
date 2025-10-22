@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core'; //, OnDestroy } from '@angular/core'; para cola en tiempo real
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SpotiService } from '../spoti-service';
@@ -27,7 +27,7 @@ interface PlayList {
   styleUrls: ['./music.css']
 })
 
-export class Music implements OnInit {
+export class Music implements OnInit, OnDestroy {
 
   devices: any[] = [];
   currentDevice: any;
@@ -37,7 +37,8 @@ export class Music implements OnInit {
 
   currentTrack? : TrackObject
 
-  //private queuePollIntervalId?: any; // para cola en tiempo real
+  private queuePollIntervalId?: any; // para cola en tiempo real
+  private currentPlaylistPollIntervalId?: any; // para actualización periódica de la reproducción actual
 
   deviceError? : string
   playlistError? : string
@@ -50,19 +51,23 @@ barName: any;
   ngOnInit(): void {
     this.getDevices()
     this.getPlaylists()
-    this.getCurrentPlayList()
-     /* obtener cola real de Spotify y mantenerla actualizada
+    this.getCurrentPlayList();
+    // también actualizar la lista actual cada 8000 ms
+    this.currentPlaylistPollIntervalId = setInterval(() => this.getCurrentPlayList(), 8000);
+    // obtener cola real de Spotify y mantenerla actualizada (cada 8000 ms)
     this.getQueue();
-    this.queuePollIntervalId = setInterval(() => this.getQueue(), 8000); */
+    this.queuePollIntervalId = setInterval(() => this.getQueue(), 8000);
   }
 
-  /* para cola en tiempo real
+  // para cola en tiempo real
   ngOnDestroy(): void {
     if (this.queuePollIntervalId) {
       clearInterval(this.queuePollIntervalId);
     }
+    if (this.currentPlaylistPollIntervalId) {
+      clearInterval(this.currentPlaylistPollIntervalId);
+    }
   }
-  */
 
   
 
@@ -152,8 +157,15 @@ addToQueue(track: TrackObject) {
   this.resetErrors();
   this.spotiService.addToQueue(track.uri!).subscribe({
     next: () => {
+      // Añadir optimistamente a la cola local (Spotify real se sincroniza con getQueue)
       this.queue.unshift(track);
-      // Opcional: mostrar mensaje de éxito
+      // mostrar mensaje de éxito
+      alert(`La canción "${track.name}" ha sido añadida a la cola.`);
+      // Limpiar resultados de búsqueda y campo para ocultarlos tras añadir la canción
+      this.tracks = [];
+      this.searchQuery = '';
+      // actualizar cola real desde Spotify
+      this.getQueue();
     },
     error: (err) => {
       this.songError = err.message;
@@ -162,7 +174,7 @@ addToQueue(track: TrackObject) {
 }
 
 // Nuevo: solicita la cola real a Spotify y la asigna a this.queue
-/*  getQueue() {
+  getQueue() {
     this.resetErrors();
     try {
       this.spotiService.getQueue().subscribe({
@@ -191,7 +203,7 @@ addToQueue(track: TrackObject) {
       this.songError = e?.message || String(e);
     }
   }
-  */
+  
 
   clearQueue() {
     this.queue = [];
