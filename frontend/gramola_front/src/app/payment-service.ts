@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../environments/environment.development';
 
 @Injectable({
   providedIn: 'root'
@@ -9,9 +10,7 @@ export class PaymentService {
   constructor(private client: HttpClient) { }
 
   prepay(): Observable<any> {
-    // la siguiente URL no debería estar "hardcodeada", debería venir de una variable de entorno
-//  return this.client.post(`${environment.apiUrl}/payments/prepay`, {}, { 
-    return this.client.get('http://localhost:8080/payments/prepay', {
+    return this.client.get(`${environment.URL_API}/payments/prepay`, {
       withCredentials: true, // para enviar cookies
       observe: 'response', // queremos observar la respuesta completa
       responseType: 'text' // el cuerpo de la respuesta es texto
@@ -21,7 +20,7 @@ export class PaymentService {
   confirm(response: any, transactionId: string, token: string): Observable<any> {
     response.transactionId = transactionId;
     response.token = token;
-    return this.client.post('http://localhost:8080/payments/confirm', response, { 
+    return this.client.post(`${environment.URL_API}/payments/confirm`, response, {
       withCredentials: true, observe: 'response', responseType: 'text' 
     });
   }

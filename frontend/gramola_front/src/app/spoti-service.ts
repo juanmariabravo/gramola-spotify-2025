@@ -10,10 +10,10 @@ export class SpotiService {
 
   // Use a safe any-cast for environment and provide sensible defaults to avoid TS2339
   private _env: any = (environment as any) || {};
-  spoti_authUrl = this._env.spoti_authUrl || 'https://accounts.spotify.com/authorize';
-  apiUrl = (this._env.URL_API ? (this._env.URL_API + '/spoti') : 'http://localhost:8080/spoti');
-  redirectUri = this._env.redirectUri || 'http://127.0.0.1:4200/callback';
-  spotiV1Url = this._env.spotiV1Url || 'https://api.spotify.com/v1';
+  spoti_authUrl = this._env.spoti_authUrl;
+  apiUrl = this._env.URL_API + '/spoti';
+  redirectUri = this._env.redirectUri;
+  spotiV1Url = this._env.spotiV1Url;
   clientId?: string = '';
   //queue: TrackObject[] = [];
   constructor(private http: HttpClient) { }
