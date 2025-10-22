@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { environment } from '../environments/environment';
 
 @Injectable({
@@ -14,7 +14,6 @@ export class SpotiService {
   apiUrl = (this._env.URL_API ? (this._env.URL_API + '/spoti') : 'http://localhost:8080/spoti');
   redirectUri = this._env.redirectUri || 'http://127.0.0.1:4200/callback';
   spotiV1Url = this._env.spotiV1Url || 'https://api.spotify.com/v1';
-  spotiToken: string = '';
   clientId?: string = '';
   //queue: TrackObject[] = [];
   constructor(private http: HttpClient) { }
@@ -24,12 +23,18 @@ export class SpotiService {
       return this.http.get(url);
   }
 
+  getSpotifyToken(): string | null {
+    // leer de sessionStorage
+    let token = sessionStorage.getItem('accessToken');
+    return token;
+  }
+  
   getCurrentlyPlaying(): Observable<any> {
-    if (!this.spotiToken) {
+    if (!this.getSpotifyToken()) {
       throw new Error('Spotify token is not set.');
     }
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.spotiToken}`,
+      'Authorization': `Bearer ${this.getSpotifyToken()}`,
       'Accept': 'application/json'
     });
     return this.http.get<any>(`${this.spotiV1Url}/me/player/currently-playing`, { headers });
@@ -37,7 +42,7 @@ export class SpotiService {
 
   getDevices() : Observable<any> {
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.spotiToken}`
+      'Authorization': `Bearer ${this.getSpotifyToken()}`
     });
 
     let url = `${this.spotiV1Url}/me/player/devices`;
@@ -46,28 +51,28 @@ export class SpotiService {
 
   getPlaylists() : Observable<any> {
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.spotiToken}`
+      'Authorization': `Bearer ${this.getSpotifyToken()}`
     });
 
     return this.http.get<any>(`${this.spotiV1Url}/me/playlists`, { headers });
   }
   getCurrentPlayList() : Observable<any> {
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.spotiToken}`
+      'Authorization': `Bearer ${this.getSpotifyToken()}`
     });
     return this.http.get<any>(`${this.spotiV1Url}/me/player/currently-playing`, { headers });
   }
 
   getTracks(playlistId : string) : Observable<any> {
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.spotiToken}`
+      'Authorization': `Bearer ${this.getSpotifyToken()}`
     });
     return this.http.get<any>(`${this.spotiV1Url}/playlists/${playlistId}/tracks`, { headers });
   }
 
   addToQueue(uri : string) : Observable<any> {
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.spotiToken}`
+      'Authorization': `Bearer ${this.getSpotifyToken()}`
     });
     let url = `${this.spotiV1Url}/me/player/queue?uri=${encodeURIComponent(uri)}`;
     return this.http.post<any>(url, null, { headers, responseType: 'text' as 'json' });
@@ -75,7 +80,7 @@ export class SpotiService {
 
   searchTracks(query : string) : Observable<any> {
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.spotiToken}`
+      'Authorization': `Bearer ${this.getSpotifyToken()}`
     });
     let url = `${this.spotiV1Url}/search?q=${encodeURIComponent(query)}&type=track&limit=10`;
     return this.http.get<any>(url, { headers });
@@ -84,11 +89,11 @@ export class SpotiService {
   // Nuevo: obtener la cola real de reproducción desde Spotify (GET /me/player/queue)
 
   getQueue(): Observable<any> {
-    if (!this.spotiToken) {
+    if (!this.getSpotifyToken()) {
       throw new Error('Spotify token is not set.');
     }
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.spotiToken}`,
+      'Authorization': `Bearer ${this.getSpotifyToken()}`,
       'Accept': 'application/json'
     });
     return this.http.get<any>(`${this.spotiV1Url}/me/player/queue`, { headers });

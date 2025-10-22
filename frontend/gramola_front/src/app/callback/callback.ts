@@ -51,7 +51,7 @@ export class Callback {
     this.spotiService.getAuthorizationToken(code).subscribe({ // antes: (code, clientId).subscribe({
       next: (data) => {
         console.log('Authorization token received:', data);
-        this.spotiService.spotiToken = data.access_token;
+        sessionStorage.setItem('accessToken', data.access_token);
         this.router.navigateByUrl('/music');
       },
       error: (error) => {
