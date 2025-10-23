@@ -145,12 +145,23 @@
     transition: all 0.3s ease;
 }
 
-.device-item:hover {
+/* make non-active devices appear clickable */
+.device-item.clickable {
+    cursor: pointer;
+}
+
+/* apply hover/transform only for clickable items (replaces previous .device-item:hover) */
+.device-item.clickable:hover {
     border-color: #1DB954;
     transform: translateY(-2px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* keyboard focus visible for accessibility */
+.device-item.clickable:focus {
+    outline: 3px solid rgba(29, 185, 84, 0.12);
+    box-shadow: 0 6px 18px rgba(29, 185, 84, 0.08);
+}
 .device-item.active {
     border-color: #1DB954;
     background: rgba(29, 185, 84, 0.1);
