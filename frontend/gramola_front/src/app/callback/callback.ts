@@ -32,7 +32,7 @@ export class Callback {
 
     const storedState = sessionStorage.getItem('oauth_state');
     if (state !== storedState) {
-      alert('State mismatch.');
+      alert('State mismatch. oauth_state:' + storedState + ' state: ' + state);
       this.router.navigateByUrl('/');
       return;
     }

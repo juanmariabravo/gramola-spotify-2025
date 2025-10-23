@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common'; // Importa CommonModule
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../user-service';
-
-
+import { Router } from '@angular/router';
+import { waitForAsync } from '@angular/core/testing';
 
 @Component({
   selector: 'app-register',
@@ -21,7 +21,7 @@ export class Register {
   clientId? : string
   clientSecret? : string
 
-  constructor(private service : UserService) { }
+  constructor(private service : UserService, private router: Router) { }
 
   registroExitoso: boolean | null = null;
 
@@ -35,6 +35,11 @@ export class Register {
       ok => {
         console.log('Registro exitoso', ok);
         this.registroExitoso = true;
+        // redirigir a la página de inicio de sesión después del registro exitoso
+        //esperar 3 segundos antes de redirigir
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 3000);
       },
       error => {
         console.error('Error en el registro', error);

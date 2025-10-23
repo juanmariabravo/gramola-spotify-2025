@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PaymentService } from '../payment-service';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 declare let Stripe: any
 
@@ -13,19 +14,21 @@ declare let Stripe: any
 })
 export class Payments implements OnInit {
 
-  stripe = new Stripe("pk_test_51SIV2MCIboBkcLKyVOrpE1od1w8rmM8bXLGsYNMQXQiwLaz4n8dd9ANiFAdVPR5OyajW4tl4CRrZWlOKX6eJ8HOg00NJCNESlI")
+  stripe = new Stripe(environment.StripePublicKey)
   transactionDetails: any;
   token? : string
+  amount? : number
 
   constructor(private paymentService: PaymentService, private router : Router) { }
 
   ngOnInit(): void {
     const params = this.router.parseUrl(this.router.url).queryParams;
-    this.token = params['token'];
+    this.token = params['token'] ?? '';
+    this.amount = params['amount'];
   }
 
   prepay() {
-    this.paymentService.prepay().subscribe({
+    this.paymentService.prepay(this.amount).subscribe({
       next: (response: any) => {
         this.transactionDetails = JSON.parse(response.body)
         this.showForm()
@@ -80,7 +83,7 @@ export class Payments implements OnInit {
       }
     }).then(function (response: any) {
       if (response.error) {
-        alert(response.error.message);
+        console.log(response.error.message);
       } else {
         if (response.paymentIntent.status === 'succeeded') {
           self.paymentService.confirm(response, self.transactionDetails.id, self.token!).subscribe({
@@ -88,7 +91,7 @@ export class Payments implements OnInit {
               self.router.navigate(["/login"])
             },
             error: (error: any) => {
-              alert(error)
+              console.error('Error confirming payment:', error);
             }
           })
         }
