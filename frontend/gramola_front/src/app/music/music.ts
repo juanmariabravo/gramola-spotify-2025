@@ -86,6 +86,30 @@ barName: any;
     });
   }
 
+  // Selecciona un dispositivo (si es distinto del actual) y llama al backend de Spotify para transferir la reproducción
+  selectDevice(device: any) {
+    this.resetErrors();
+    if (!device || !device.id) {
+      this.deviceError = 'Dispositivo inválido';
+      return;
+    }
+    // Si ya es el dispositivo activo, no hacer nada
+    if (this.currentDevice && this.currentDevice.id === device.id) {
+      return;
+    }
+
+    this.spotiService.setCurrentDevice(device.id).subscribe({
+      next: () => {
+        // Refrescar lista de dispositivos y marcar el seleccionado como activo
+        // Spotify puede tardar en transferir; pedir de nuevo los dispositivos
+        this.getDevices();
+      },
+      error: (err) => {
+        this.deviceError = err?.message || 'Error al seleccionar el dispositivo';
+      }
+    });
+  }
+
   getPlaylists() {
     this.resetErrors();
     this.spotiService.getPlaylists().subscribe({

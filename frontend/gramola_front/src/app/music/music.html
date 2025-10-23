@@ -36,13 +36,15 @@
         <div class="control-group">
             <h3>Dispositivos Disponibles</h3>
             <div class="devices-list">
-                <div *ngFor="let device of devices" class="device-item" [class.active]="device.is_active">
+                <div *ngFor="let device of devices" class="device-item" [class.active]="device.is_active"
+                    [class.clickable]="!device.is_active" (click)="selectDevice(device)" (keydown.enter)="selectDevice(device)"
+                    role="button" tabindex="0" [attr.aria-pressed]="device.is_active">
                     <span class="device-icon">{{getDeviceIcon(device.type)}}</span>
                     <span class="device-name">{{device.name}}</span>
                     <span class="device-type">{{device.type}}</span>
                     <span *ngIf="device.is_active" class="active-badge">Activo</span>
                 </div>
-            </div>
+                </div>
             <div *ngIf="deviceError" class="error-message">
                 {{deviceError}}
             </div>

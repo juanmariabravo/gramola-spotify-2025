@@ -49,6 +49,16 @@ export class SpotiService {
     return this.http.get<any>(url, { headers });
   }
 
+  setCurrentDevice(deviceId : string) : Observable<any> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.getSpotifyToken()}`,
+      'Content-Type': 'application/json'
+    });
+
+    let body = JSON.stringify({ device_ids: [deviceId] });
+    return this.http.put<any>(`${this.spotiV1Url}/me/player`, body, { headers });
+  }
+
   getPlaylists() : Observable<any> {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.getSpotifyToken()}`
