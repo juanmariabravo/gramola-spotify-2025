@@ -29,13 +29,13 @@ public class PaymentService {
     @Autowired
     private UserDao userDao;
 
-    public StripeTransaction prepay() throws StripeException {
+    public StripeTransaction prepay(Long amount) throws StripeException {
         PaymentIntentCreateParams createParams = new PaymentIntentCreateParams.Builder()
                     .setCurrency("eur")
-                    .setAmount(1000L)
+                    .setAmount(amount)
                     .build();
         PaymentIntent intent = PaymentIntent.create(createParams);
-        JSONObject transactionDetails = new JSONObject(intent.toJson());
+        JSONObject transactionDetails = new JSONObject(intent.toJson()); // esta línea no convierte correctamente a JSON
         StripeTransaction st = new StripeTransaction();
         st.setData(transactionDetails);
         this.dao.save(st);

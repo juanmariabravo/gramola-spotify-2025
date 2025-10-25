@@ -179,22 +179,19 @@ searchTracks() {
 
 addToQueue(track: TrackObject) {
   this.resetErrors();
-  this.spotiService.addToQueue(track.uri!).subscribe({
-    next: () => {
-      // Añadir optimistamente a la cola local (Spotify real se sincroniza con getQueue)
-      this.queue.unshift(track);
-      // mostrar mensaje de éxito
-      alert(`La canción "${track.name}" ha sido añadida a la cola.`);
-      // Limpiar resultados de búsqueda y campo para ocultarlos tras añadir la canción
-      this.tracks = [];
-      this.searchQuery = '';
-      // actualizar cola real desde Spotify
-      this.getQueue();
-    },
-    error: (err) => {
-      this.songError = err.message;
-    }
+  // Confirmación de pago antes de proceder
+  const proceed = confirm(`La canción "${track.name}" cuesta 0,50 €. ¿Deseas pagar ahora?`);
+  if (!proceed) {
+    return;
+  }
+
+  // Redirigir a la página de pagos con el importe (y opcionalmente la URI de la pista para uso posterior)
+  const params = new URLSearchParams({
+    amount: '0050',
+    trackUri: track.uri || ''
   });
+  // usar location.href para forzar la navegación completa (la página de pagos procesa el pago)
+  window.location.href = `http://127.0.0.1:4200/payments?${params.toString()}`;
 }
 
 // Nuevo: solicita la cola real a Spotify y la asigna a this.queue
