@@ -326,6 +326,107 @@
   transform: none;
 }
 
+/* Configuración de precio por canción */
+.price-config-container {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 25px;
+    border: 2px solid #e0e0e0;
+    transition: border-color 0.3s ease;
+}
+
+.price-config-container:hover {
+    border-color: #1DB954;
+}
+
+.price-slider-container {
+    margin-bottom: 20px;
+}
+
+.price-slider {
+    width: 100%;
+    height: 8px;
+    border-radius: 5px;
+    background: linear-gradient(to right, #e0e0e0 0%, #1DB954 100%);
+    outline: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+}
+
+.price-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #1DB954;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.price-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 4px 12px rgba(29, 185, 84, 0.4);
+}
+
+.price-slider::-webkit-slider-thumb:active {
+    transform: scale(1.1);
+}
+
+.price-slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #1DB954;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.price-slider::-moz-range-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 4px 12px rgba(29, 185, 84, 0.4);
+}
+
+.price-slider::-moz-range-thumb:active {
+    transform: scale(1.1);
+}
+
+.price-display {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.price-value {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #1DB954;
+    line-height: 1;
+    margin-bottom: 5px;
+}
+
+.price-label {
+    display: block;
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.price-range-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #999;
+    padding: 0 5px;
+}
+
+.range-min,
+.range-max {
+    font-weight: 500;
+}
 /* Responsive */
 @media (max-width: 768px) {
   .setup-container {
@@ -351,4 +452,11 @@
   .playlists-grid {
     grid-template-columns: 1fr;
   }
+.price-value {
+    font-size: 2rem;
+}
+
+.price-config-container {
+    padding: 20px;
+}
 }

@@ -41,7 +41,7 @@ export class Payments implements OnInit {
       this.paymentTitle = 'Suscripción a esipotify';
       this.paymentDescription = 'Acceso ilimitado a todas las funciones de nuestra gramola';
       this.paymentIcon = '⭐';
-    } else if (amountValue > 0 && amountValue < 100) {
+    } else if (amountValue > 0 && amountValue < 1000) {
       this.isSongPayment = true;
       this.paymentTitle = 'Añadir canción a la cola';
       this.paymentDescription = 'Tu canción se reproducirá después de las actuales';

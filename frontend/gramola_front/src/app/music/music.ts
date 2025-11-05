@@ -36,6 +36,7 @@ export class Music implements OnInit, OnDestroy {
   tracks : TrackObject[] = [];
 
   currentTrack? : TrackObject
+  songPrice: number = 50; // precio por canción en céntimos (se leerá del sessionStorage)
 
   private queuePollIntervalId?: any; // para cola en tiempo real
   private currentPlaylistPollIntervalId?: any; // para actualización periódica de la reproducción actual
@@ -57,6 +58,11 @@ barName: any;
     // obtener cola real de Spotify y mantenerla actualizada (cada 8000 ms)
     this.getQueue();
     this.queuePollIntervalId = setInterval(() => this.getQueue(), 8000);
+    // leer precio por canción desde sessionStorage o backend
+    const storedPrice = sessionStorage.getItem('songPrice');
+    if (storedPrice) {
+      this.songPrice = Number(storedPrice);
+    }
   }
 
   // para cola en tiempo real
@@ -179,19 +185,33 @@ searchTracks() {
 
 addToQueue(track: TrackObject) {
   this.resetErrors();
+  if (this.songPrice <= 0) {
+    // Si el precio es 0 o negativo, añadir directamente a la cola sin pago
+    this.spotiService.addToQueue(track.uri || '').subscribe({
+      next: () => {
+        alert(`La canción "${track.name}" ha sido añadida a la cola.`);
+      },
+      error: (err) => {
+        this.songError = err.message || 'Error al añadir la canción a la cola';
+      }
+    });
+  }
+  else {
   // Confirmación de pago antes de proceder
-  const proceed = confirm(`La canción "${track.name}" cuesta 0,50 €. ¿Deseas pagar ahora?`);
+  const priceFormatted = (this.songPrice / 100).toFixed(2);
+  const proceed = confirm(`La canción "${track.name}" cuesta ${priceFormatted}€. ¿Deseas pagar ahora?`);
   if (!proceed) {
     return;
   }
 
   // Redirigir a la página de pagos con el importe (y opcionalmente la URI de la pista para uso posterior)
   const params = new URLSearchParams({
-    amount: '0050',
+    amount: String(this.songPrice).padStart(4, '0'),
     trackUri: track.uri || ''
   });
   // usar location.href para forzar la navegación completa (la página de pagos procesa el pago)
   window.location.href = `http://127.0.0.1:4200/payments?${params.toString()}`;
+}
 }
 
 // Nuevo: solicita la cola real a Spotify y la asigna a this.queue

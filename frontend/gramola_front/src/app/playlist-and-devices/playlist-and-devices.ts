@@ -34,6 +34,9 @@ export class PlaylistAndDevices implements OnInit {
   selectedPlaylistId?: string;
   playlistSearchQuery: string = '';
   private searchSubject = new Subject<string>();
+  songPrice: number = 50; // precio por canción en céntimos (0.50€ por defecto)
+  minPrice = 10;   // 0.10€
+  maxPrice = 500;  // 5.00€
 
   deviceError?: string;
   playlistError?: string;
@@ -162,10 +165,20 @@ export class PlaylistAndDevices implements OnInit {
     this.searchSubject.next(query);
   }
 
+  // Formatear el precio para mostrarlo al usuario
+  getFormattedSongPrice(): string {
+    return (this.songPrice / 100).toFixed(2);
+  }
+
   confirmSelection() {
     // validar que haya seleccionado al menos un dispositivo
     if (!this.selectedDeviceId) {
       alert('Por favor selecciona un dispositivo de reproducción');
+      return;
+    }
+    // validar precio
+    if (this.songPrice < this.minPrice || this.songPrice > this.maxPrice) {
+      alert(`El precio por canción debe estar entre ${this.minPrice / 100}€ y ${this.maxPrice / 100}€`);
       return;
     }
     // opcional: validar playlist (permitir continuar sin playlist)
@@ -179,6 +192,8 @@ export class PlaylistAndDevices implements OnInit {
     if (this.selectedPlaylistId) {
       sessionStorage.setItem('defaultPlaylistId', this.selectedPlaylistId);
     }
+    // guardar precio por canción en sessionStorage
+    sessionStorage.setItem('songPrice', String(this.songPrice));
 
     // construir playlistUri si se seleccionó una playlist (formato: spotify:playlist:ID)
     const playlistUri = this.selectedPlaylistId ? `spotify:playlist:${this.selectedPlaylistId}` : undefined;
