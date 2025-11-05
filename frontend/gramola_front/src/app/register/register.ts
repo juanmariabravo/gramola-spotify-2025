@@ -35,11 +35,6 @@ export class Register {
       ok => {
         console.log('Registro exitoso', ok);
         this.registroExitoso = true;
-        // redirigir a la página de inicio de sesión después del registro exitoso
-        //esperar 3 segundos antes de redirigir
-        setTimeout(() => {
-          this.router.navigate(['/login']);
-        }, 3000);
       },
       error => {
         console.error('Error en el registro', error);

@@ -1,5 +1,7 @@
 package edu.esi.uclm.gramola_juanmaria.services;
 
+import java.util.Optional;
+
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,7 @@ import com.stripe.param.PaymentIntentCreateParams;
 import edu.esi.uclm.gramola_juanmaria.dao.StripeTransactionDao;
 import edu.esi.uclm.gramola_juanmaria.dao.UserDao;
 import edu.esi.uclm.gramola_juanmaria.model.StripeTransaction;
+import edu.esi.uclm.gramola_juanmaria.model.User;
 
 
 @Service
@@ -29,6 +32,9 @@ public class PaymentService {
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private UserService userService;
+
     public StripeTransaction prepay(Long amount) throws StripeException {
         PaymentIntentCreateParams createParams = new PaymentIntentCreateParams.Builder()
                     .setCurrency("eur")
@@ -43,14 +49,29 @@ public class PaymentService {
     }
 
     public void confirmTransaction(StripeTransaction transactionDetails, String userToken) {
-        // verificar que el token es correcto
-        if (this.userDao.findByCreationTokenId(userToken) == null) {
-            throw new IllegalArgumentException("Token de usuario no válido");
-        }
-        // marcar la transacción como completada
+        // Marcar la transacción como completada
         JSONObject jso = new JSONObject(transactionDetails.getData());
         jso.put("status", "completed");
         transactionDetails.setData(jso);
+        
+        // Si se proporciona un token de usuario (pago de registro), confirmar el usuario
+        if (userToken != null && !userToken.isEmpty()) {
+            Optional<User> optUser = this.userDao.findByCreationTokenId(userToken);
+            if (optUser.isEmpty()) {
+                throw new IllegalArgumentException("Token de usuario no válido");
+            }
+            
+            User user = optUser.get();
+            transactionDetails.setEmail(user.getEmail()); // Asociar la transacción con el usuario
+            
+            // Confirmar el token del usuario (marcarlo como usado y confirmar cuenta)
+            this.userService.confirmToken(user.getEmail(), userToken);
+            System.out.println("Pago confirmado y usuario " + user.getEmail() + " activado correctamente");
+        } else {
+            // Pago de canción u otro tipo - solo marcar la transacción como completada
+            System.out.println("Pago de canción confirmado - transacción ID: " + transactionDetails.getId());
+        }
+        
         this.dao.save(transactionDetails);
     }
 }

@@ -1,24 +1,64 @@
 <div class="payment-container">
-    <div class="payment-card">
-        <div class="payment-header">
-            <div class="logo">Pago de la Gramola de ESIpotify</div>
+<div class="payment-card">
+    <!-- Header dinámico según tipo de pago -->
+    <div class="payment-header">
+    <div class="payment-icon">{{paymentIcon}}</div>
+    <h1 class="payment-title">{{paymentTitle}}</h1>
+    <p class="payment-description">{{paymentDescription}}</p>
+    </div>
+
+    <!-- Resumen del pedido -->
+    <div class="order-summary">
+        <h3>Resumen del pedido</h3>
+        <div class="summary-row">
+            <span class="summary-label">
+                @if (isSubscription) {
+                <span>Suscripción mensual a esipotify</span>
+                }
+                @if (isSongPayment) {
+                <span>1 Canción en cola</span>
+                }
+                @if (!isSubscription && !isSongPayment) {
+                <span>Importe</span>
+                }
+            </span>
+            <span class="summary-value">{{getFormattedAmount()}}€</span>
         </div>
+        <div class="summary-row total-row">
+            <span class="summary-label-total">Total</span>
+            <span class="summary-value-total">{{getFormattedAmount()}}€</span>
+        </div>
+    </div>
 
-        <button id="prepay-btn" type="button" (click)="prepay()">Go to payment</button>
+    <!-- Formulario de pago (mostrado automáticamente tras prepay) -->
+    <form id="payment-form" style="display:none">
+    <h3 class="form-section-title">Información de pago</h3>
+    <p class="form-section-subtitle">Introduce los datos de tu tarjeta de forma segura</p>
+    
+    <div class="card-element-container">
+        <div id="card-element" tabindex="0"></div>
+    </div>
+    
+    <p id="card-error" role="alert" class="card-error-message"></p>
 
-        <form id="payment-form" style="display:none">
-            <div id="card-element" tabindex="0"></div>
+    <button id="submit" type="submit" class="payment-submit-btn">
+        <div class="spinner hidden" id="spinner"></div>
+        <span id="button-text">Completar pago de {{getFormattedAmount()}}€</span>
+        </button>
 
-            <button id="submit" type="submit">
-                <div class="spinner hidden" id="spinner"></div>
-                <span id="button-text">Pay now</span>
-            </button>
-
-    <p id="card-error" role="alert"></p>
+    <div class="security-badges">
+        <span class="security-badge">🔒 Pago seguro</span>
+        <span class="security-badge">✓ Encriptado SSL</span>
+    </div>
+    
     <p class="result-message hidden">
-        Payment succeeded, see the result in your
-        <a href="" target="_blank">Stripe dashboard.</a> Refresh the page to pay again.
-    </p>
+        Pago completado con éxito.
+        </p>
     </form>
+<!-- Mensaje de carga mientras se prepara el pago -->
+<div id="loading-prepay" class="loading-prepay">
+    <div class="spinner-large"></div>
+    <p>Preparando el pago...</p>
+</div>
 </div>
 </div>

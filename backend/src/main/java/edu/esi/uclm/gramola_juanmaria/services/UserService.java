@@ -124,6 +124,35 @@ public class UserService {
 
         user.setConfirmed(true); // marcar el usuario como confirmado
         this.userDao.save(user); // guardar los cambios en la base de datos
-        System.out.println("Usuario " + email + " ha confirmado su email correctamente");
+    }
+
+    // Valida el token sin marcarlo como usado ni confirmar al usuario (para usar antes del pago)
+    public void validateToken(String email, String token) {
+        Optional<User> optUser = this.userDao.findById(email);
+        if (optUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "El email no está registrado");
+        }
+
+        if (optUser.get().isConfirmed()) {
+            System.out.println("Usuario " + email + " ya está confirmado");
+            return;
+        }
+
+        User user = optUser.get();
+        Token userToken = user.getCreationToken();
+        
+        if (!userToken.getId().equals(token)) {
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Token incorrecto");
+        }
+
+        if (userToken.getCreationTime() < System.currentTimeMillis()-30 * 60 * 1000) { // 30 minutos
+            throw new ResponseStatusException(HttpStatus.GONE, "El token ha expirado");
+        }
+
+        if (userToken.isUsed()) {
+            throw new ResponseStatusException(HttpStatus.GONE, "El token ya ha sido usado");
+        }
+
+        // System.out.println("Token validado correctamente para usuario " + email + " - pendiente de pago");
     }
 }

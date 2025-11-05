@@ -20,6 +20,11 @@ export class Payments implements OnInit {
   token? : string
   amount? : number
   trackUri?: string;
+  isSubscription = false;
+  isSongPayment = false;
+  paymentTitle = '';
+  paymentDescription = '';
+  paymentIcon = '💳';
 
   constructor(private paymentService: PaymentService, private router : Router, private spotiService: SpotiService) { }
 
@@ -28,6 +33,32 @@ export class Payments implements OnInit {
     this.token = params['token'] ?? '';
     this.amount = params['amount'];
     this.trackUri = params['trackUri'] ?? '';
+
+    // Detectar tipo de pago
+    const amountValue = Number(this.amount || 0);
+    if (amountValue >= 1000) {
+      this.isSubscription = true;
+      this.paymentTitle = 'Suscripción a esipotify';
+      this.paymentDescription = 'Acceso ilimitado a todas las funciones de nuestra gramola';
+      this.paymentIcon = '⭐';
+    } else if (amountValue > 0 && amountValue < 100) {
+      this.isSongPayment = true;
+      this.paymentTitle = 'Añadir canción a la cola';
+      this.paymentDescription = 'Tu canción se reproducirá después de las actuales';
+      this.paymentIcon = '🎵';
+    } else {
+      this.paymentTitle = 'Pago';
+      this.paymentDescription = 'Completa tu pago de forma segura';
+      this.paymentIcon = '💳';
+    }
+
+    // Iniciar proceso de pago automáticamente
+    this.prepay();
+  }
+
+  getFormattedAmount(): string {
+    const amountValue = Number(this.amount || 0) / 100;
+    return amountValue.toFixed(2);
   }
 
   prepay() {
@@ -37,7 +68,15 @@ export class Payments implements OnInit {
         this.showForm()
       },
       error: (response: any) => {
-        alert(response)
+        console.error('Error en prepay:', response);
+        alert('Error al iniciar el pago. Por favor intenta de nuevo.');
+        // si el pago es de suscripción, redirigir a /login
+        if (this.isSubscription) {
+          this.router.navigate(['/login']);
+          return;
+        }
+        // si el pago es de canción, redirigir a /music
+          this.router.navigate(['/music']);
       },
     })
   }
@@ -70,37 +109,46 @@ export class Payments implements OnInit {
       event.preventDefault();
       self.payWithCard(card);
     });
-    form!.style.display = "block"
-    // ocultar el botón "Go to payment" al aparecer el formulario
-    const prepayBtn = document.getElementById("prepay-btn");
-    if (prepayBtn) {
-      prepayBtn.style.display = "none";
-    }
+    form!.style.display = "block";
+    // ocultar spinner de carga
+    const loadingEl = document.getElementById("loading-prepay");
+    if (loadingEl) loadingEl.style.display = "none";
   }
 
   payWithCard(card: any) {
-    console.log("Paying with card...");
+    //console.log("Paying with card...");
     let self = this;
     this.stripe.confirmCardPayment(this.transactionDetails.data.client_secret, {
       payment_method: {
         card: card
       }
-    }).then(function (response: any) {
+    }).then( (response: any) => {
       if (response.error) {
         console.log(response.error.message);
+        // mostrar error al usuario
+        const cardErrorEl = document.getElementById('card-error');
+        if (cardErrorEl) {
+          cardErrorEl.textContent = response.error.message;
+        }
       } else {
         if (response.paymentIntent.status === 'succeeded') {
           self.paymentService.confirm(response, self.transactionDetails.id, self.token!).subscribe({
             next: (response: any) => {
-              self.feedback_PagoRealizado(); // 
+              // console.log('Payment confirmed by backend');
+              // ocultar formulario
+              const form = document.getElementById('payment-form');
+              if (form) form.style.display = 'none';
 
-              // Si tenemos una trackUri, intentar añadir la canción a la cola de Spotify
-              if (self.trackUri) {
+              // Mostrar feedback específico según tipo de pago
+              if (self.isSongPayment && self.trackUri) {
+                // Pago de canción: añadir a cola y redirigir a /music tras 3s
+                self.showSongPaymentSuccess();
+                
+                // intentar añadir la canción a la cola de Spotify
                 try {
                   self.spotiService.addToQueue(self.trackUri).subscribe({
                     next: (res) => {
                       console.info('Canción añadida a la cola de Spotify:', self.trackUri, res);
-                      // (no bloqueamos la navegación principal)
                     },
                     error: (err) => {
                       console.warn('No se pudo añadir la canción tras el pago:', err);
@@ -109,22 +157,25 @@ export class Payments implements OnInit {
                 } catch (err) {
                   console.warn('addToQueue falló:', err);
                 }
-              }
 
-              setTimeout(() => {
-                // lo siguiente es una chapuza que hay que arreglar
-                const amountValue = Number(self.amount);
-                if (amountValue === 1000) {
-                  self.router.navigate(['/login']);
-                } else if (amountValue === 50) {
+                setTimeout(() => {
                   self.router.navigate(['/music']);
-                }
-              }, 3000);
+                }, 3000);
 
-              return;
+              } else if (self.isSubscription) {
+                // Pago de suscripción: mostrar mensaje con link a login (sin redirección automática)
+                self.showSubscriptionPaymentSuccess();
+              } else {
+                // Pago genérico (fallback)
+                self.showGenericPaymentSuccess();
+                setTimeout(() => {
+                  self.router.navigate(['/login']);
+                }, 3000);
+              }
             },
             error: (error: any) => {
               console.error('Error confirming payment:', error);
+              alert('Error al confirmar el pago. Por favor contacta con soporte.');
             }
           })
         }
@@ -132,32 +183,60 @@ export class Payments implements OnInit {
     });
   }
 
-  feedback_PagoRealizado() {
-    // mostrar feedback visual, ocultar formulario y redirigir tras 3s
-              const form = document.getElementById('payment-form');
-              if (form) form.style.display = 'none';
+  showSongPaymentSuccess() {
+    let msg = document.getElementById('payment-success') as HTMLElement | null;
+    if (!msg) {
+      msg = document.createElement('div');
+      msg.id = 'payment-success';
+      msg.style.cssText = 'padding:20px;border-radius:12px;background:#e6ffed;color:#064e28;margin-top:20px;text-align:center;font-weight:600;font-size:1.1rem;';
+      const parent = document.querySelector('.payment-card') ?? document.body;
+      parent.appendChild(msg);
+    }
+    msg.innerHTML = '<div style="font-size:2.5rem;margin-bottom:10px;">🎵</div><p style="margin:0 0 10px 0;">¡Gracias! Añadiendo tu canción a la cola...</p>';
+    
+    // spinner pequeño
+    const spinner = document.createElement('span');
+    spinner.style.cssText = 'display:inline-block;width:16px;height:16px;margin-left:8px;border:3px solid rgba(0,0,0,0.15);border-top-color:#064e28;border-radius:50%;animation:spin 0.8s linear infinite;';
+    msg.appendChild(spinner);
+    
+    this.addSpinnerStyles();
+  }
 
-              let msg = document.getElementById('payment-success') as HTMLElement | null;
-              if (!msg) {
-                msg = document.createElement('div');
-                msg.id = 'payment-success';
-                msg.style.cssText = 'padding:16px;border-radius:6px;background:#e6ffed;color:#064e28;margin-top:12px;text-align:center;font-weight:600';
-                const parent = document.getElementById('payment-form')?.parentElement ?? document.body;
-                parent.appendChild(msg);
-              }
-              msg.textContent = 'Pago realizado con éxito.';
+  showSubscriptionPaymentSuccess() {
+    let msg = document.getElementById('payment-success') as HTMLElement | null;
+    if (!msg) {
+      msg = document.createElement('div');
+      msg.id = 'payment-success';
+      msg.style.cssText = 'padding:25px;border-radius:12px;background:#e6ffed;color:#064e28;margin-top:20px;text-align:center;font-weight:600;';
+      const parent = document.querySelector('.payment-card') ?? document.body;
+      parent.appendChild(msg);
+    }
+    msg.innerHTML = `
+      <div style="font-size:3rem;margin-bottom:15px;">⭐</div>
+      <h3 style="margin:0 0 10px 0;color:#064e28;font-size:1.3rem;">¡Gracias!</h3>
+      <p style="margin:0 0 20px 0;font-size:1rem;line-height:1.5;">Tu pago se ha confirmado correctamente y ya puedes disfrutar de nuestro servicio.</p>
+      <a href="/login" style="display:inline-block;padding:12px 30px;background:#1DB954;color:white;text-decoration:none;border-radius:25px;font-weight:600;transition:background 0.3s ease;" onmouseover="this.style.background='#1ed760'" onmouseout="this.style.background='#1DB954'">Inicia sesión para comenzar</a>
+    `;
+  }
 
-              // spinner pequeño
-              const spinner = document.createElement('span');
-              spinner.style.cssText = 'display:inline-block;width:14px;height:14px;margin-left:10px;border:3px solid rgba(0,0,0,0.15);border-top-color:#064e28;border-radius:50%;animation:spin 0.8s linear infinite';
-              msg.appendChild(spinner);
+  showGenericPaymentSuccess() {
+    let msg = document.getElementById('payment-success') as HTMLElement | null;
+    if (!msg) {
+      msg = document.createElement('div');
+      msg.id = 'payment-success';
+      msg.style.cssText = 'padding:20px;border-radius:12px;background:#e6ffed;color:#064e28;margin-top:20px;text-align:center;font-weight:600;';
+      const parent = document.querySelector('.payment-card') ?? document.body;
+      parent.appendChild(msg);
+    }
+    msg.innerHTML = '<div style="font-size:2.5rem;margin-bottom:10px;">✓</div><p style="margin:0;">Pago realizado con éxito.</p>';
+  }
 
-              // añadir keyframes una sola vez
-              if (!document.getElementById('payment-success-spinner-style')) {
-                const style = document.createElement('style');
-                style.id = 'payment-success-spinner-style';
-                style.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
-                document.head.appendChild(style);
-              }
+  addSpinnerStyles() {
+    if (!document.getElementById('payment-success-spinner-style')) {
+      const style = document.createElement('style');
+      style.id = 'payment-success-spinner-style';
+      style.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
+      document.head.appendChild(style);
+    }
   }
 }

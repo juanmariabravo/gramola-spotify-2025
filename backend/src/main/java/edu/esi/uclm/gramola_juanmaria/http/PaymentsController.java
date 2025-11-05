@@ -42,7 +42,7 @@ public class PaymentsController {
 
     @PostMapping("/confirm")
     public void confirm(HttpSession session, @RequestBody Map<String, Object> finalData) {
-        System.out.println("Confirmando pago..." + finalData);
+        // System.out.println("Confirmando pago..." + finalData);
         StripeTransaction transactionDetails = (StripeTransaction) session.getAttribute("transactionDetails");
         JSONObject jso = new JSONObject(transactionDetails.getData());
 
@@ -50,7 +50,8 @@ public class PaymentsController {
         String sentClientSecret = jso.getString("client_secret");
 
         JSONObject finalDataJson = new JSONObject(finalData);
-        String userToken = finalDataJson.getString("token");
+        // Token es opcional - solo se envía en pagos de registro, no en pagos de canciones
+        String userToken = finalDataJson.optString("token", null);
         String receivedTransactionId = finalDataJson.getString("transactionId");
         String receivedClientSecret = finalDataJson.getJSONObject("paymentIntent").getString("client_secret");
 

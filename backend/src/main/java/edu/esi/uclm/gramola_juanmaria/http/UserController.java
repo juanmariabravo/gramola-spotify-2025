@@ -80,8 +80,9 @@ public class UserController {
 
     @GetMapping("/confirm/{email}")
     public void confirmToken(@PathVariable String email, @RequestParam String token, HttpServletResponse response) throws IOException { // @PathVariable para email porque está en el path, @RequestParam para token porque está después del ?
-        this.service.confirmToken(email, token);
-        response.sendRedirect("http://127.0.0.1:4200/payments?token=" + token); // redirigir a la página de pago
-        // todo: Que solo se confirme el token si se ha realizado el pago correctamente
+        // Solo validamos el token (no lo marcamos como usado ni confirmamos al usuario aún)
+        this.service.validateToken(email, token);
+        // Redirigir a la página de pago - la confirmación real ocurrirá después del pago exitoso
+        response.sendRedirect("http://127.0.0.1:4200/payments?token=" + token + "&amount=1000");
     }
 }
