@@ -1,0 +1,107 @@
+<div class="setup-container">
+  <div class="setup-card">
+    <div class="setup-header">
+      <div class="logo">Configuración de ESIpotify</div>
+      <p class="subtitle">Selecciona tu dispositivo de reproducción y playlist por defecto</p>
+    </div>
+
+    @if (loading) {
+    <div class="loading-overlay">
+      <div class="spinner-large"></div>
+      <p>Cargando dispositivos y playlists...</p>
+    </div>
+    }
+
+    <!-- Selección de dispositivo -->
+    @if (!loading) {
+    <section class="section">
+      <h3 class="section-title">1. Dispositivo de reproducción</h3>
+      <p class="section-subtitle">Elige dónde quieres reproducir la música</p>
+
+      @for (device of devices; track device.id) {
+      <div
+            class="device-card"
+            [class.selected]="device.id === selectedDeviceId"
+            (click)="selectDevice(device.id)"
+            role="button"
+            tabindex="0"
+            (keydown.enter)="selectDevice(device.id)">
+        <span class="device-icon-large">{{getDeviceIcon(device.type)}}</span>
+        <h4 class="device-card-name">{{device.name}}</h4>
+        <p class="device-card-type">{{device.type}}</p>
+        <span *ngIf="device.id === selectedDeviceId" class="selected-badge">✓ Seleccionado</span>
+      </div>
+      }
+      
+
+      <div *ngIf="deviceError" class="error-message">
+        <span class="error-icon">⚠️</span>
+        {{deviceError}}
+      </div>
+
+      <div *ngIf="devices.length === 0 && !deviceError" class="empty-message">
+        <span class="empty-icon">📱</span>
+        <p>No se encontraron dispositivos disponibles.</p>
+        <p class="hint">Asegúrate de tener Spotify abierto en algún dispositivo.</p>
+      </div>
+    </section>
+    }
+
+    <!-- Selección de playlist -->
+    <section class="section" *ngIf="!loading">
+      <h3 class="section-title">2. Playlist por defecto (opcional)</h3>
+      <p class="section-subtitle">Selecciona una playlist para reproducir por defecto</p>
+
+      <!-- Barra de búsqueda de playlists -->
+      <div class="search-container">
+        <input type="text"
+               [(ngModel)]="playlistSearchQuery"
+               (ngModelChange)="onSearchChange($event)"
+               placeholder="Buscar playlist..."
+               class="search-input"
+               aria-label="Buscar playlists" />
+        <span class="search-icon">🔍</span>
+      </div>
+
+      <div class="playlists-grid">
+        <div *ngFor="let playlist of filteredPlaylists()"
+             class="playlist-card"
+             [class.selected]="playlist.id === selectedPlaylistId"
+             (click)="selectPlaylist(playlist.id)"
+             role="button"
+             tabindex="0"
+             (keydown.enter)="selectPlaylist(playlist.id)">
+          <div class="playlist-cover">
+            <img *ngIf="playlist.images && playlist.images.length > 0"
+                 [src]="playlist.images[0]?.url"
+                 [alt]="playlist.name"
+                 class="playlist-img" />
+            <div *ngIf="!playlist.images || playlist.images.length === 0" class="playlist-placeholder">
+              🎵
+            </div>
+          </div>
+          <h4 class="playlist-card-name">{{playlist.name}}</h4>
+          <span *ngIf="playlist.id === selectedPlaylistId" class="selected-badge-small">✓</span>
+        </div>
+      </div>
+
+      <div *ngIf="playlistError" class="error-message">
+        <span class="error-icon">⚠️</span>
+        {{playlistError}}
+      </div>
+
+      <div *ngIf="filteredPlaylists().length === 0 && !playlistError" class="empty-message">
+        <span class="empty-icon">🎶</span>
+        <p *ngIf="!playlistSearchQuery">No se encontraron playlists en tu cuenta.</p>
+        <p *ngIf="playlistSearchQuery">No se encontraron playlists (propias ni públicas) que coincidan con "{{playlistSearchQuery}}".</p>
+      </div>
+    </section>
+
+    <!-- Botón de confirmación -->
+    <div class="actions" *ngIf="!loading">
+      <button class="confirm-btn" (click)="confirmSelection()" [disabled]="!selectedDeviceId">
+        Continuar a la Gramola
+      </button>
+    </div>
+  </div>
+</div>

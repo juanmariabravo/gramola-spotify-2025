@@ -59,6 +59,21 @@ export class SpotiService {
     return this.http.put<any>(`${this.spotiV1Url}/me/player`, body, { headers });
   }
 
+  // Iniciar reproducción en un dispositivo específico, opcionalmente con una playlist (context_uri)
+  startPlayback(deviceId: string, playlistUri?: string): Observable<any> {
+    if (!this.getSpotifyToken()) {
+      throw new Error('Spotify token is not set.');
+    }
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.getSpotifyToken()}`,
+      'Content-Type': 'application/json'
+    });
+    // body: si hay playlistUri usarlo como context_uri; si no, body vacío para reanudar lo pausado
+    const body = playlistUri ? { context_uri: playlistUri } : {};
+    const url = `${this.spotiV1Url}/me/player/play?device_id=${encodeURIComponent(deviceId)}`;
+    return this.http.put<any>(url, body, { headers, responseType: 'text' as 'json' });
+  }
+
   getPlaylists() : Observable<any> {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.getSpotifyToken()}`
@@ -96,8 +111,20 @@ export class SpotiService {
     return this.http.get<any>(url, { headers });
   }
 
-  // Nuevo: obtener la cola real de reproducción desde Spotify (GET /me/player/queue)
+  // Buscar playlists públicas (además de las del usuario)
+  searchPlaylists(query: string): Observable<any> {
+    if (!this.getSpotifyToken()) {
+      throw new Error('Spotify token is not set.');
+    }
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.getSpotifyToken()}`,
+      'Accept': 'application/json'
+    });
+    const url = `${this.spotiV1Url}/search?q=${encodeURIComponent(query)}&type=playlist&limit=20`;
+    return this.http.get<any>(url, { headers });
+  }
 
+  // Nuevo: obtener la cola real de reproducción desde Spotify (GET /me/player/queue)
   getQueue(): Observable<any> {
     if (!this.getSpotifyToken()) {
       throw new Error('Spotify token is not set.');

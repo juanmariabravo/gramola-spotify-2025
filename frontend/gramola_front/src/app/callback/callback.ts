@@ -52,7 +52,7 @@ export class Callback {
       next: (data) => {
         console.log('Authorization token received:', data);
         sessionStorage.setItem('accessToken', data.access_token);
-        this.router.navigateByUrl('/music');
+        this.router.navigateByUrl('/playlist-and-devices');
       },
       error: (error) => {
         console.error('Error fetching authorization token:', error);
