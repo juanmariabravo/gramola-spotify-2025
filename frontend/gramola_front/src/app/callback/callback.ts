@@ -32,7 +32,7 @@ export class Callback {
 
     const storedState = sessionStorage.getItem('oauth_state');
     if (state !== storedState) {
-      alert('State mismatch. oauth_state:' + storedState + ' state: ' + state);
+      console.error('State mismatch. oauth_state:', storedState, 'state:', state);
       this.router.navigateByUrl('/');
       return;
     }
@@ -47,7 +47,7 @@ export class Callback {
       return;
     }
 
-    // Ask the backend for the Authorization Token
+    // Ask Spotify for the Authorization Token
     this.spotiService.getAuthorizationToken(code).subscribe({ // antes: (code, clientId).subscribe({
       next: (data) => {
         console.log('Authorization token received:', data);
