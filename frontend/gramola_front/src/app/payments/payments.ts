@@ -96,7 +96,11 @@ export class Payments implements OnInit {
         iconColor: "#fa755a"
       }
     }
-    let card = elements.create("card", { style: style })
+    // Configurar card element sin solicitar código postal
+    let card = elements.create("card", {
+      style: style,
+      hidePostalCode: true  // deshabilitar solicitud de código postal
+    })
     card.mount("#card-element")
     card.on("change", function (event: any) {
       document.querySelector("button")!.disabled = event.empty;
