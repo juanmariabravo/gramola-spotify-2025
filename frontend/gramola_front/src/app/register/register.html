@@ -5,42 +5,75 @@
     </header>
     <div class="card">
         <h2>Regístrate para empezar a escuchar</h2>
-        <form id="registerForm" class="form">
+        <form id="registerForm" class="form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
             <div class="form-group">
                 <label for="barName">Nombre del bar</label>
-                <input type="text" id="barName" [(ngModel)]="barName" name="barName" required>
+                <input type="text" id="barName" formControlName="barName" required>
             </div>
             <div class="form-group">
                 <label for="clientId">Client ID de Spotify</label>
-                <input type="text" id="clientId" [(ngModel)]="clientId" name="clientId" required>
+                <input type="text" id="clientId" formControlName="clientId" required>
             </div>
             <div class="form-group">
                 <label for="clientSecret">Client Secret de Spotify</label>
-                <input type="password" id="clientSecret" [(ngModel)]="clientSecret" name="clientSecret" required>
+                <input type="password" id="clientSecret" formControlName="clientSecret" required>
             </div>
-            <div class="form-group">
+                        <div class="form-group">
                 <label for="email">Dirección de correo electrónico</label>
-                <input type="email" [(ngModel)]="email" name="email" required>
-            </div>
+                <input type="email" id="email" formControlName="email" class="form-control" required>
+                @if (registerForm.controls['email'].invalid && (registerForm.controls['email'].dirty ||
+                registerForm.controls['email'].touched))
+                {
+                <div class="error-message">
+                    @if (registerForm.controls['email'].errors?.['required']) {
+                    <span>El correo electrónico es obligatorio.</span>
+                    }
+                    @if (registerForm.controls['email'].errors?.['email']) {
+                    <span>El correo electrónico no es válido.</span>
+                    }
+                    @if (registerForm.controls['email'].errors?.['minlength']) {
+                    <span>El correo electrónico debe tener al menos 5 caracteres.</span>
+                    }
+                </div>
+                }
+                </div>
             <div class="form-group">
                 <label for="pwd1">Contraseña</label>
-                <input type="password" id="pwd1" [(ngModel)]="pwd1" name="pwd1" required>
+                <input type="password" id="pwd1" formControlName="pwd1" class="form-control" required>
+                @if (registerForm.controls['pwd1'].invalid && (registerForm.controls['pwd1'].dirty ||
+                registerForm.controls['pwd1'].touched)) {
+                <div class="error-message">
+                    @if (registerForm.controls['pwd1'].errors?.['required']) {
+                    <span>La contraseña es obligatoria.</span>
+                    }
+                    @if (registerForm.controls['pwd1'].errors?.['minlength']) {
+                    <span>La contraseña debe tener al menos 8 caracteres.</span>
+                    }
+                </div>
+                }
             </div>
             <div class="form-group">
                 <label for="pwd2">Repetir contraseña</label>
-                <input type="password" id="pwd2" [(ngModel)]="pwd2" name="pwd2" required>
+                <input type="password" id="pwd2" formControlName="pwd2" name="pwd2" required>
+                @if (registerForm.controls['pwd2'].invalid && (registerForm.controls['pwd2'].dirty ||
+                registerForm.controls['pwd2'].touched)) {
+                <div class="error-message">
+                    @if (registerForm.controls['pwd2'].value !== registerForm.controls['pwd1'].value) {
+                    <span>Las contraseñas no coinciden.</span>
+                    }
+                </div>
+                }
             </div>
 
-            <button (click)="registrar()" type="button" class="btn btn-primary">Registrar</button>
+            <button type="button" class="btn btn-primary" [disabled]="registerForm.invalid">Registrar</button>
             @if (registroExitoso === true) {
             <div class="success-message">
                 Se ha registrado exitosamente. Por favor, activa tu cuenta y paga el servicio a través del enlace enviado a tu correo
                 electrónico. Después, puedes <a href="/login" class="link">iniciar sesión aquí</a>.
             </div>
-            }
-            @if (registroExitoso === false) {
+            } @if (registroExitoso === false) {
             <div class="error-message">
-                Error en el registro. Por favor, inténtalo de nuevo.
+                Error en el registro. Revisa los datos e inténtalo de nuevo.
             </div>
             }
             <div class="login-link">
