@@ -1,9 +1,19 @@
 <div class="setup-container">
   <div class="setup-card">
     <div class="setup-header">
-      <div class="logo">Configuración de ESIpotify</div>
-      <p class="subtitle">Selecciona tu dispositivo de reproducción y playlist por defecto</p>
+      <div class="logo">Configuración de esipotify</div>
+      <p class="subtitle">Selecciona el precio de cada canción, tu dispositivo de reproducción y la playlist que sonará por
+        defecto</p>
     </div>
+<!-- Mostrar firma del propietario -->
+@if (userSignature) {
+<div class="signature-welcome">
+  <p class="signature-welcome-text">Bienvenido de nuevo, {{barName}}</p>
+  <div class="signature-display-card">
+    <img [src]="userSignature" alt="Firma del propietario" class="signature-img-display" />
+  </div>
+</div>
+}
 
     @if (loading) {
     <div class="loading-overlay">
@@ -14,7 +24,7 @@
 
         <!-- Configuración de precio por canción -->
         <section class="section" *ngIf="!loading">
-            <h3 class="section-title">3. Precio por canción</h3>
+            <h3 class="section-title">1. Precio por canción</h3>
             <p class="section-subtitle">Define cuánto cobrarás a los usuarios por añadir una canción a la cola</p>
         
             <div class="price-config-container">
@@ -38,7 +48,7 @@
     <!-- Selección de dispositivo -->
     @if (!loading) {
     <section class="section">
-      <h3 class="section-title">1. Dispositivo de reproducción</h3>
+      <h3 class="section-title">2. Dispositivo de reproducción</h3>
       <p class="section-subtitle">Elige dónde quieres reproducir la música</p>
 
       @for (device of devices; track device.id) {
@@ -72,7 +82,7 @@
 
     <!-- Selección de playlist -->
     <section class="section" *ngIf="!loading">
-      <h3 class="section-title">2. Playlist por defecto (opcional)</h3>
+      <h3 class="section-title">3. Playlist por defecto (opcional)</h3>
       <p class="section-subtitle">Selecciona una playlist para reproducir por defecto</p>
 
       <!-- Barra de búsqueda de playlists -->

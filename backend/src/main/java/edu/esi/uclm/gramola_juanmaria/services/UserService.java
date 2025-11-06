@@ -2,6 +2,7 @@ package edu.esi.uclm.gramola_juanmaria.services;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class UserService {
     @Autowired
     UserDao userDao;
 
-    public void register(String barName, String email, String pwd, String client_id, String client_secret) {
+    public void register(String barName, String email, String pwd, String client_id, String client_secret, String signature) {
         Optional<User> optUser = this.userDao.findById(email); // Optional<User> es una caja que puede contener un User o no. Hasta que no mires dentro, no sabes si está o no.
         if (optUser.isEmpty()) {
             // El email no está registrado, podemos crear el usuario
@@ -33,6 +34,7 @@ public class UserService {
             user.setClientId(client_id);
             user.setClientSecret(client_secret);
             user.setCreationToken(new Token()); // Crear un token de confirmación
+            user.setSignature(signature);
             this.userDao.save(user); // Guardar en la base de datos
 
             // Devolver el token de confirmación
@@ -52,7 +54,7 @@ public class UserService {
         }
     }
 
-    public String login(String email, String pwd) {
+    public Map<String, String> login(String email, String pwd) {
         Optional<User> optUser = this.userDao.findById(email); // Optional<User> es una caja que puede contener un User o no. Hasta que no mires dentro, no sabes si está o no.
         if (optUser.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "El email no está registrado");
@@ -69,8 +71,12 @@ public class UserService {
         }
 
         System.out.println("Usuario " + email + " ha hecho login correctamente");
-        // Devolver clientId (puede ser null si no existe)
-        return user.getClientId();
+        // Devolver clientId y signature (pueden ser null si no existen)
+        return Map.of(
+            "client_id", user.getClientId() != null ? user.getClientId() : "",
+            "signature", user.getSignature() != null ? user.getSignature() : "",
+            "bar_name", user.getBarName() != null ? user.getBarName() : ""
+        );
     }
     
     public void delete(String email) {

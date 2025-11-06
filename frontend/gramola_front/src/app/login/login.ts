@@ -17,6 +17,10 @@ export class Login {
   loginForm: FormGroup;
   scopes : string[] = ["user-read-private", "user-read-email", "playlist-read-private", "playlist-read-collaborative", "user-read-playback-state", "user-modify-playback-state", "user-read-currently-playing", "user-library-read", "user-library-modify", "user-read-recently-played", "user-top-read", "app-remote-control", "streaming"];
 
+  isLoading = false;
+  feedbackMessage = '';
+  feedbackType: 'success' | 'error' | '' = '';
+  userSignature?: string; // firma del usuario en base64
 
   constructor(private fb: FormBuilder, private userService: UserService, private router: Router, private spotiService: SpotiService) {
     this.loginForm = this.fb.group({
@@ -29,21 +33,38 @@ export class Login {
   onSubmit() {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
-      console.log('Form invalid');
       return;
     }
+
+    this.isLoading = true;
+    this.feedbackMessage = '';
+    this.feedbackType = '';
 
     const { email, password } = this.loginForm.value;
 
     this.userService.login(email, password).subscribe({
       next: (response) => {
+        this.isLoading = false;
+        this.feedbackType = 'success';
+        this.feedbackMessage = '¡Bienvenido! Redirigiendo...';
+
         // store client id in the shared SpotiService and sessionStorage
         //this.spotiService.clientId = response.client_id;
         //sessionStorage.setItem('mustPay', response.mustPay);
         sessionStorage.setItem('clientId', response.client_id);
-        this.getToken();
+        // guardar firma del usuario si viene en la respuesta
+        if (response.signature) {
+          sessionStorage.setItem('userSignature', response.signature);
+          this.userSignature = response.signature;
+        }
+        sessionStorage.setItem('barName', response.bar_name);
+
+        this.getToken(); // redirigir a Spotify para autorización
       },
       error: (error) => {
+        this.isLoading = false;
+        this.feedbackType = 'error';
+        this.feedbackMessage = error?.error?.message || 'Usuario o contraseña incorrectos';
         console.error('Login error:', error);
       }
     });

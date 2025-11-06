@@ -29,3 +29,28 @@
 .forgot-password .link:focus {
     text-decoration: underline;
 }
+
+/* Mostrar firma en login */
+.signature-display {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(6, 78, 40, 0.2);
+  text-align: center;
+}
+
+.signature-label {
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  color: #064e28;
+  font-weight: 600;
+}
+
+.signature-img {
+  max-width: 100%;
+  height: auto;
+  max-height: 120px;
+  border: 2px solid #1DB954;
+  border-radius: 8px;
+  background: white;
+  padding: 8px;
+}

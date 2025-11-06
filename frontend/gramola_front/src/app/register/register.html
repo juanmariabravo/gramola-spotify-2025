@@ -65,7 +65,19 @@
                 }
             </div>
 
-            <button type="button" class="btn btn-primary" [disabled]="registerForm.invalid">Registrar</button>
+            <!-- Canvas de firma -->
+            <div class="form-group signature-group">
+                <label for="signature">Firma del propietario</label>
+                <p class="signature-hint">Firma en el recuadro con el ratón o dedo</p>
+                <div class="signature-container">
+                    <canvas #signatureCanvas class="signature-canvas"></canvas>
+                </div>
+                <button type="button" class="btn-clear-signature" (click)="clearSignature()">
+                    Limpiar firma
+                </button>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid">Registrar</button>
             @if (registroExitoso === true) {
             <div class="success-message">
                 Se ha registrado exitosamente. Por favor, activa tu cuenta y paga el servicio a través del enlace enviado a tu correo

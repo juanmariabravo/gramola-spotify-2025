@@ -37,6 +37,8 @@ export class PlaylistAndDevices implements OnInit {
   songPrice: number = 50; // precio por canción en céntimos (0.50€ por defecto)
   minPrice = 10;   // 0.10€
   maxPrice = 500;  // 5.00€
+  userSignature?: string; // firma del usuario en base64
+  barName?: string; // nombre del bar
 
   deviceError?: string;
   playlistError?: string;
@@ -45,6 +47,10 @@ export class PlaylistAndDevices implements OnInit {
   constructor(private spotiService: SpotiService, private router: Router) {}
 
   ngOnInit(): void {
+    // Leer firma del usuario desde sessionStorage
+    this.userSignature = sessionStorage.getItem('userSignature') || undefined;
+    this.barName = sessionStorage.getItem('barName') || undefined;
+
     this.loadDevicesAndPlaylists();
     // suscribirse a cambios en la búsqueda con debounce
     this.searchSubject.pipe(

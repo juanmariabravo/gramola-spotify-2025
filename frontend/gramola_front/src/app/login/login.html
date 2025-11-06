@@ -60,5 +60,19 @@
     <p>¿No tienes cuenta? <a href="/register" class="link">Regístrate</a></p>
 </div>
 </form>
+@if (feedbackMessage && !isLoading) {
+<div class="feedback-container" [class.success]="feedbackType === 'success'" [class.error]="feedbackType === 'error'">
+    <div class="feedback-icon">
+        <i class="icon"
+            [ngClass]="{'icon-success': feedbackType === 'success', 'icon-error': feedbackType === 'error'}"></i>
     </div>
+    <p>{{feedbackMessage}}</p>
+    @if (userSignature && feedbackType === 'success') {
+    <div class="signature-display">
+        <p class="signature-label">Tu firma registrada:</p>
+        <img [src]="userSignature" alt="Firma del propietario" class="signature-img" />
+    </div>
+    }
+    </div>
+    }
 </div>

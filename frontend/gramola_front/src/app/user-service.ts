@@ -11,17 +11,17 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
-  register(barName: string, email: string, pwd1: string, pwd2: string, clientId: string, clientSecret: string) {
-    let info = {
-      barName : barName,
-      email : email,
-      pwd1 : pwd1, 
-      pwd2 : pwd2,
-      clientId: clientId,
-      clientSecret: clientSecret
+  register(barName: string, email: string, pwd1: string, pwd2: string, clientId: string, clientSecret: string, signature: string) {
+    const body = {
+      barName,
+      email,
+      pwd1,
+      pwd2,
+      clientId,
+      clientSecret,
+      signature
     };
-    const headers = { 'Content-Type': 'application/json', 'Accept': 'application/json' };
-    return this.http.post<any>(this.registerUrl, info, { headers });
+    return this.http.post<any>(this.registerUrl, body, { headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' } });
   }
 
   login(email: string, password: string) {

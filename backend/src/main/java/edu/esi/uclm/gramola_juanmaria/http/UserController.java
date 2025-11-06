@@ -26,7 +26,7 @@ public class UserController {
     @Autowired
     private UserService service; // Spring se encarga de instanciar el objeto ya que UserService es un @Service
 
-    /* register es un servicio web que recibe un JSON con email, pwd1 y pwd2, barName, client_id y client_secret */
+    /* register es un servicio web que recibe un JSON con email, pwd1 y pwd2, barName, client_id, client_secret y signature (firma del propietario codificada en Base64) */
     @CrossOrigin(origins = {"http://localhost:4200", "http://127.0.0.1:4200"}) // permitir llamadas desde el frontend en Angular
     @PostMapping("/register") // podríamos especificar: (value="/register", consumes="application/json")
     public void register(@RequestBody Map<String, String> body) {
@@ -36,7 +36,8 @@ public class UserController {
         String pwd2 = body.get("pwd2");
         String client_id = body.get("clientId");
         String client_secret = body.get("clientSecret");
-        if (email == null || pwd1 == null || pwd2 == null) {
+        String signature = body.get("signature");
+        if (email == null || pwd1 == null || pwd2 == null || barName == null || client_id == null || client_secret == null || signature == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Faltan parámetros");
         }
 
@@ -52,7 +53,7 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Email inválido");
         }
 
-        this.service.register(barName, email, pwd1, client_id, client_secret);
+        this.service.register(barName, email, pwd1, client_id, client_secret, signature);
     }
 
     /* login es un servicio web que recibe un JSON con email y pwd */
@@ -69,8 +70,8 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Email inválido");
         }
 
-        String clientId = this.service.login(email, pwd);
-        return Map.of("client_id", clientId);
+        // Devuelve Map con client_id y signature
+        return this.service.login(email, pwd);
     }
 
     @DeleteMapping("/delete")
