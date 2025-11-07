@@ -52,21 +52,24 @@
       <h3 class="section-title">2. Dispositivo de reproducción</h3>
       <p class="section-subtitle">Elige dónde quieres reproducir la música</p>
 
-      @for (device of devices; track device.id) {
-      <div
-            class="device-card"
-            [class.selected]="device.id === selectedDeviceId"
-            (click)="selectDevice(device.id)"
-            role="button"
-            tabindex="0"
-            (keydown.enter)="selectDevice(device.id)">
-        <span class="device-icon-large">{{getDeviceIcon(device.type)}}</span>
-        <h4 class="device-card-name">{{device.name}}</h4>
-        <p class="device-card-type">{{device.type}}</p>
-        <span *ngIf="device.id === selectedDeviceId" class="selected-badge">✓ Seleccionado</span>
+      <div class="devices-list">
+        @for (device of devices; track device.id) {
+        <div
+              class="device-item"
+              [class.selected]="device.id === selectedDeviceId"
+              (click)="selectDevice(device.id)"
+              role="button"
+              tabindex="0"
+              (keydown.enter)="selectDevice(device.id)">
+          <span class="device-icon">{{getDeviceIcon(device.type)}}</span>
+          <div class="device-details">
+            <h4 class="device-name">{{device.name}}</h4>
+            <p class="device-type">{{device.type}}</p>
+          </div>
+          <span *ngIf="device.id === selectedDeviceId" class="device-badge">✓ Activo</span>
+          </div>
+          }
       </div>
-      }
-      
 
       <div *ngIf="deviceError" class="error-message">
         <span class="error-icon">⚠️</span>
@@ -86,8 +89,10 @@
       <button class="confirm-btn" (click)="confirmSelection()" [disabled]="!selectedDeviceId">
         Continuar a la Gramola
       </button>
-      <p class="action-hint">Puedes continuar sin seleccionar playlist. Se reanudará la reproducción actual.</p>
+      <p class="action-hint">Puedes continuar sin seleccionar playlist. Se reanudará la última reproducción.</p>
     </div>
+
+
 
     <!-- Selección de playlist -->
     <section class="section" *ngIf="!loading">

@@ -76,72 +76,86 @@
   margin: 0 0 20px 0;
 }
 
-/* Devices grid */
-.devices-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
+/* Devices list - estilo horizontal compacto */
+.devices-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   margin-bottom: 20px;
 }
 
-.device-card {
+.device-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 18px;
   background: #f8f9fa;
   border: 2px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 20px;
-  text-align: center;
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
+  transition: all 0.2s ease;
 }
 
-.device-card:hover {
+.device-item:hover {
   border-color: #1DB954;
-  transform: translateY(-3px);
+  transform: translateX(4px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.device-card.selected {
+.device-item.selected {
   border-color: #1DB954;
   background: linear-gradient(135deg, #1DB954, #1ed760);
   color: white;
+  box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
 }
 
-.device-icon-large {
-  font-size: 3rem;
-  display: block;
-  margin-bottom: 10px;
+.device-icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.device-card-name {
-  font-size: 1rem;
+.device-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.device-name {
+  font-size: 0.95rem;
   font-weight: 600;
-  margin: 10px 0 5px;
+  margin: 0 0 3px 0;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.device-card.selected .device-card-name {
+.device-item.selected .device-name {
   color: white;
 }
 
-.device-card-type {
-  font-size: 0.85rem;
+.device-type {
+  font-size: 0.8rem;
   color: #666;
   margin: 0;
   text-transform: capitalize;
 }
 
-.device-card.selected .device-card-type {
+.device-item.selected .device-type {
   color: rgba(255, 255, 255, 0.8);
 }
 
-.selected-badge {
-  display: inline-block;
-  margin-top: 10px;
-  padding: 5px 10px;
+.device-badge {
+  padding: 6px 14px;
   background: rgba(255, 255, 255, 0.3);
-  border-radius: 12px;
-  font-size: 0.8rem;
+  border-radius: 15px;
+    font-size: 0.75rem;
   font-weight: 600;
+  white-space: nowrap;
+    flex-shrink: 0;
 }
 
 /* Barra de búsqueda de playlists */
@@ -298,8 +312,18 @@
 .actions {
   text-align: center;
   margin-top: 40px;
+  margin-bottom: 20px;
   padding-top: 30px;
+  padding-bottom: 30px;
   border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.action-hint {
+  margin-top: 15px;
+  color: #666;
+  font-size: 0.9rem;
+  font-style: italic;
 }
 
 .confirm-btn {
@@ -502,7 +526,18 @@
     font-size: 2rem;
   }
 
-  .devices-grid,
+                                                                .devices-list {
+                                                                  gap: 10px;
+                                                                }
+                                
+                                                                .device-item {
+                                                                  padding: 10px 15px;
+                                                                }
+                                
+                                                                .device-icon {
+                                                                  font-size: 1.5rem;
+                                                                  width: 35px;
+                                                                }
   .playlists-grid {
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   }
@@ -514,11 +549,14 @@
 }
 
 @media (max-width: 480px) {
-  .devices-grid,
+  .device-item {
+      gap: 12px;
+    }
   .playlists-grid {
     grid-template-columns: 1fr;
   }
-.price-value {
+  
+                                                                .price-value {
     font-size: 2rem;
 }
 
