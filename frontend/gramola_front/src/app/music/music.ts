@@ -50,6 +50,14 @@ barName: any;
   constructor(private spotiService : SpotiService) {}
 
   ngOnInit(): void {
+
+    // lo primero, si no hay accessToken, redirigir a login
+    const accessToken = sessionStorage.getItem('accessToken');
+    if (!accessToken) {
+      // Redirigir a la página de login
+      window.location.href = '/login';
+      return;
+    }
     this.getDevices()
     this.getPlaylists()
     this.getCurrentPlayList();

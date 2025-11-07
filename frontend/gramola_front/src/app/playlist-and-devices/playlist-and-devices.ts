@@ -47,6 +47,13 @@ export class PlaylistAndDevices implements OnInit {
   constructor(private spotiService: SpotiService, private router: Router) {}
 
   ngOnInit(): void {
+    // lo primero, si no hay accessToken, redirigir a login
+    const accessToken = sessionStorage.getItem('accessToken');
+    if (!accessToken) {
+      // Redirigir a la página de login
+      window.location.href = '/login';
+      return;
+    }
     // Leer firma del usuario desde sessionStorage
     this.userSignature = sessionStorage.getItem('userSignature') || undefined;
     this.barName = sessionStorage.getItem('barName') || undefined;
