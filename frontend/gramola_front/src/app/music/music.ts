@@ -211,6 +211,8 @@ export class Music implements OnInit, OnDestroy {
       this.spotiService.addToQueue(track.uri || '').subscribe({
         next: () => {
           alert(`La canción "${track.name}" ha sido añadida a la cola.`);
+          // Cerrar resultados de búsqueda
+          this.clearSearch();
           this.getQueue();  // Actualizar la cola después de añadir
           
         },
