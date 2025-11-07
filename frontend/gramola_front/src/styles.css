@@ -28,6 +28,8 @@ body {
     align-items: center;
     min-height: 100vh;
     width: 100%;
+    margin: 0;
+        padding: 0;
 }
 
 /* Contenedor principal */
@@ -44,12 +46,26 @@ body {
 }
 
 .logo {
-    color: #1DB954;
+    color: #1f1f1f;
     font-size: 3rem;
     font-weight: bold;
     cursor: default;
     user-select: none;
     letter-spacing: -1px;
+}
+
+/* Estilos para las letras "esi" en todos los contextos */
+.esi-e,
+.esi-s,
+.esi-i {
+    color: rgb(131, 131, 255);
+    font-size: 1.3em;
+}
+
+/* Solo "potify" en verde */
+.logo .spotify,
+.logo span:not(.esi-e):not(.esi-s):not(.esi-i) {
+    color: #1DB954;
 }
 
 /* Tarjeta del formulario */
