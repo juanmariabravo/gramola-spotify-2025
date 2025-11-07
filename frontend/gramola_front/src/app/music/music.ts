@@ -45,7 +45,7 @@ export class Music implements OnInit, OnDestroy {
   playlistError? : string
   currentPlaylistError? : string
   songError? : string
-  barName: any;
+  barName: string = 'Mi Bar';
   searchQuery: string = '';
 
   constructor(private spotiService : SpotiService) {}
@@ -59,6 +59,9 @@ export class Music implements OnInit, OnDestroy {
       window.location.href = '/login';
       return;
     }
+    // Leer nombre del bar desde sessionStorage
+    this.barName = sessionStorage.getItem('barName') || 'Mi Bar';
+    
     this.getDevices()
     this.getPlaylists()
     this.getCurrentPlayList();

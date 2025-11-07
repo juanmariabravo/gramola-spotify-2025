@@ -1,33 +1,33 @@
 <div class="music-container">
     <!-- Header con información del bar -->
     <header class="music-header">
-        <div class="bar-info">
-            <h1 class="bar-name">{{barName}}</h1>
-            <div class="current-playing" *ngIf="currentTrack">
+        <div class="current-playing">
+            <h1 class="bar-name">Gramola de {{barName}}</h1>
+            <div *ngIf="currentTrack">
                 <div class="now-playing-indicator">▶️ REPRODUCIENDO AHORA</div>
                 <div class="current-track-info">
                     <img [src]="currentTrack.album?.images?.[2]?.url || 'assets/default-album.png'" [alt]="currentTrack.album?.name"
-                        class="track-album-cover">
+                        class="current-album-cover">
                     <div class="track-details">
                         <h3 class="track-title">{{currentTrack.name}}</h3>
                         <p class="track-artist">{{getArtists(currentTrack)}}</p>
                         <p class="track-album">{{currentTrack.album?.name}}</p>
                     </div>
                 </div>
+            </div>
+            <div *ngIf="!currentTrack" class="no-track">
+                <p>No se está reproduciendo ninguna canción</p>
+            </div>
+            </div>
+            <div class="device-info">
+                <div class="device-status" *ngIf="currentDevice">
+                <span class="device-icon">{{getDeviceIcon(currentDevice.type)}}</span>
+                <span class="device-name">{{currentDevice.name}}</span>
+                <span class="device-type">{{currentDevice.type}}</span>
                 </div>
-                <div class="no-track" *ngIf="!currentTrack">
-                    <p>No se está reproduciendo ninguna canción</p>
-                </div>
-                </div>
-                <div class="device-info">
-                    <div class="device-status" *ngIf="currentDevice">
-                        <span class="device-icon">📱</span>
-                        <span class="device-name">{{currentDevice.name}}</span>
-                        <span class="device-type">({{currentDevice.type}})</span>
-                    </div>
-                    <div class="no-device" *ngIf="!currentDevice">
-                        <p>No hay dispositivos activos</p>
-                    </div>
+            <div *ngIf="!currentDevice" class="no-device">
+                <p>No hay dispositivos activos</p>
+            </div>
         </div>
     </header>
 

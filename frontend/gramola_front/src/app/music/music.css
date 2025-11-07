@@ -22,8 +22,9 @@
 /* Header */
 .music-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: flex-start;
+    gap: 20px;
     background: linear-gradient(135deg, #1DB954, #1ed760);
     padding: 25px;
     border-radius: 12px;
@@ -43,6 +44,7 @@
     display: flex;
     flex-direction: column;
     gap: 15px;
+    flex: 1;
 }
 
 .now-playing-indicator {
@@ -53,9 +55,13 @@
 }
 
 .current-track-info {
-    display: flex;
+    display: inline-flex;
     align-items: center;
+    margin-top: 10px;
     gap: 15px;
+    background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        padding: 12px;
 }
 
 .current-album-cover {
@@ -97,6 +103,7 @@
 
 .device-info {
     text-align: right;
+    margin-left: auto;
 }
 
 .device-status {
@@ -625,12 +632,15 @@ flex: 1;
 
     .music-header {
         flex-direction: column;
-        gap: 20px;
+        gap: 15px;
         text-align: center;
+        align-items: center;
     }
 
     .device-info {
         text-align: center;
+        margin-left: 0;
+            width: 100%;
     }
 
     .device-status {
