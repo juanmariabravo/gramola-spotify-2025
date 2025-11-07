@@ -8,8 +8,10 @@ import { PlaylistAndDevices } from './playlist-and-devices/playlist-and-devices'
 import { Geolocalizacion } from './geolocalizacion/geolocalizacion';
 import { RecoverPassword } from './recover-password/recover-password';
 import { ResetPassword } from './reset-password/reset-password';
+import { Home } from './home/home';
 
 export const routes: Routes = [
+	{ path: '', component: Home },
 	{ path: 'login', component: Login },
 	{ path: 'register', component: Register },
 	{ path: 'recover-password', component: RecoverPassword },
