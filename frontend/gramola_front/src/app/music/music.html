@@ -46,6 +46,12 @@
 
     <!-- Resultados de búsqueda -->
     <section class="search-results" *ngIf="tracks.length > 0">
+        <div class="search-results-header">
+            <h3>Resultados de búsqueda</h3>
+            <button class="close-search-btn" (click)="clearSearch()" aria-label="Cerrar búsqueda" title="Cerrar">
+                ✕
+            </button>
+        </div>
         <div class="tracks-list">
             <div *ngFor="let track of tracks" class="track-card">
                 <div class="track-info">

@@ -45,7 +45,8 @@ export class Music implements OnInit, OnDestroy {
   playlistError? : string
   currentPlaylistError? : string
   songError? : string
-barName: any;
+  barName: any;
+  searchQuery: string = '';
 
   constructor(private spotiService : SpotiService) {}
 
@@ -71,6 +72,9 @@ barName: any;
     if (storedPrice) {
       this.songPrice = Number(storedPrice);
     }
+
+    // Listener para cerrar búsqueda con ESC
+    document.addEventListener('keydown', this.handleEscapeKey.bind(this));
   }
 
   // para cola en tiempo real
@@ -81,9 +85,15 @@ barName: any;
     if (this.currentPlaylistPollIntervalId) {
       clearInterval(this.currentPlaylistPollIntervalId);
     }
+    // Remover listener de ESC
+    document.removeEventListener('keydown', this.handleEscapeKey.bind(this));
   }
 
-  
+  handleEscapeKey(event: KeyboardEvent) {
+    if (event.key === 'Escape' && this.tracks.length > 0) {
+      this.clearSearch();
+    }
+  }
 
   getDevices() {
     this.resetErrors()
@@ -158,68 +168,73 @@ barName: any;
     this.songError = undefined;
   }
 
-  // Añade estas propiedades
-searchQuery: string = '';
+  // Métodos adicionales
+  getArtists(track: TrackObject): string {
+    return track.artists?.map(artist => artist.name).join(', ') || 'Artista desconocido';
+  }
 
-// Métodos adicionales
-getArtists(track: TrackObject): string {
-  return track.artists?.map(artist => artist.name).join(', ') || 'Artista desconocido';
-}
+  getDeviceIcon(deviceType: string): string {
+    const icons: { [key: string]: string } = {
+      'computer': '💻',
+      'smartphone': '📱',
+      'tablet': '📟',
+      'speaker': '🔊',
+      'tv': '📺'
+    };
+    return icons[deviceType.toLowerCase()] || '📱';
+  }
 
-getDeviceIcon(deviceType: string): string {
-  const icons: { [key: string]: string } = {
-    'computer': '💻',
-    'smartphone': '📱',
-    'tablet': '📟',
-    'speaker': '🔊',
-    'tv': '📺'
-  };
-  return icons[deviceType.toLowerCase()] || '📱';
-}
-
-searchTracks() {
-  if (!this.searchQuery.trim()) return;
-  
-  this.resetErrors();
-  this.spotiService.searchTracks(this.searchQuery).subscribe({
-    next: (result) => {
-      this.tracks = result.tracks.items;
-    },
-    error: (err) => {
-      this.songError = err.message;
-    }
-  });
-}
-
-addToQueue(track: TrackObject) {
-  this.resetErrors();
-  if (this.songPrice <= 0) {
-    // Si el precio es 0 o negativo, añadir directamente a la cola sin pago
-    this.spotiService.addToQueue(track.uri || '').subscribe({
-      next: () => {
-        alert(`La canción "${track.name}" ha sido añadida a la cola.`);
+  searchTracks() {
+    if (!this.searchQuery.trim()) return;
+    
+    this.resetErrors();
+    this.spotiService.searchTracks(this.searchQuery).subscribe({
+      next: (result) => {
+        this.tracks = result.tracks.items;
       },
       error: (err) => {
-        this.songError = err.message || 'Error al añadir la canción a la cola';
+        this.songError = err.message;
       }
     });
   }
-  else {
-  // Confirmación de pago antes de proceder
-  const priceFormatted = (this.songPrice / 100).toFixed(2);
-  const proceed = confirm(`La canción "${track.name}" cuesta ${priceFormatted}€. ¿Deseas pagar ahora?`);
-  if (!proceed) {
-    return;
+
+  clearSearch() {
+    this.tracks = [];
+    this.searchQuery = '';
+    this.songError = undefined;
   }
 
-  // Redirigir a la página de pagos con el importe (y opcionalmente la URI de la pista para uso posterior)
-  const params = new URLSearchParams({
-    amount: String(this.songPrice).padStart(4, '0'),
-    trackUri: track.uri || ''
-  });
-  // usar location.href para forzar la navegación completa (la página de pagos procesa el pago)
-  window.location.href = `http://127.0.0.1:4200/payments?${params.toString()}`;
-}
+  addToQueue(track: TrackObject) {
+    this.resetErrors();
+    if (this.songPrice <= 0) {
+      // Si el precio es 0 o negativo, añadir directamente a la cola sin pago
+      this.spotiService.addToQueue(track.uri || '').subscribe({
+        next: () => {
+          alert(`La canción "${track.name}" ha sido añadida a la cola.`);
+          this.getQueue();  // Actualizar la cola después de añadir
+          
+        },
+        error: (err) => {
+          this.songError = err.message || 'Error al añadir la canción a la cola';
+        }
+      });
+    }
+    else {
+    // Confirmación de pago antes de proceder
+    const priceFormatted = (this.songPrice / 100).toFixed(2);
+    const proceed = confirm(`La canción "${track.name}" cuesta ${priceFormatted}€. ¿Deseas pagar ahora?`);
+    if (!proceed) {
+      return;
+    }
+
+    // Redirigir a la página de pagos con el importe (y opcionalmente la URI de la pista para uso posterior)
+    const params = new URLSearchParams({
+      amount: String(this.songPrice).padStart(4, '0'),
+      trackUri: track.uri || ''
+    });
+    // usar location.href para forzar la navegación completa (la página de pagos procesa el pago)
+    window.location.href = `http://127.0.0.1:4200/payments?${params.toString()}`;
+  }
 }
 
 // Nuevo: solicita la cola real a Spotify y la asigna a this.queue
