@@ -1,12 +1,22 @@
 /* ===== ESTILOS PARA EL COMPONENTE MUSIC ===== */
 
+:host {
+    display: block;
+    width: 100vw;
+    min-height: 100vh;
+    position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+}
+
 .music-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
+    max-width: 100%;
+        width: 100%;
+        padding: 20px;
     background-color: #f6f6f6;
     min-height: 100vh;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* Header */
@@ -114,7 +124,7 @@
 /* Controles principales */
 .controls-section {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1.2fr 1.8fr;
     gap: 30px;
     margin-bottom: 30px;
 }
@@ -195,7 +205,7 @@
 /* Playlists */
 .playlists-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 15px;
 }
 
@@ -256,7 +266,7 @@
 .search-container {
     display: flex;
     gap: 15px;
-    max-width: 600px;
+    max-width: 100%;
 }
 
 .search-input {
@@ -541,7 +551,7 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     .music-container {
         padding: 15px;
     }
