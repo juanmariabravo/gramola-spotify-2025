@@ -99,9 +99,74 @@ box-sizing: border-box;
 
 .vinyl-wrapper {
   position: relative;
-padding: 0;
+  padding: 0;
     background: transparent;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: visible;
+    cursor: pointer;
+    transition: transform 0.05s ease;
+    will-change: transform;
+  }
+  
+  /* Efecto de vibración al hacer hover (como altavoz) */
+  .vinyl-wrapper.vibrating {
+    animation: speakerVibrate 0.40s ease-in-out infinite;
+  }
+  
+  @keyframes speakerVibrate {
+  
+    0%,
+    100% {
+      transform: translate(0, 0) scale(1);
+    }
+  
+    25% {
+      transform: translate(-1.5px, 0.75px) scale(1.015);
+    }
+  
+    50% {
+      transform: translate(1.5px, -0.75px) scale(0.985);
+    }
+  
+    75% {
+      transform: translate(-0.75px, -1.5px) scale(1.008);
+    }
+  }
+  
+  /* Notas flotantes dinámicas creadas al hover */
+  .floating-note {
+    position: absolute;
+    font-size: 22px;
+    color: #1DB954;
+    font-weight: bold;
+    pointer-events: none;
+    animation: floatAway 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    opacity: 1;
+    z-index: 10;
+  }
+  
+  @keyframes floatAway {
+    0% {
+      transform: translate(0, 0) scale(1) rotate(0deg);
+      opacity: 1;
+    }
+  
+    30% {
+      opacity: 0.9;
+      transform: translate(calc(var(--random-x, 0) * 15px),
+          -20px) scale(1.1) rotate(calc(var(--random-rot, 0) * 90deg));
+    }
+  
+    50% {
+      opacity: 0.8;
+      transform: translate(calc(var(--random-x, 0) * 35px),
+          -45px) scale(1.25) rotate(calc(var(--random-rot, 0) * 180deg));
+    }
+  
+    100% {
+      transform: translate(calc(var(--random-x, 0) * 70px),
+          calc(-100px + var(--random-y, 0) * -30px)) scale(1.5) rotate(calc(var(--random-rot, 0) * 360deg));
+      opacity: 0;
+    }
 }
 
 .turntable {
@@ -112,7 +177,7 @@ padding: 0;
 .vinyl {
   animation: spin 6s linear infinite;
   transform-origin: 81px 99px;
-  transition: animation-duration 0.3s ease;
+  transition: animation-duration 0.7s ease;
 }
 
 .tonearm {
