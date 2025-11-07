@@ -39,6 +39,7 @@ export class PlaylistAndDevices implements OnInit {
   maxPrice = 500;  // 5.00€
   userSignature?: string; // firma del usuario en base64
   barName?: string; // nombre del bar
+  showAllPlaylists = false; // controlar si mostrar todas las playlists
 
   deviceError?: string;
   playlistError?: string;
@@ -170,6 +171,17 @@ export class PlaylistAndDevices implements OnInit {
       .filter(sp => sp && sp.id) // validar que sp existe y tiene id
       .filter(sp => !this.myPlaylists.some(mp => mp && mp.id === sp.id));
     return [...myFiltered, ...publicFiltered];
+  }
+
+  // Obtener las playlists visibles (limitadas o todas según toggle)
+  getVisiblePlaylists(): Playlist[] {
+    const filtered = this.filteredPlaylists();
+    // Si hay búsqueda activa o el usuario pidió ver todas, mostrar todas
+    if (this.showAllPlaylists) {
+      return filtered;
+    }
+    // Sino, limitar a 6 playlists
+    return filtered.slice(0, 6);
   }
 
   // llamar cuando el usuario escribe en la barra de búsqueda

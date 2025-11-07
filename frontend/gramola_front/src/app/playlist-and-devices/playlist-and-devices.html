@@ -81,10 +81,18 @@
     </section>
     }
 
+
+    <div class="actions" *ngIf="!loading">
+      <button class="confirm-btn" (click)="confirmSelection()" [disabled]="!selectedDeviceId">
+        Continuar a la Gramola
+      </button>
+      <p class="action-hint">Puedes continuar sin seleccionar playlist. Se reanudará la reproducción actual.</p>
+    </div>
+
     <!-- Selección de playlist -->
     <section class="section" *ngIf="!loading">
       <h3 class="section-title">3. Playlist por defecto (opcional)</h3>
-      <p class="section-subtitle">Selecciona una playlist para reproducir por defecto</p>
+      <p class="section-subtitle">Selecciona una playlist para reproducir por defecto o continúa sin ella</p>
 
       <!-- Barra de búsqueda de playlists -->
       <div class="search-container">
@@ -97,8 +105,15 @@
         <span class="search-icon">🔍</span>
       </div>
 
+      <!-- Toggle para mostrar todas las playlists -->
+      <div class="playlist-view-toggle" *ngIf="filteredPlaylists().length > 6">
+        <button class="toggle-btn" (click)="showAllPlaylists = !showAllPlaylists">
+          {{ showAllPlaylists ? '▲ Mostrar menos' : '▼ Ver todas las playlists (' + filteredPlaylists().length + ')' }}
+        </button>
+      </div>
+
       <div class="playlists-grid">
-        <div *ngFor="let playlist of filteredPlaylists()"
+        <div *ngFor="let playlist of getVisiblePlaylists()"
              class="playlist-card"
              [class.selected]="playlist.id === selectedPlaylistId"
              (click)="selectPlaylist(playlist.id)"
@@ -130,12 +145,5 @@
         <p *ngIf="playlistSearchQuery">No se encontraron playlists (propias ni públicas) que coincidan con "{{playlistSearchQuery}}".</p>
       </div>
     </section>
-
-    <!-- Botón de confirmación -->
-    <div class="actions" *ngIf="!loading">
-      <button class="confirm-btn" (click)="confirmSelection()" [disabled]="!selectedDeviceId">
-        Continuar a la Gramola
-      </button>
-    </div>
   </div>
 </div>
