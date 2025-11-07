@@ -1,1 +1,34 @@
-<p>Redirigiendo ...</p>
+<div class="callback-container">
+  @if (!showError) {
+    <div class="loading-section">
+      <div class="spinner-large"></div>
+      <p>Autorizando con Spotify...</p>
+      <p class="loading-hint">Por favor espera un momento</p>
+    </div>
+  }
+
+  @if (showError) {
+    <div class="error-section">
+      <div class="error-card">
+        <div class="error-icon">⚠️</div>
+        <h2 class="error-title">Error de Autorización</h2>
+        <div class="error-message" [innerHTML]="errorMessage"></div>
+        
+        <div class="error-actions">
+          @if (isInvalidClient) {
+            <button class="btn-primary" (click)="goToRegister()">
+              Registrarme de nuevo
+            </button>
+            <button class="btn-secondary" (click)="goToLogin()">
+              Iniciar Sesión
+            </button>
+          } @else {
+            <button class="btn-primary" (click)="goToLogin()">
+              Volver a Iniciar Sesión
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

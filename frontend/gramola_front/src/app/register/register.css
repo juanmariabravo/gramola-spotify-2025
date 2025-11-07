@@ -1,7 +1,6 @@
-/* Solo necesitas importar los estilos unificados */
 @import '../../styles.css';
 
-/* Opcional: Puedes añadir estilos específicos del registro aquí */
+/* Estilos específicos del registro aquí */
 /* Sección de firma */
 .signature-group {
     margin-bottom: 25px;

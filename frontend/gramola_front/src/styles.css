@@ -273,6 +273,12 @@ a {
     background-color: rgba(29, 185, 84, 0.1);
 }
 
+.label-hint {
+    color: #505050;
+    font-size: 0.9rem;
+    font-style: italic;
+    margin-left: 1px;
+}
 /* Checkbox personalizado */
 .checkbox-container {
     display: flex;

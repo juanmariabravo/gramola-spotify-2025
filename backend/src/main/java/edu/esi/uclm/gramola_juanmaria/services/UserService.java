@@ -61,7 +61,7 @@ public class UserService {
         }
         User user = optUser.get(); // Sacar el User de la caja Optional
         if (!user.isConfirmed()) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El email no ha sido confirmado");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El email no ha sido confirmado. Por favor, revisa el enlace enviado por email y activa tu cuenta.");
         }
 
         // Verificar la contraseña encriptando la entrada y comparando

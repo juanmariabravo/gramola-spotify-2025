@@ -19,7 +19,10 @@
                 <input type="password" id="clientSecret" formControlName="clientSecret" required>
             </div>
                         <div class="form-group">
-                <label for="email">Dirección de correo electrónico</label>
+                <label for="email">
+                    Dirección de correo electrónico
+                    <br><span class="label-hint">(debe ser la misma que la de tu cuenta de Spotify)</span>
+                </label>
                 <input type="email" id="email" formControlName="email" class="form-control" required>
                 @if (registerForm.controls['email'].invalid && (registerForm.controls['email'].dirty ||
                 registerForm.controls['email'].touched))
