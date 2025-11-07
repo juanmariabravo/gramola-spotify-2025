@@ -57,7 +57,7 @@ export class PlaylistAndDevices implements OnInit {
     }
     // Leer firma del usuario desde sessionStorage
     this.userSignature = sessionStorage.getItem('userSignature') || undefined;
-    this.barName = sessionStorage.getItem('barName') || undefined;
+    this.barName = sessionStorage.getItem('barName') || '';
 
     this.loadDevicesAndPlaylists();
     // suscribirse a cambios en la búsqueda con debounce
@@ -126,17 +126,21 @@ export class PlaylistAndDevices implements OnInit {
 
     this.spotiService.setCurrentDevice(deviceId).subscribe({
       next: () => {
-        this.selectedDeviceId = deviceId;
-        // actualizar lista de dispositivos para reflejar cambio
-        this.spotiService.getDevices().subscribe({
-          next: (res) => {
-            this.devices = res.devices || [];
-          },
-          error: () => {}
-        });
+      this.selectedDeviceId = deviceId;
+      // actualizar lista de dispositivos para reflejar cambio
+      this.spotiService.getDevices().subscribe({
+        next: (res) => {
+        this.devices = res.devices || [];
+        },
+        error: () => {}
+      });
       },
       error: (err) => {
+      if (err?.status === 404) {
+        this.deviceError = 'Dispositivo no encontrado. Asegúrate de que está encendido y tiene conexión.';
+      } else {
         this.deviceError = err?.message || 'Error al seleccionar dispositivo';
+      }
       }
     });
   }
@@ -227,7 +231,6 @@ export class PlaylistAndDevices implements OnInit {
     // iniciar reproducción en el dispositivo seleccionado
     this.spotiService.startPlayback(this.selectedDeviceId, playlistUri).subscribe({
       next: () => {
-        console.info('Reproducción iniciada correctamente');
         // redirigir a /music tras iniciar reproducción
         this.router.navigate(['/music']);
       },
