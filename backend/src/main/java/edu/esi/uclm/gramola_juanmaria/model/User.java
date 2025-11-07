@@ -28,6 +28,10 @@ public class User {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "creation_token_id", referencedColumnName = "id", nullable = false)
     private Token creationToken; // token de confirmación
+    
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "recovery_token_id", referencedColumnName = "id", nullable = true)
+    private Token recoveryToken; // token de recuperación de contraseña
 
     public void setEmail(String email) {
         this.email = email;
@@ -49,6 +53,12 @@ public class User {
     }
     public Token getCreationToken() {
         return this.creationToken;
+    }
+    public void setRecoveryToken(Token token) {
+        this.recoveryToken = token;
+    }
+    public Token getRecoveryToken() {
+        return this.recoveryToken;
     }
     public void setConfirmed(boolean b) {
         this.confirmed = b;

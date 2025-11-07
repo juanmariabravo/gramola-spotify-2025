@@ -5,13 +5,19 @@ import { Music } from './music/music';
 import { Callback } from './callback/callback';
 import { Payments } from './payments/payments';
 import { PlaylistAndDevices } from './playlist-and-devices/playlist-and-devices';
+import { Geolocalizacion } from './geolocalizacion/geolocalizacion';
+import { RecoverPassword } from './recover-password/recover-password';
+import { ResetPassword } from './reset-password/reset-password';
 
 export const routes: Routes = [
 	{ path: 'login', component: Login },
 	{ path: 'register', component: Register },
+	{ path: 'recover-password', component: RecoverPassword },
+	{ path: 'reset-password', component: ResetPassword },
 	{ path: 'music', component: Music },
 	{ path: 'payments', component: Payments },
 	{ path: 'callback', component: Callback },
 	{ path: 'playlist-and-devices', component: PlaylistAndDevices },
+	{ path: 'geolocalizacion', component: Geolocalizacion },
 	{ path: '', redirectTo: 'register', pathMatch: 'full' }
 ];

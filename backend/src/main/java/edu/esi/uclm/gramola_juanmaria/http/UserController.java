@@ -79,6 +79,39 @@ public class UserController {
         this.service.delete(email);
     }
 
+    @CrossOrigin(origins = {"http://localhost:4200", "http://127.0.0.1:4200"})
+    @PostMapping("/recover-password")
+    public void recoverPassword(@RequestBody Map<String, String> body) {
+        String email = body.get("email");
+        if (email == null || email.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email es requerido");
+        }
+        if (!email.contains("@") || !email.contains(".")) {
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Email inválido");
+        }
+        this.service.recoverPassword(email);
+    }
+
+    @CrossOrigin(origins = {"http://localhost:4200", "http://127.0.0.1:4200"})
+    @GetMapping("/validate-reset-token")
+    public void validateResetToken(@RequestParam String email, @RequestParam String token) {
+        this.service.validateResetToken(email, token);
+    }
+
+    @CrossOrigin(origins = {"http://localhost:4200", "http://127.0.0.1:4200"})
+    @PostMapping("/reset-password")
+    public void resetPassword(@RequestBody Map<String, String> body) {
+        String email = body.get("email");
+        String token = body.get("token");
+        String newPassword = body.get("newPassword");
+        
+        if (email == null || token == null || newPassword == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Faltan parámetros requeridos");
+        }
+        
+        this.service.resetPassword(email, token, newPassword);
+    }
+
     @GetMapping("/confirm/{email}")
     public void confirmToken(@PathVariable String email, @RequestParam String token, HttpServletResponse response) throws IOException { // @PathVariable para email porque está en el path, @RequestParam para token porque está después del ?
         // Solo validamos el token (no lo marcamos como usado ni confirmamos al usuario aún)

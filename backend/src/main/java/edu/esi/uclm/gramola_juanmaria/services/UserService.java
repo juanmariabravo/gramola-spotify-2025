@@ -161,4 +161,88 @@ public class UserService {
 
         // System.out.println("Token validado correctamente para usuario " + email + " - pendiente de pago");
     }
+
+    public void recoverPassword(String email) {
+        Optional<User> optUser = this.userDao.findById(email);
+        if (optUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "El email no está registrado");
+        }
+
+        User user = optUser.get();
+        
+        // Crear un nuevo token de recuperación
+        Token recoveryToken = new Token();
+        user.setRecoveryToken(recoveryToken);
+        this.userDao.save(user);
+
+        // Construir URL de recuperación
+        String base = "http://127.0.0.1:4200";
+        String recoveryUrl = String.format("%s/reset-password?email=%s&token=%s",
+            base,
+            URLEncoder.encode(email, StandardCharsets.UTF_8),
+            URLEncoder.encode(recoveryToken.getId(), StandardCharsets.UTF_8)
+        );
+        
+        System.out.println("=== EMAIL DE RECUPERACIÓN ===");
+        System.out.println("Para: " + email);
+        System.out.println("Asunto: Recuperación de contraseña - Gramola");
+        System.out.println("Enlace de recuperación: " + recoveryUrl);
+        System.out.println("Token válido por 30 minutos");
+        System.out.println("============================");
+        
+        // TODO: Enviar email real usando MailService
+        // mailService.sendRecoveryEmail(email, recoveryUrl);
+    }
+
+    public void validateResetToken(String email, String token) {
+        Optional<User> optUser = this.userDao.findById(email);
+        if (optUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "El email no está registrado");
+        }
+
+        User user = optUser.get();
+        Token recoveryToken = user.getRecoveryToken();
+        
+        if (recoveryToken == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe token de recuperación para este usuario");
+        }
+        
+        if (!recoveryToken.getId().equals(token)) {
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Token incorrecto");
+        }
+
+        if (recoveryToken.getCreationTime() < System.currentTimeMillis() - 30 * 60 * 1000) { // 30 minutos
+            throw new ResponseStatusException(HttpStatus.GONE, "El token ha expirado");
+        }
+
+        if (recoveryToken.isUsed()) {
+            throw new ResponseStatusException(HttpStatus.GONE, "El token ya ha sido usado");
+        }
+
+        System.out.println("Token de recuperación validado correctamente para usuario " + email);
+    }
+
+    public void resetPassword(String email, String token, String newPassword) {
+        // Primero validar el token
+        validateResetToken(email, token);
+        
+        Optional<User> optUser = this.userDao.findById(email);
+        User user = optUser.get(); // Ya validamos que existe en validateResetToken
+        
+        // Validar la nueva contraseña
+        if (newPassword == null || newPassword.length() < 8) {
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "La contraseña debe tener al menos 8 caracteres");
+        }
+        
+        // Actualizar la contraseña (setPwd encripta automáticamente)
+        user.setPwd(newPassword);
+        
+        // Marcar el token de recuperación como usado
+        user.getRecoveryToken().use();
+        
+        // Guardar cambios
+        this.userDao.save(user);
+        
+        System.out.println("Contraseña actualizada correctamente para usuario " + email);
+    }
 }
