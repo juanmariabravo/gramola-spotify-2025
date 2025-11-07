@@ -26,21 +26,22 @@
         <!-- Configuración de precio por canción -->
         <section class="section" *ngIf="!loading">
             <h3 class="section-title">1. Precio por canción</h3>
-            <p class="section-subtitle">Define cuánto cobrarás a los usuarios por añadir una canción a la cola</p>
+            <p class="section-subtitle">Define cuánto cobrarás a los usuarios por añadir una canción a la cola (también puedes
+              ofrecerlo gratis)</p>
         
             <div class="price-config-container">
                 <div class="price-slider-container">
-                    <input type="range" id="songPrice" [(ngModel)]="songPrice" [min]="minPrice" [max]="maxPrice" step="5"
+                    <input type="range" id="songPrice" [(ngModel)]="songPrice" [min]="minPrice" [max]="maxPrice" step="10"
                         class="price-slider" aria-label="Precio por canción en céntimos" />
                 </div>
         
                 <div class="price-display">
-                    <span class="price-value">{{getFormattedSongPrice()}}€</span>
-                    <span class="price-label">por canción</span>
+                    <span class="price-value">{{ songPrice === 0 ? 'GRATIS' : getFormattedSongPrice() + '€' }}</span>
+                    <span class="price-label">{{ songPrice === 0 ? 'Sin coste para los usuarios' : 'por canción' }}</span>
                 </div>
         
                 <div class="price-range-labels">
-                    <span class="range-min">{{minPrice / 100 | number:'1.2-2'}}€</span>
+                    <span class="range-min">Gratis</span>
                     <span class="range-max">{{maxPrice / 100 | number:'1.2-2'}}€</span>
                 </div>
             </div>

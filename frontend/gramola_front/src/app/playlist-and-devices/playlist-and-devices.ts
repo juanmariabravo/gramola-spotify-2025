@@ -35,7 +35,7 @@ export class PlaylistAndDevices implements OnInit {
   playlistSearchQuery: string = '';
   private searchSubject = new Subject<string>();
   songPrice: number = 50; // precio por canción en céntimos (0.50€ por defecto)
-  minPrice = 10;   // 0.10€
+  minPrice = 0;    // 0.00€ (gratis)
   maxPrice = 500;  // 5.00€
   userSignature?: string; // firma del usuario en base64
   barName?: string; // nombre del bar
@@ -202,8 +202,9 @@ export class PlaylistAndDevices implements OnInit {
       return;
     }
     // validar precio
-    if (this.songPrice < this.minPrice || this.songPrice > this.maxPrice) {
-      alert(`El precio por canción debe estar entre ${this.minPrice / 100}€ y ${this.maxPrice / 100}€`);
+    // Permitir precio 0 (gratis) o dentro del rango 10-500 céntimos
+    if (this.songPrice < 0 || this.songPrice > this.maxPrice) {
+      alert(`El precio por canción debe estar entre 0€ (gratis) y ${this.maxPrice / 100}€`);
       return;
     }
     // opcional: validar playlist (permitir continuar sin playlist)
