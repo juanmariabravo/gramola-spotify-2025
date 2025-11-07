@@ -2,6 +2,131 @@
     <header class="header">
         <h1 class="logo">Gramola <span class="esi-e">e</span><span class="esi-s">s</span><span class="esi-i">i</span><span class="spotify">potify</span></h1>
     </header>
+    <!-- Botón flotante de ayuda -->
+    <button type="button" class="help-button" (click)="toggleHelpModal()" aria-label="Ayuda para crear app de Spotify">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="24" cy="24" r="22" fill="white" />
+            <text x="24" y="34" text-anchor="middle" font-size="28" font-weight="bold">?</text>
+        </svg>
+    </button>
+    
+    <!-- Modal de ayuda -->
+    @if (showHelpModal) {
+    <div class="help-modal-overlay" (click)="closeHelpModal()">
+        <div class="help-modal-content" (click)="$event.stopPropagation()">
+    
+            <h2 class="help-modal-title">
+                <span class="help-icon">🎵</span>
+                Cómo crear tu app de Spotify
+            </h2>
+    
+            <div class="help-steps">
+                <div class="help-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Accede al Dashboard</h3>
+                        <p>Ve a <a href="https://developer.spotify.com/dashboard" target="_blank"
+                                class="help-link">developer.spotify.com/dashboard</a> e inicia sesión con tu cuenta de
+                            Spotify</p>
+                        <div class="step-sketch">
+                            <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="10" y="10" width="180" height="100" rx="8" fill="#f0f0f0" stroke="#1DB954"
+                                    stroke-width="2" />
+                                <rect x="20" y="25" width="80" height="12" rx="4" fill="#1DB954" />
+                                <circle cx="170" cy="31" r="8" fill="#1DB954" />
+                                <text x="100" y="70" text-anchor="middle" fill="#666" font-size="12">Dashboard</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="help-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Crea una nueva app</h3>
+                        <p>Haz clic en "Create app" y rellena el nombre (ej: "Mi Bar Gramola") y descripción</p>
+                        <div class="step-sketch">
+                            <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="30" y="20" width="140" height="80" rx="8" fill="#fff" stroke="#1DB954"
+                                    stroke-width="2" />
+                                <rect x="45" y="35" width="110" height="15" rx="4" fill="#e0e0e0" />
+                                <rect x="45" y="55" width="110" height="15" rx="4" fill="#e0e0e0" />
+                                <rect x="60" y="80" width="80" height="18" rx="9" fill="#1DB954" />
+                                <text x="100" y="92" text-anchor="middle" fill="#fff" font-size="10">Create</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="help-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Configura Redirect URI</h3>
+                        <p>En "Redirect URIs" añade: <code class="help-code">http://127.0.0.1:4200/callback</code></p>
+                        <div class="step-sketch">
+                            <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="20" y="30" width="160" height="25" rx="6" fill="#fff" stroke="#1DB954"
+                                    stroke-width="2" />
+                                <text x="30" y="47" fill="#666" font-size="8">http://127.0.0.1:4200/callback</text>
+                                <circle cx="170" cy="42" r="6" fill="#1DB954" />
+                                <text x="170" y="45" text-anchor="middle" fill="#fff" font-size="8">+</text>
+                                <path d="M 100 65 L 80 85 L 120 85 Z" fill="#1DB954" opacity="0.3" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="help-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Obtén tus credenciales</h3>
+                        <p>En "Settings" encontrarás tu <strong>Client ID</strong>. Haz clic en "View client secret" para
+                            obtener el <strong>Client Secret</strong></p>
+                        <div class="step-sketch">
+                            <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="20" y="25" width="160" height="30" rx="6" fill="#e8f5e9" stroke="#1DB954"
+                                    stroke-width="2" />
+                                <text x="30" y="42" fill="#333" font-size="9" font-weight="bold">Client ID</text>
+                                <text x="30" y="50" fill="#666" font-size="7">abc123def456...</text>
+                                <rect x="20" y="65" width="160" height="30" rx="6" fill="#e8f5e9" stroke="#1DB954"
+                                    stroke-width="2" />
+                                <text x="30" y="82" fill="#333" font-size="9" font-weight="bold">Client Secret</text>
+                                <rect x="30" y="86" width="100" height="6" rx="3" fill="#1DB954" />
+                                <circle cx="155" cy="82" r="8" fill="#1DB954" />
+                                <text x="155" y="85" text-anchor="middle" fill="#fff" font-size="8">👁</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="help-step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h3>Copia las credenciales aquí</h3>
+                        <p>Pega el <strong>Client ID</strong> y <strong>Client Secret</strong> en los campos de arriba.
+                            ¡Listo para comenzar! 🎉</p>
+                        <div class="step-sketch">
+                            <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M 60 30 Q 100 20 140 30" stroke="#1DB954" stroke-width="2" fill="none"
+                                    stroke-dasharray="5,5" />
+                                <circle cx="60" cy="30" r="5" fill="#1DB954" />
+                                <circle cx="140" cy="30" r="5" fill="#1DB954" />
+                                <rect x="80" y="55" width="40" height="40" rx="8" fill="#1DB954" opacity="0.2" />
+                                <text x="100" y="80" text-anchor="middle" fill="#1DB954" font-size="24">✓</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="help-footer">
+                <p class="help-note">💡 <strong>Importante:</strong> Usa el mismo correo electrónico de Spotify en el
+                    registro</p>
+            </div>
+        </div>
+    </div>
+    }
+
     <div class="card">
         <h2>Regístrate para empezar a escuchar</h2>
         <form id="registerForm" class="form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">

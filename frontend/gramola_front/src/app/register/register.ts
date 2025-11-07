@@ -20,6 +20,7 @@ export class Register implements AfterViewInit {
   private lastY = 0;
   signatureDataUrl?: string;
   hasSignature = false;
+  showHelpModal = false;
 
   barName? : string
   email? : string
@@ -177,5 +178,13 @@ export class Register implements AfterViewInit {
         this.registroExitoso = false;
       }
     );
+  }
+
+  toggleHelpModal() {
+    this.showHelpModal = !this.showHelpModal;
+  }
+
+  closeHelpModal() {
+    this.showHelpModal = false;
   }
 }
