@@ -52,6 +52,7 @@ export class Login {
         //this.spotiService.clientId = response.client_id;
         //sessionStorage.setItem('mustPay', response.mustPay);
         sessionStorage.setItem('clientId', response.client_id);
+        sessionStorage.setItem('userToken', response.user_token);
         // guardar firma del usuario si viene en la respuesta
         if (response.signature) {
           sessionStorage.setItem('userSignature', response.signature);

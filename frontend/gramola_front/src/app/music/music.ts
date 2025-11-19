@@ -234,6 +234,7 @@ export class Music implements OnInit, OnDestroy {
 
     // Redirigir a la página de pagos con el importe (y opcionalmente la URI de la pista para uso posterior)
     const params = new URLSearchParams({
+      token: sessionStorage.getItem('userToken') || '',
       amount: String(this.songPrice).padStart(4, '0'),
       trackUri: track.uri || ''
     });

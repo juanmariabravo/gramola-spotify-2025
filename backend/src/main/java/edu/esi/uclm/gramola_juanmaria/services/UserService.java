@@ -75,7 +75,8 @@ public class UserService {
         return Map.of(
             "client_id", user.getClientId() != null ? user.getClientId() : "",
             "signature", user.getSignature() != null ? user.getSignature() : "",
-            "bar_name", user.getBarName() != null ? user.getBarName() : ""
+                "bar_name", user.getBarName() != null ? user.getBarName() : "",
+                "user_token", user.getCreationToken() != null ? user.getCreationToken().getId() : ""
         );
     }
     

@@ -50,8 +50,7 @@ public class PaymentsController {
         String sentClientSecret = jso.getString("client_secret");
 
         JSONObject finalDataJson = new JSONObject(finalData);
-        // Token es opcional - solo se envía en pagos de registro, no en pagos de canciones
-        String userToken = finalDataJson.optString("token", null);
+        String userToken = finalDataJson.getString("token");
         String receivedTransactionId = finalDataJson.getString("transactionId");
         String receivedClientSecret = finalDataJson.getJSONObject("paymentIntent").getString("client_secret");
 
