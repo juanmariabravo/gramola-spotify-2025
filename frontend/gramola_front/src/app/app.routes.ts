@@ -9,6 +9,7 @@ import { Geolocalizacion } from './geolocalizacion/geolocalizacion';
 import { RecoverPassword } from './recover-password/recover-password';
 import { ResetPassword } from './reset-password/reset-password';
 import { Home } from './home/home';
+import { Account } from './account/account';
 
 export const routes: Routes = [
 	{ path: '', component: Home },
@@ -21,5 +22,6 @@ export const routes: Routes = [
 	{ path: 'callback', component: Callback },
 	{ path: 'playlist-and-devices', component: PlaylistAndDevices },
 	{ path: 'geolocalizacion', component: Geolocalizacion },
+	{ path: 'account', component: Account },
 	{ path: '', redirectTo: 'register', pathMatch: 'full' }
 ];

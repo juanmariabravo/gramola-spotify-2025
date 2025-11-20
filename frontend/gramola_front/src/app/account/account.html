@@ -1,0 +1,211 @@
+<app-navbar></app-navbar>
+
+<div class="account-container">
+  <div class="account-card">
+    <!-- Botón de volver -->
+    <button type="button" class="btn-back" (click)="goBack()" aria-label="Volver">
+      <span class="back-icon">←</span>
+      <span>Volver</span>
+    </button>
+
+    <div class="account-header">
+      <h1 class="account-title">Mi cuenta</h1>
+      <p class="account-subtitle">Gestiona tu información y preferencias</p>
+    </div>
+
+    <!-- Información del usuario (solo lectura) -->
+    <div class="user-info-section">
+      <div class="info-item">
+        <span class="info-label">Correo electrónico</span>
+        <span class="info-value">{{email}}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Client ID de Spotify</span>
+        <span class="info-value">{{clientId}}</span>
+      </div>
+      @if (currentSignature) {
+      <div class="info-item-signature">
+        <span class="info-label">Firma registrada</span>
+        <div class="signature-display">
+          <img [src]="currentSignature" alt="Firma" class="signature-img">
+        </div>
+      </div>
+      }
+    </div>
+
+    <!-- Sección: Cambiar nombre del bar -->
+    <div class="config-section">
+      <button type="button" class="btn-toggle-section" (click)="toggleBarNameSection()">
+        <span class="toggle-icon">{{showBarNameSection ? '▼' : '▶'}}</span>
+        <span>Cambiar nombre del bar</span>
+        <span class="current-value">Actual: {{barName}}</span>
+      </button>
+
+      @if (showBarNameSection) {
+      <form [formGroup]="barNameForm" (ngSubmit)="onSubmitBarName()" class="section-form">
+        <div class="form-group">
+          <label for="barName">Nuevo nombre del bar</label>
+          <input type="text" id="barName" formControlName="barName" class="form-control" placeholder="Mi Bar">
+          @if (barNameForm.get('barName')?.invalid && barNameForm.get('barName')?.touched) {
+          <div class="error-message-inline">
+            <span>El nombre del bar es obligatorio</span>
+          </div>
+          }
+        </div>
+
+        <button type="submit" class="btn btn-primary" [disabled]="barNameForm.invalid || isSubmittingBarName">
+          @if (isSubmittingBarName) {
+            <span class="spinner-small"></span>
+            <span>Guardando...</span>
+          } @else {
+            <span>Guardar nombre</span>
+          }
+        </button>
+
+        @if (barNameSuccess === true) {
+        <div class="success-message-inline">
+          <span class="success-icon">✓</span>
+          <span>Nombre actualizado correctamente</span>
+        </div>
+        }
+
+        @if (barNameSuccess === false && barNameError) {
+        <div class="error-message-inline">
+          <span class="error-icon">⚠️</span>
+          <span>{{barNameError}}</span>
+        </div>
+        }
+      </form>
+      }
+    </div>
+
+    <!-- Sección: Cambiar precio por canción -->
+    <div class="config-section">
+      <button type="button" class="btn-toggle-section" (click)="togglePriceSection()">
+        <span class="toggle-icon">{{showPriceSection ? '▼' : '▶'}}</span>
+        <span>Cambiar precio por canción</span>
+        <span class="current-value">Actual: {{getFormattedCurrentPrice()}}€</span>
+      </button>
+
+      @if (showPriceSection) {
+      <form [formGroup]="songPriceForm" (ngSubmit)="onSubmitSongPrice()" class="section-form">
+        <div class="form-group">
+          <label for="songPrice">Precio por canción</label>
+          <div class="price-config-container">
+            <div class="price-slider-container">
+              <input type="range" id="songPrice" formControlName="songPrice" 
+                     [min]="minPrice" [max]="maxPrice" step="10"
+                     class="price-slider" aria-label="Precio por canción en céntimos" />
+            </div>
+
+            <div class="price-display">
+              <span class="price-value">
+                {{ songPriceForm.value.songPrice === 0 ? 'GRATIS' : getFormattedSongPrice() + '€' }}
+              </span>
+              <span class="price-label">
+                {{ songPriceForm.value.songPrice === 0 ? 'Sin coste para los usuarios' : 'por canción' }}
+              </span>
+            </div>
+
+            <div class="price-range-labels">
+              <span class="range-min">Gratis</span>
+              <span class="range-max">{{maxPrice / 100 | number:'1.2-2'}}€</span>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" [disabled]="songPriceForm.invalid || isSubmittingPrice">
+          @if (isSubmittingPrice) {
+            <span class="spinner-small"></span>
+            <span>Guardando...</span>
+          } @else {
+            <span>Guardar precio</span>
+          }
+        </button>
+
+        @if (priceSuccess === true) {
+        <div class="success-message-inline">
+          <span class="success-icon">✓</span>
+          <span>Precio actualizado correctamente</span>
+        </div>
+        }
+
+        @if (priceSuccess === false && priceError) {
+        <div class="error-message-inline">
+          <span class="error-icon">⚠️</span>
+          <span>{{priceError}}</span>
+        </div>
+        }
+      </form>
+      }
+    </div>
+
+    <!-- Sección: Cambiar contraseña -->
+    <div class="config-section">
+      <button type="button" class="btn-toggle-section" (click)="togglePasswordSection()">
+        <span class="toggle-icon">{{showPasswordSection ? '▼' : '▶'}}</span>
+        <span>Cambiar contraseña</span>
+      </button>
+
+      @if (showPasswordSection) {
+      <form [formGroup]="passwordForm" (ngSubmit)="onSubmitPassword()" class="section-form">
+        <div class="form-group">
+          <label for="currentPassword">Contraseña actual</label>
+          <input type="password" id="currentPassword" formControlName="currentPassword" class="form-control">
+          @if (passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched) {
+          <div class="error-message-inline">
+            <span>La contraseña actual es obligatoria (mínimo 8 caracteres)</span>
+          </div>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="newPassword">Nueva contraseña</label>
+          <input type="password" id="newPassword" formControlName="newPassword" class="form-control">
+          @if (passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched) {
+          <div class="error-message-inline">
+            <span>La nueva contraseña debe tener al menos 8 caracteres</span>
+          </div>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Confirmar nueva contraseña</label>
+          <input type="password" id="confirmPassword" formControlName="confirmPassword" class="form-control">
+          @if (passwordForm.get('confirmPassword')?.touched && passwordForm.get('confirmPassword')?.value) {
+            @if (passwordForm.hasError('passwordsMismatch')) {
+            <div class="error-message-inline">
+              <span>Las contraseñas no coinciden</span>
+            </div>
+            }
+          }
+        </div>
+
+        <button type="submit" class="btn btn-secondary" [disabled]="passwordForm.invalid || isSubmittingPassword">
+          @if (isSubmittingPassword) {
+            <span class="spinner-small"></span>
+            <span>Cambiando...</span>
+          } @else {
+            <span>Cambiar contraseña</span>
+          }
+        </button>
+
+        @if (passwordSuccess === true) {
+        <div class="success-message-inline">
+          <span class="success-icon">✓</span>
+          <span>Contraseña cambiada correctamente</span>
+        </div>
+        }
+
+        @if (passwordSuccess === false && passwordError) {
+        <div class="error-message-inline">
+          <span class="error-icon">⚠️</span>
+          <span>{{passwordError}}</span>
+        </div>
+        }
+      </form>
+      }
+    </div>
+
+  </div>
+</div>
