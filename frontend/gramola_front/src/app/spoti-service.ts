@@ -44,7 +44,6 @@ export class SpotiService {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.getSpotifyToken()}`
     });
-
     let url = `${this.spotiV1Url}/me/player/devices`;
     return this.http.get<any>(url, { headers });
   }
@@ -134,5 +133,15 @@ export class SpotiService {
       'Accept': 'application/json'
     });
     return this.http.get<any>(`${this.spotiV1Url}/me/player/queue`, { headers });
+  }
+
+  // Notificar al backend que una canción se ha añadido correctamente a la cola
+  notifySongAdded(trackId: string, userToken: string): Observable<any> {
+    let url = `${this.apiUrl}/notifySongAdded`;
+    const body = { 
+      trackId: trackId,
+      userToken: userToken 
+    };
+    return this.http.post<any>(url, body);
   }
 }

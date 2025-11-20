@@ -152,7 +152,19 @@ export class Payments implements OnInit {
                 try {
                   self.spotiService.addToQueue(self.trackUri).subscribe({
                     next: (res) => {
-                      console.info('Canción añadida a la cola de Spotify:', self.trackUri, res);
+                      // Comunicar al backend que la canción se añadió correctamente
+                      if (self.trackUri && self.token) {
+                        const trackId = self.trackUri.split(':').pop() || self.trackUri;
+                        self.spotiService.notifySongAdded(trackId, self.token).subscribe({
+                          next: () => {
+                          },
+                          error: (errNotify) => {
+                            console.warn('No se pudo notificar al backend del añadido de canción:', errNotify);
+                          }
+                        });
+                      } else {
+                        console.warn('No se puede notificar al backend: falta trackId o userToken');
+                      }
                     },
                     error: (err) => {
                       console.warn('No se pudo añadir la canción tras el pago:', err);

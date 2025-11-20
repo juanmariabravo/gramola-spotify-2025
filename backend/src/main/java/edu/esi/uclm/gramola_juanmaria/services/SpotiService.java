@@ -13,7 +13,9 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.server.ResponseStatusException;
 
+import edu.esi.uclm.gramola_juanmaria.dao.AddedSongDao;
 import edu.esi.uclm.gramola_juanmaria.dao.UserDao;
+import edu.esi.uclm.gramola_juanmaria.model.AddedSong;
 import edu.esi.uclm.gramola_juanmaria.model.SpotiToken;
 import edu.esi.uclm.gramola_juanmaria.model.User;
 
@@ -22,6 +24,9 @@ public class SpotiService {
 
     @Autowired
     UserDao userDao;
+
+    @Autowired
+    AddedSongDao addedSongDao;
 
     @Autowired
     UserService userService;
@@ -68,6 +73,21 @@ public class SpotiService {
         String pairs = clientId + ":" + clientSecret;
         String encoded = Base64.getEncoder().encodeToString(pairs.getBytes(StandardCharsets.UTF_8));
         return "Basic " + encoded;
+    }
+
+    public void notifySongAdded(String trackId, String userToken) {
+        if (trackId == null || trackId.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El trackId no puede estar vacío");
+        }
+        if (userToken == null || userToken.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El userToken no puede estar vacío");
+        }
+        Optional<User> optUser = this.userDao.findByCreationTokenId(userToken);
+        if (optUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "El token de usuario no es válido");
+        }
+        User user = optUser.get();
+        this.addedSongDao.save(new AddedSong(trackId, user));
     }
 
 }

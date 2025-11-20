@@ -33,7 +33,7 @@ export class Music implements OnInit, OnDestroy {
   currentDevice: any;
   playlists : PlayList[] = [];
   queue : TrackObject[] = [];
-  tracks : TrackObject[] = [];
+  tracks : TrackObject[] = []; // resultados de búsqueda
 
   currentTrack? : TrackObject
   songPrice: number = 50; // precio por canción en céntimos (se leerá del sessionStorage)
@@ -218,6 +218,18 @@ export class Music implements OnInit, OnDestroy {
           this.clearSearch();
           this.getQueue();  // Actualizar la cola después de añadir
           
+          // Notificar al backend (si la canción es gratis también queremos registrarlo)
+          const userToken = sessionStorage.getItem('userToken') || '';
+          if (track.id && userToken) {
+            this.spotiService.notifySongAdded(track.id, userToken).subscribe({
+              next: () => {
+                //console.info('Backend notificado de canción gratis. TrackId:', track.id, 'User:', userToken);
+              },
+              error: (err) => {
+                console.warn('No se pudo notificar al backend:', err);
+              }
+            });
+          }
         },
         error: (err) => {
           this.songError = err.message || 'Error al añadir la canción a la cola';
@@ -225,12 +237,12 @@ export class Music implements OnInit, OnDestroy {
       });
     }
     else {
-    // Confirmación de pago antes de proceder
-    const priceFormatted = (this.songPrice / 100).toFixed(2);
-    const proceed = confirm(`La canción "${track.name}" cuesta ${priceFormatted}€. ¿Deseas pagar ahora?`);
-    if (!proceed) {
-      return;
-    }
+      // Confirmación de pago antes de proceder
+      const priceFormatted = (this.songPrice / 100).toFixed(2);
+      const proceed = confirm(`La canción "${track.name}" cuesta ${priceFormatted}€. ¿Deseas pagar ahora?`);
+      if (!proceed) {
+        return;
+      }
 
     // Redirigir a la página de pagos con el importe (y opcionalmente la URI de la pista para uso posterior)
     const params = new URLSearchParams({
