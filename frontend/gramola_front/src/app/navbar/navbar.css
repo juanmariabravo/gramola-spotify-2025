@@ -1,0 +1,187 @@
+/* ===== NAVBAR ===== */
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.04);
+}
+
+.navbar-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Logo */
+.navbar-logo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.navbar-logo:hover {
+  transform: translateY(-2px);
+}
+
+.logo-text {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #1f1f1f;
+  display: flex;
+  align-items: baseline;
+}
+
+.logo-text .esi-e,
+.logo-text .esi-s,
+.logo-text .esi-i {
+  color: rgb(131, 131, 255);
+  font-size: 1.3em;
+}
+
+.logo-text .spotify {
+  color: #1DB954;
+}
+
+.bar-name {
+  font-size: 0.75rem;
+  color: #666;
+  font-weight: 500;
+  margin-top: -5px;
+}
+
+/* Botones minimalistas */
+.navbar-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 980px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  background: transparent;
+  color: #1f1f1f;
+  letter-spacing: -0.2px;
+}
+
+.btn-icon {
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  opacity: 0.8;
+}
+
+.btn-text {
+  font-weight: 500;
+}
+
+/* Botón de cuenta - estilo outline minimalista */
+.account-btn {
+  color: #1f1f1f;
+}
+
+.account-btn:hover {
+  background: rgba(29, 185, 84, 0.08);
+  color: #1DB954;
+}
+
+.account-btn:hover .btn-icon {
+  opacity: 1;
+}
+
+.account-btn:active {
+  background: rgba(29, 185, 84, 0.15);
+  transform: scale(0.96);
+}
+
+/* Botón de cerrar sesión - estilo discreto */
+.logout-btn {
+  color: #86868b;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 59, 48, 0.08);
+  color: #ff3b30;
+}
+
+.logout-btn:hover .btn-icon {
+  opacity: 1;
+}
+
+.logout-btn:active {
+  background: rgba(255, 59, 48, 0.15);
+  transform: scale(0.96);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .navbar-container {
+    padding: 10px 24px;
+  }
+
+  .logo-text {
+    font-size: 1.15rem;
+  }
+
+  .bar-name {
+    font-size: 0.65rem;
+  }
+
+  .nav-btn {
+    padding: 7px 14px;
+    font-size: 0.8rem;
+  }
+
+  .btn-icon {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-container {
+    padding: 10px 16px;
+  }
+
+  .logo-text {
+    font-size: 1rem;
+  }
+
+  .bar-name {
+    display: none;
+  }
+
+  .nav-btn {
+    padding: 6px 10px;
+    gap: 4px;
+  }
+
+  .btn-text {
+    display: none;
+  }
+
+  .btn-icon {
+    font-size: 1.2rem;
+  }
+
+  .navbar-actions {
+    gap: 6px;
+  }
+}

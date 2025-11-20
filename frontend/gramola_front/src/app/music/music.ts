@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SpotiService } from '../spoti-service';
+import { Navbar } from '../navbar/navbar';
 
 
 interface TrackObject {
@@ -22,7 +23,7 @@ interface PlayList {
 @Component({
   selector: 'app-music',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, Navbar],
   templateUrl: './music.html',
   styleUrls: ['./music.css']
 })

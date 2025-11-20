@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { SpotiService } from '../spoti-service';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { Navbar } from '../navbar/navbar';
 
 interface Device {
   id: string;
@@ -22,7 +23,7 @@ interface Playlist {
 @Component({
   selector: 'app-playlist-and-devices',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, Navbar],
   templateUrl: './playlist-and-devices.html',
   styleUrls: ['./playlist-and-devices.css']
 })
