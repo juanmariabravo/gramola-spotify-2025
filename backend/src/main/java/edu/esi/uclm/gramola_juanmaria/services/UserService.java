@@ -2,7 +2,6 @@ package edu.esi.uclm.gramola_juanmaria.services;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,7 @@ public class UserService {
             user.setBarName(barName);
             user.setEmail(email);
             user.setPwd(pwd); // Encriptar la contraseña antes de guardarla
-            System.out.println("Password :" + user.getPwd());
+            //System.out.println("Password :" + user.getPwd());
             user.setClientId(client_id);
             user.setClientSecret(client_secret);
             user.setCreationToken(new Token()); // Crear un token de confirmación
@@ -41,7 +40,7 @@ public class UserService {
             // (code_profesor) return user.getCreationToken().getId();
             System.out.println("Usuario " + email + " registrado correctamente");
             // Se enviaría un email con el token de confirmación, pero de momento imprimimos aquí el link
-            String base = "http://localhost:8080";
+            String base = "http://127.0.0.1:8080";
             String confirmUrl = String.format("%s/users/confirm/%s?token=%s",
                 base,
                 URLEncoder.encode(email, StandardCharsets.UTF_8),
