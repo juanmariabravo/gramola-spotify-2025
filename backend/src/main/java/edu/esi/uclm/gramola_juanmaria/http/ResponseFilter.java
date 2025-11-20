@@ -5,14 +5,14 @@ import java.io.IOException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.server.ResponseStatusException;
 
+import edu.esi.uclm.gramola_juanmaria.model.User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import edu.esi.uclm.gramola_juanmaria.model.User;
-import org.springframework.web.server.ResponseStatusException;
 
 @Component
 public class ResponseFilter extends OncePerRequestFilter {
@@ -23,7 +23,10 @@ public class ResponseFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String resource = request.getRequestURI();
-        return resource.startsWith("/users"); // si el recurso que está pidiendo empieza con /users, no aplicar el filtro
+        //return resource.startsWith("/users"); // si el recurso que está pidiendo empieza con /users, no aplicar el filtro
+        return resource.startsWith("/");
+        // DE MOMENTO NO FILTRAR NINGUNA RUTA. Cuando funcione la autenticación con la cookie, descomentar la línea anterior.
+
     }
 
     @Override
