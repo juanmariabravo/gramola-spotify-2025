@@ -27,7 +27,7 @@ export class UserService {
   login(email: string, password: string) {
     const payload = { email, password };
     const headers = { 'Content-Type': 'application/json', 'Accept': 'application/json' };
-    return this.http.post<any>(`${this.apiUrl}/login`, payload, { headers });
+    return this.http.post<any>(`${this.apiUrl}/login`, payload, { headers, withCredentials: true });
   }
 
   recoverPassword(email: string): Observable<any> {

@@ -2,10 +2,10 @@ package edu.esi.uclm.gramola_juanmaria.http;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,8 +16,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import edu.esi.uclm.gramola_juanmaria.model.User;
 import edu.esi.uclm.gramola_juanmaria.services.UserService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("users")
@@ -27,7 +30,6 @@ public class UserController {
     private UserService service; // Spring se encarga de instanciar el objeto ya que UserService es un @Service
 
     /* register es un servicio web que recibe un JSON con email, pwd1 y pwd2, barName, client_id, client_secret y signature (firma del propietario codificada en Base64) */
-    @CrossOrigin(origins = {"http://localhost:4200", "http://127.0.0.1:4200"}) // permitir llamadas desde el frontend en Angular
     @PostMapping("/register") // podríamos especificar: (value="/register", consumes="application/json")
     public void register(@RequestBody Map<String, String> body) {
         String barName = body.get("barName");
@@ -57,9 +59,8 @@ public class UserController {
     }
 
     /* login es un servicio web que recibe un JSON con email y pwd */
-    @CrossOrigin(origins = {"http://localhost:4200", "http://127.0.0.1:4200"}) // permitir llamadas desde el frontend en Angular
     @PostMapping("/login")
-    public Map<String, String> login(@RequestBody Map<String, String> body) {
+    public Map<String, String> login(HttpServletResponse response, HttpSession session, @RequestBody Map<String, String> body) {
         String email = body.get("email");
         String pwd = body.get("password");
         if (email == null || pwd == null) {
@@ -70,8 +71,22 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Email inválido");
         }
 
+        // Cookie 
+        Cookie gramolaCookie;
+        gramolaCookie = new Cookie("gramola_session", UUID.randomUUID().toString());
+        gramolaCookie.setPath("/");
+        gramolaCookie.setHttpOnly(true);
+        response.addCookie(gramolaCookie);
+
         // Devuelve Map con client_id y signature
-        return this.service.login(email, pwd);
+        User user = service.login(email, pwd);
+        session.setAttribute("user", user);
+        return Map.of(
+                "client_id", user.getClientId() != null ? user.getClientId() : "",
+                "signature", user.getSignature() != null ? user.getSignature() : "",
+                "bar_name", user.getBarName() != null ? user.getBarName() : "",
+                "user_token", user.getCreationToken() != null ? user.getCreationToken().getId() : ""
+        );
     }
 
     @DeleteMapping("/delete")
@@ -79,7 +94,6 @@ public class UserController {
         this.service.delete(email);
     }
 
-    @CrossOrigin(origins = {"http://localhost:4200", "http://127.0.0.1:4200"})
     @PostMapping("/recover-password")
     public void recoverPassword(@RequestBody Map<String, String> body) {
         String email = body.get("email");
@@ -92,23 +106,21 @@ public class UserController {
         this.service.recoverPassword(email);
     }
 
-    @CrossOrigin(origins = {"http://localhost:4200", "http://127.0.0.1:4200"})
     @GetMapping("/validate-reset-token")
     public void validateResetToken(@RequestParam String email, @RequestParam String token) {
         this.service.validateResetToken(email, token);
     }
 
-    @CrossOrigin(origins = {"http://localhost:4200", "http://127.0.0.1:4200"})
     @PostMapping("/reset-password")
     public void resetPassword(@RequestBody Map<String, String> body) {
         String email = body.get("email");
         String token = body.get("token");
         String newPassword = body.get("newPassword");
-        
+
         if (email == null || token == null || newPassword == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Faltan parámetros requeridos");
         }
-        
+
         this.service.resetPassword(email, token, newPassword);
     }
 

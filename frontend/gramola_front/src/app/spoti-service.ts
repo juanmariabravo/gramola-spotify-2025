@@ -20,7 +20,7 @@ export class SpotiService {
 
   getAuthorizationToken(code : string) : Observable<any> {
       let url = `${this.apiUrl}/getAuthorizationToken?code=${code}&clientId=${sessionStorage.getItem("clientId")}`;
-      return this.http.get(url);
+      return this.http.get(url, { withCredentials: true });
   }
 
   getSpotifyToken(): string | null {
@@ -80,6 +80,7 @@ export class SpotiService {
 
     return this.http.get<any>(`${this.spotiV1Url}/me/playlists`, { headers });
   }
+  
   getCurrentPlayList() : Observable<any> {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.getSpotifyToken()}`
@@ -142,6 +143,6 @@ export class SpotiService {
       trackId: trackId,
       userToken: userToken 
     };
-    return this.http.post<any>(url, body);
+    return this.http.post<any>(url, body, { withCredentials: true });
   }
 }

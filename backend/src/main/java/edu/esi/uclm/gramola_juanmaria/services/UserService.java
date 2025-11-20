@@ -54,7 +54,7 @@ public class UserService {
         }
     }
 
-    public Map<String, String> login(String email, String pwd) {
+    public User login(String email, String pwd) {
         Optional<User> optUser = this.userDao.findById(email); // Optional<User> es una caja que puede contener un User o no. Hasta que no mires dentro, no sabes si está o no.
         if (optUser.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "El email no está registrado");
@@ -71,13 +71,8 @@ public class UserService {
         }
 
         System.out.println("Usuario " + email + " ha hecho login correctamente");
-        // Devolver clientId y signature (pueden ser null si no existen)
-        return Map.of(
-            "client_id", user.getClientId() != null ? user.getClientId() : "",
-            "signature", user.getSignature() != null ? user.getSignature() : "",
-                "bar_name", user.getBarName() != null ? user.getBarName() : "",
-                "user_token", user.getCreationToken() != null ? user.getCreationToken().getId() : ""
-        );
+
+        return user;
     }
     
     public void delete(String email) {
