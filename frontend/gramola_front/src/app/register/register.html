@@ -182,12 +182,19 @@
             <div class="form-group">
                 <label for="pwd2">Repetir contraseña</label>
                 <input type="password" id="pwd2" formControlName="pwd2" name="pwd2" required>
-                @if (registerForm.controls['pwd2'].invalid && (registerForm.controls['pwd2'].dirty ||
-                registerForm.controls['pwd2'].touched)) {
+                @if (registerForm.get('pwd2')?.invalid && (registerForm.get('pwd2')?.dirty || registerForm.get('pwd2')?.touched)) {
                 <div class="error-message">
-                    @if (registerForm.controls['pwd2'].value !== registerForm.controls['pwd1'].value) {
-                    <span>Las contraseñas no coinciden.</span>
+                    @if (registerForm.get('pwd2')?.errors?.['required']) {
+                    <span>Debes repetir la contraseña.</span>
                     }
+                    @if (registerForm.get('pwd2')?.errors?.['minlength']) {
+                    <span>La contraseña debe tener al menos 8 caracteres.</span>
+                    }
+                </div>
+                }
+                @if (registerForm.hasError('passwordsMismatch') && registerForm.get('pwd2')?.touched && registerForm.get('pwd2')?.value) {
+                <div class="error-message">
+                    <span>Las contraseñas no coinciden.</span>
                 </div>
                 }
             </div>
@@ -199,25 +206,50 @@
                 <div class="signature-container">
                     <canvas #signatureCanvas class="signature-canvas"></canvas>
                 </div>
+                @if (!hasSignature && errorMessage?.includes('firma')) {
+                <div class="error-message">
+                    <span>{{errorMessage}}</span>
+                </div>
+                }
                 <button type="button" class="btn-clear-signature" (click)="clearSignature()">
                     Limpiar firma
                 </button>
             </div>
             
-            <button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid">Registrar</button>
+            <button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid || isSubmitting || !hasSignature">
+                @if (isSubmitting) {
+                    <span class="spinner-small"></span>
+                    <span>Registrando...</span>
+                } @else {
+                    <span>Registrar</span>
+                }
+            </button>
+            
+            <!-- Mensajes de feedback -->
             @if (registroExitoso === true) {
             <div class="success-message">
-                Se ha registrado exitosamente. Por favor, activa tu cuenta y paga el servicio a través del enlace enviado a tu correo
-                electrónico. Después, puedes <a href="/login" class="link">iniciar sesión aquí</a>.
-            </div>
-            } @if (registroExitoso === false) {
-            <div class="error-message">
-                Error en el registro. Revisa los datos e inténtalo de nuevo.
+                <span class="success-icon">✓</span>
+                <div class="message-content">
+                    <strong>¡Registro exitoso!</strong>
+                    <p>Se ha registrado exitosamente. Por favor, activa tu cuenta y paga el servicio a través del enlace enviado a tu correo electrónico.</p>
+                    <p>Después, puedes <a href="/login" class="link-success">iniciar sesión aquí</a>.</p>
+                </div>
             </div>
             }
+            
+            @if (registroExitoso === false && errorMessage) {
+            <div class="error-message">
+                <span class="error-icon">⚠️</span>
+                <div class="message-content">
+                    <strong>Error en el registro</strong>
+                    <p>{{errorMessage}}</p>
+                </div>
+            </div>
+            }
+
             <div class="login-link">
                 <p>¿Ya tienes una cuenta? <a href="/login" class="link">Iniciar sesión</a></p>
-                </div>
-                </form>
-                </div>
-                </div>
+            </div>
+        </form>
+    </div>
+</div>

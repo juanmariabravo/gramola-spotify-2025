@@ -1,6 +1,6 @@
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { UserService } from '../user-service';
 import { Router } from '@angular/router';
 
@@ -30,16 +30,36 @@ export class Register implements AfterViewInit {
   clientSecret? : string
   
   registroExitoso? : boolean
+  errorMessage?: string;
+  isSubmitting = false;
 
   constructor(private fb: FormBuilder, private service : UserService, private router: Router) {
     this.registerForm = this.fb.group({
-      barName: [''],
+      barName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       pwd1: ['', [Validators.required, Validators.minLength(8)]],
-      pwd2: ['', [Validators.required, Validators.minLength(8)]],
-      clientId: [''],
-      clientSecret: ['']
+      pwd2: ['', [Validators.required]],
+      clientId: ['', Validators.required],
+      clientSecret: ['', Validators.required]
+    }, {
+      validators: this.passwordsMatchValidator
     });
+  }
+
+  // Validador personalizado para verificar que las contraseñas coincidan
+  passwordsMatchValidator(control: AbstractControl): ValidationErrors | null {
+    const pwd1 = control.get('pwd1');
+    const pwd2 = control.get('pwd2');
+
+    if (!pwd1 || !pwd2) {
+      return null;
+    }
+
+    if (pwd2.value === '') {
+      return null;
+    }
+
+    return pwd1.value === pwd2.value ? null : { passwordsMismatch: true };
   }
 
   ngAfterViewInit() {
@@ -130,7 +150,10 @@ export class Register implements AfterViewInit {
 
   clearSignature() {
     const canvas = this.signatureCanvas.nativeElement;
-    this.ctx?.fillRect(0, 0, canvas.width, canvas.height);
+    if (this.ctx) {
+      this.ctx.fillStyle = '#fff';
+      this.ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
     this.hasSignature = false;
     this.signatureDataUrl = undefined;
   }
@@ -145,19 +168,34 @@ export class Register implements AfterViewInit {
   }
 
   onSubmit() {
-    if (this.registerForm.invalid) {
-      this.registerForm.markAllAsTouched();
+    // Reset estados
+    this.registroExitoso = undefined;
+    this.errorMessage = undefined;
+
+    // Validar firma
+    if (!this.hasSignature) {
+      this.errorMessage = 'Por favor firma en el recuadro antes de registrarte';
       return;
     }
 
-    // Validar que haya firma
-    if (!this.hasSignature) {
-      alert('Por favor firma en el recuadro antes de registrarte');
+    if (this.registerForm.invalid) {
+      this.registerForm.markAllAsTouched();
+      
+      // Mensaje específico según el error
+      if (this.registerForm.hasError('passwordsMismatch')) {
+        this.errorMessage = 'Las contraseñas no coinciden';
+      } else {
+        this.errorMessage = 'Por favor completa todos los campos correctamente';
+      }
       return;
     }
 
     // Capturar firma
     const signature = this.captureSignature();
+    if (!signature) {
+      this.errorMessage = 'Error al capturar la firma. Por favor intenta de nuevo';
+      return;
+    }
 
     this.barName = this.registerForm.value.barName;
     this.email = this.registerForm.value.email;
@@ -166,18 +204,52 @@ export class Register implements AfterViewInit {
     this.clientId = this.registerForm.value.clientId;
     this.clientSecret = this.registerForm.value.clientSecret;
 
-    this.service.register(this.barName!, this.email!, this.pwd1!, this.pwd2!, this.clientId!, this.clientSecret!, signature!).subscribe(
-      ok => {
-        console.log('Registro exitoso', ok);
+    this.isSubmitting = true;
+
+    this.service.register(this.barName!, this.email!, this.pwd1!, this.pwd2!, this.clientId!, this.clientSecret!, signature).subscribe({
+      next: (response) => {
+        console.log('Registro exitoso', response);
+        this.isSubmitting = false;
         this.registroExitoso = true;
+        this.errorMessage = undefined;
         this.registerForm.reset();
         this.clearSignature();
       },
-      error => {
+      error: (error) => {
         console.error('Error en el registro', error);
+        this.isSubmitting = false;
         this.registroExitoso = false;
+        
+        // Extraer mensaje de error específico del backend
+        const status = error.status;
+        const message = error.error?.message || error.message || '';
+        
+        if (status === 400) {
+          // Bad Request - Faltan parámetros
+          this.errorMessage = 'Faltan parámetros obligatorios. Por favor completa todos los campos.';
+        } else if (status === 406) {
+          // Not Acceptable - Validaciones específicas
+          if (message.includes('contraseñas no coinciden')) {
+            this.errorMessage = 'Las contraseñas no coinciden. Por favor verifica e intenta de nuevo.';
+          } else if (message.includes('al menos 8 caracteres')) {
+            this.errorMessage = 'La contraseña debe tener al menos 8 caracteres.';
+          } else if (message.includes('Email inválido')) {
+            this.errorMessage = 'El formato del correo electrónico no es válido. Debe contener "@" y un dominio válido.';
+          } else {
+            this.errorMessage = message;
+          }
+        } else if (status === 409) {
+          // Conflict - Email ya registrado
+          this.errorMessage = 'El correo electrónico ya está registrado. Intenta iniciar sesión o usa otro correo.';
+        } else if (status === 500) {
+          this.errorMessage = 'Error del servidor. Por favor intenta de nuevo más tarde.';
+        } else if (status === 0) {
+          this.errorMessage = 'No se puede conectar con el servidor. Verifica tu conexión a internet.';
+        } else {
+          this.errorMessage = message || 'Error desconocido en el registro. Por favor intenta de nuevo.';
+        }
       }
-    );
+    });
   }
 
   toggleHelpModal() {
@@ -186,5 +258,12 @@ export class Register implements AfterViewInit {
 
   closeHelpModal() {
     this.showHelpModal = false;
+  }
+
+  // Método helper para verificar si las contraseñas coinciden (para el template)
+  get passwordsMatch(): boolean {
+    const pwd1 = this.registerForm.get('pwd1')?.value;
+    const pwd2 = this.registerForm.get('pwd2')?.value;
+    return pwd1 === pwd2;
   }
 }
