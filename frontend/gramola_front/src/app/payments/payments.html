@@ -1,5 +1,11 @@
 <div class="payment-container">
 <div class="payment-card">
+    <!-- Botón de volver -->
+    <button type="button" class="btn-back" (click)="goBack()" aria-label="Volver">
+        <span class="material-icons back-icon">arrow_back</span>
+        <span>Volver</span>
+    </button>
+
     <!-- Header dinámico según tipo de pago -->
     <div class="payment-header">
     <div class="payment-icon"><span class="material-icons">{{paymentIcon}}</span></div>

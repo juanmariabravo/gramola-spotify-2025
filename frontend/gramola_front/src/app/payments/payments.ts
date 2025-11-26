@@ -255,4 +255,23 @@ export class Payments implements OnInit {
       document.head.appendChild(style);
     }
   }
+
+  goBack() {
+    // Cancelar el pago y volver a la página anterior
+    const confirmCancel = confirm('¿Estás seguro de que deseas cancelar el pago?');
+    if (confirmCancel) {
+      // Intentar volver a la página anterior, o a /music si no hay historial
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        // Si es pago de suscripción, ir a login
+        if (this.isSubscription) {
+          this.router.navigate(['/login']);
+        } else {
+          // Si es pago de canción, ir a music
+          this.router.navigate(['/music']);
+        }
+      }
+    }
+  }
 }
