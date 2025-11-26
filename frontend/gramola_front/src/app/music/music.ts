@@ -37,7 +37,7 @@ export class Music implements OnInit, OnDestroy {
   tracks : TrackObject[] = []; // resultados de búsqueda
 
   currentTrack? : TrackObject
-  songPrice: number = 50; // precio por canción en céntimos (se leerá del sessionStorage)
+  songPrice: number = 50; // precio por canción en céntimos (se leerá de la base de datos desde el backend)
 
   private queuePollIntervalId?: any; // para cola en tiempo real
   private currentPlaylistPollIntervalId?: any; // para actualización periódica de la reproducción actual
@@ -64,11 +64,13 @@ export class Music implements OnInit, OnDestroy {
     this.userService.getCurrentUser().subscribe({
       next: (result) => {
         this.barName = result.barName;
+        this.songPrice = result.songPrice; // leer precio por canción desde el backend
       },
       error: (err) => {
         console.error('Error al obtener el usuario actual:', err);
       }
     });
+    
     
     this.getDevices()
     this.getPlaylists()
