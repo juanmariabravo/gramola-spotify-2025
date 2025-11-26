@@ -94,6 +94,14 @@ public class UserService {
         return optUser.get();
     }
 
+    public User getUserByEmail(String email) {
+        Optional<User> optUser = this.userDao.findById(email);
+        if (optUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "El email no está registrado");
+        }
+        return optUser.get();
+    }
+
     public void confirmToken(String email, String token) {
 
         Optional<User> optUser = this.userDao.findById(email);
@@ -238,6 +246,42 @@ public class UserService {
         // Guardar cambios
         this.userDao.save(user);
         
+        System.out.println("Contraseña actualizada correctamente para usuario " + email);
+    }
+
+    public void updateBarName(String email, String barName) {
+        Optional<User> optUser = this.userDao.findById(email);
+        if (optUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "El email no está registrado");
+        }
+        User user = optUser.get();
+        user.setBarName(barName);
+        this.userDao.save(user);
+        System.out.println("Nombre del bar actualizado correctamente para usuario " + email);
+    }
+
+    public void updateSongPrice(String email, String songPrice) {
+        Optional<User> optUser = this.userDao.findById(email);
+        if (optUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "El email no está registrado");
+        }
+        User user = optUser.get();
+        user.setSongPrice(songPrice);
+        this.userDao.save(user);
+        System.out.println("Precio de la canción actualizado correctamente para usuario " + email);
+    }
+
+    public void changePassword(String email, String currentPassword, String newPassword) {
+        Optional<User> optUser = this.userDao.findById(email);
+        if (optUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "El email no está registrado");
+        }
+        User user = optUser.get();
+        if (!user.getPwd().equals(PasswordEncryptor.encrypt(currentPassword))) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Contraseña incorrecta");
+        }
+        user.setPwd(newPassword);
+        this.userDao.save(user);
         System.out.println("Contraseña actualizada correctamente para usuario " + email);
     }
 }

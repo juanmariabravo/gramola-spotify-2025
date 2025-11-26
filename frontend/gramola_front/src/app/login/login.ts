@@ -55,10 +55,8 @@ export class Login {
         sessionStorage.setItem('userToken', response.user_token);
         // guardar firma del usuario si viene en la respuesta
         if (response.signature) {
-          sessionStorage.setItem('userSignature', response.signature);
           this.userSignature = response.signature;
         }
-        sessionStorage.setItem('barName', response.bar_name);
 
         this.getToken(); // redirigir a Spotify para autorización
       },

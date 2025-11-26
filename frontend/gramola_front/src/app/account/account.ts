@@ -76,19 +76,30 @@ export class Account implements OnInit {
   }
 
   loadUserData() {
-    this.barName = sessionStorage.getItem('barName') || '';
-    // TODO: Los datos del usuario deben recuperarse del backend
-    this.clientId = sessionStorage.getItem('clientId') || '';
-    this.currentSignature = sessionStorage.getItem('userSignature') || undefined;
-    this.currentSongPrice = Number(sessionStorage.getItem('songPrice') || '50');
+    this.userService.getCurrentUser().subscribe({
+      next: (userData) => {
+        this.email = userData.email;
+        this.barName = userData.barName || '';
+        this.clientId = userData.clientId || '';
+        this.currentSignature = userData.signature || undefined;
+        this.currentSongPrice = Number(userData.songPrice || '50');
 
-    // Prellenar formularios
-    this.barNameForm.patchValue({
-      barName: this.barName
-    });
+        // Prellenar formularios
+        this.barNameForm.patchValue({
+          barName: this.barName
+        });
 
-    this.songPriceForm.patchValue({
-      songPrice: this.currentSongPrice
+        this.songPriceForm.patchValue({
+          songPrice: this.currentSongPrice
+        });
+      },
+      error: (error) => {
+        console.error('Error al cargar datos del usuario:', error);
+        if (error.status === 401) {
+          // Sesión expirada, redirigir al login
+          this.router.navigate(['/login']);
+        }
+      }
     });
   }
 
@@ -153,13 +164,12 @@ export class Account implements OnInit {
 
     this.isSubmittingBarName = true;
 
-    this.userService.updateBarName(this.email, newBarName).subscribe({
+    this.userService.updateBarName(newBarName).subscribe({
       next: (response) => {
         this.isSubmittingBarName = false;
         this.barNameSuccess = true;
         
-        // Actualizar sessionStorage y variable local
-        sessionStorage.setItem('barName', newBarName);
+        // Actualizar variable local
         this.barName = newBarName;
         
         setTimeout(() => {
@@ -209,13 +219,12 @@ export class Account implements OnInit {
 
     this.isSubmittingPrice = true;
 
-    this.userService.updateSongPrice(this.email, newPrice).subscribe({
+    this.userService.updateSongPrice(newPrice).subscribe({
       next: (response) => {
         this.isSubmittingPrice = false;
         this.priceSuccess = true;
         
-        // Actualizar sessionStorage y variable local
-        sessionStorage.setItem('songPrice', String(newPrice));
+        // Actualizar variable local
         this.currentSongPrice = newPrice;
         
         setTimeout(() => {
@@ -263,7 +272,7 @@ export class Account implements OnInit {
       newPassword: this.passwordForm.value.newPassword
     };
 
-    this.userService.changePassword(this.email, passwordData).subscribe({
+    this.userService.changePassword(passwordData).subscribe({
       next: (response) => {
         this.isSubmittingPassword = false;
         this.passwordSuccess = true;

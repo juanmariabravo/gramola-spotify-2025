@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -83,8 +84,6 @@ public class UserController {
         session.setAttribute("user", user);
         return Map.of(
                 "client_id", user.getClientId() != null ? user.getClientId() : "",
-                "signature", user.getSignature() != null ? user.getSignature() : "",
-                "bar_name", user.getBarName() != null ? user.getBarName() : "",
                 "user_token", user.getCreationToken() != null ? user.getCreationToken().getId() : ""
         );
     }
@@ -111,6 +110,21 @@ public class UserController {
         this.service.validateResetToken(email, token);
     }
 
+    @GetMapping("/me")
+    public Map<String, Object> getCurrentUser(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No hay sesión activa");
+        }
+
+        return Map.of(
+                "email", user.getEmail(),
+                "barName", user.getBarName() != null ? user.getBarName() : "",
+                "clientId", user.getClientId() != null ? user.getClientId() : "",
+                "signature", user.getSignature() != null ? user.getSignature() : "",
+                "songPrice", user.getSongPrice() != null ? user.getSongPrice() : "50");
+    }
+
     @PostMapping("/reset-password")
     public void resetPassword(@RequestBody Map<String, String> body) {
         String email = body.get("email");
@@ -130,5 +144,51 @@ public class UserController {
         this.service.validateToken(email, token);
         // Redirigir a la página de pago - la confirmación real ocurrirá después del pago exitoso
         response.sendRedirect("http://127.0.0.1:4200/payments?token=" + token + "&amount=1000");
+    }
+
+    @PutMapping("/update-barname")
+    public void updateBarName(HttpSession session, @RequestBody Map<String, String> body) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No hay sesión activa");
+        }
+
+        String barName = body.get("barName");
+        this.service.updateBarName(user.getEmail(), barName);
+
+        // Actualizar el usuario en la sesión con los datos más recientes
+        User updatedUser = this.service.getUserByEmail(user.getEmail());
+        session.setAttribute("user", updatedUser);
+    }
+
+    @PutMapping("/update-songprice")
+    public void updateSongPrice(HttpSession session, @RequestBody Map<String, String> body) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No hay sesión activa");
+        }
+
+        String songPrice = body.get("songPrice");
+        this.service.updateSongPrice(user.getEmail(), songPrice);
+
+        // Actualizar el usuario en la sesión con los datos más recientes
+        User updatedUser = this.service.getUserByEmail(user.getEmail());
+        session.setAttribute("user", updatedUser);
+    }
+
+    @PutMapping("/change-password")
+    public void changePassword(HttpSession session, @RequestBody Map<String, String> body) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No hay sesión activa");
+        }
+
+        String currentPassword = body.get("currentPassword");
+        String newPassword = body.get("newPassword");
+        this.service.changePassword(user.getEmail(), currentPassword, newPassword);
+
+        // Actualizar el usuario en la sesión con los datos más recientes
+        User updatedUser = this.service.getUserByEmail(user.getEmail());
+        session.setAttribute("user", updatedUser);
     }
 }

@@ -56,4 +56,29 @@ export class UserService {
       responseType: 'text'
     });
   }
+
+  getCurrentUser(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/me`, { withCredentials: true });
+  }
+
+  updateBarName(barName: string): Observable<any> {
+    const url = `${this.apiUrl}/update-barname`;
+    const body = { barName };
+    return this.http.put(url, body, { withCredentials: true });
+  }
+
+  updateSongPrice(songPrice: number): Observable<any> {
+    const url = `${this.apiUrl}/update-songprice`;
+    const body = { songPrice };
+    return this.http.put(url, body, { withCredentials: true });
+  }
+
+  changePassword(data: any): Observable<any> {
+    const url = `${this.apiUrl}/change-password`;
+    const body = {
+      currentPassword: data.currentPassword,
+      newPassword: data.newPassword
+    };
+    return this.http.put(url, body, { withCredentials: true });
+  }
 }
