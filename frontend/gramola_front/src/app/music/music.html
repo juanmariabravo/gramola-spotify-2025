@@ -6,7 +6,7 @@
         <div class="current-playing">
             <h1 class="bar-name">Gramola de {{barName}}</h1>
             <div *ngIf="currentTrack">
-                <div class="now-playing-indicator">▶️ REPRODUCIENDO AHORA</div>
+                <div class="now-playing-indicator">▶ REPRODUCIENDO AHORA</div>
                 <div class="current-track-info">
                     <img [src]="currentTrack.album?.images?.[2]?.url || 'assets/default-album.png'" [alt]="currentTrack.album?.name"
                         class="current-album-cover">

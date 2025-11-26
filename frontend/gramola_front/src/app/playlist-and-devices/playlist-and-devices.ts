@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SpotiService } from '../spoti-service';
+import { UserService } from '../user-service';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { Navbar } from '../navbar/navbar';
@@ -46,7 +47,7 @@ export class PlaylistAndDevices implements OnInit {
   playlistError?: string;
   loading = true;
 
-  constructor(private spotiService: SpotiService, private router: Router) {}
+  constructor(private spotiService: SpotiService, private userService: UserService, private router: Router) { }
 
   ngOnInit(): void {
     // lo primero, si no hay accessToken, redirigir a login
@@ -56,9 +57,20 @@ export class PlaylistAndDevices implements OnInit {
       window.location.href = '/login';
       return;
     }
-    // Leer firma del usuario desde sessionStorage
-    this.userSignature = sessionStorage.getItem('userSignature') || undefined;
-    this.barName = sessionStorage.getItem('barName') || '';
+
+    // Cargar el precio actual del usuario desde la BD
+    this.userService.getCurrentUser().subscribe({
+      next: (userData) => {
+        this.songPrice = Number(userData.songPrice || '50');
+        this.barName = userData.barName;
+        this.userSignature = userData.signature;
+      },
+      error: (err) => {
+        console.error('Error al cargar datos del usuario:', err);
+        // Usar valor por defecto si falla
+        this.songPrice = 50;
+      }
+    });
 
     this.loadDevicesAndPlaylists();
     // suscribirse a cambios en la búsqueda con debounce
@@ -218,19 +230,34 @@ export class PlaylistAndDevices implements OnInit {
       if (!proceed) return;
     }
 
+    // Primero guardar el precio en la base de datos
+    this.userService.updateSongPrice(this.songPrice).subscribe({
+      next: () => {
+        // Precio guardado exitosamente, continuar con la configuración
+        this.proceedWithPlayback();
+      },
+      error: (err) => {
+        console.error('Error al guardar el precio:', err);
+        const proceed = confirm('No se pudo guardar el precio en la base de datos. ¿Deseas continuar de todas formas?');
+        if (proceed) {
+          this.proceedWithPlayback();
+        }
+      }
+    });
+  }
+
+  private proceedWithPlayback() {
     // guardar selección en sessionStorage
-    sessionStorage.setItem('defaultDeviceId', this.selectedDeviceId);
+    sessionStorage.setItem('defaultDeviceId', this.selectedDeviceId!);
     if (this.selectedPlaylistId) {
       sessionStorage.setItem('defaultPlaylistId', this.selectedPlaylistId);
     }
-    // guardar precio por canción en sessionStorage
-    sessionStorage.setItem('songPrice', String(this.songPrice));
 
     // construir playlistUri si se seleccionó una playlist (formato: spotify:playlist:ID)
     const playlistUri = this.selectedPlaylistId ? `spotify:playlist:${this.selectedPlaylistId}` : undefined;
 
     // iniciar reproducción en el dispositivo seleccionado
-    this.spotiService.startPlayback(this.selectedDeviceId, playlistUri).subscribe({
+    this.spotiService.startPlayback(this.selectedDeviceId!, playlistUri).subscribe({
       next: () => {
         // redirigir a /music tras iniciar reproducción
         this.router.navigate(['/music']);

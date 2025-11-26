@@ -15,12 +15,16 @@ export class Navbar implements OnInit {
   constructor(private router: Router) {}
 
   ngOnInit(): void {
-    this.barName = sessionStorage.getItem('barName') || 'Mi Gramola';
   }
 
   navigateToAccount() {
     // Redirigir a página de cuenta (por implementar)
     this.router.navigate(['/account']);
+  }
+
+  navigateToMusic() {
+    // Redirigir a página de música (por implementar)
+    this.router.navigate(['/music']);
   }
 
   logout() {

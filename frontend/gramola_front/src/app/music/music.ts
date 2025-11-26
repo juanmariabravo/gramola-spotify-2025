@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SpotiService } from '../spoti-service';
 import { Navbar } from '../navbar/navbar';
-
+import { UserService } from '../user-service';
 
 interface TrackObject {
   id?: string;
@@ -49,7 +49,7 @@ export class Music implements OnInit, OnDestroy {
   barName: string = 'Mi Bar';
   searchQuery: string = '';
 
-  constructor(private spotiService : SpotiService) {}
+  constructor(private spotiService: SpotiService, private userService: UserService) { }
 
   ngOnInit(): void {
 
@@ -60,8 +60,15 @@ export class Music implements OnInit, OnDestroy {
       window.location.href = '/login';
       return;
     }
-    // Leer nombre del bar desde sessionStorage
-    this.barName = sessionStorage.getItem('barName') || 'Mi Bar';
+    // Leer nombre del bar llamando a userservice.getCurrentUser()
+    this.userService.getCurrentUser().subscribe({
+      next: (result) => {
+        this.barName = result.barName;
+      },
+      error: (err) => {
+        console.error('Error al obtener el usuario actual:', err);
+      }
+    });
     
     this.getDevices()
     this.getPlaylists()
