@@ -2,7 +2,7 @@
 <div class="payment-card">
     <!-- Header dinámico según tipo de pago -->
     <div class="payment-header">
-    <div class="payment-icon">{{paymentIcon}}</div>
+    <div class="payment-icon"><span class="material-icons">{{paymentIcon}}</span></div>
     <h1 class="payment-title">{{paymentTitle}}</h1>
     <p class="payment-description">{{paymentDescription}}</p>
     </div>
@@ -47,8 +47,8 @@
         </button>
 
     <div class="security-badges">
-        <span class="security-badge">🔒 Pago seguro</span>
-        <span class="security-badge">✓ Encriptado SSL</span>
+        <span class="security-badge"><span class="material-icons">lock</span> Pago seguro</span>
+        <span class="security-badge"><span class="material-icons">check_circle</span> Encriptado SSL</span>
     </div>
     
     <p class="result-message hidden">

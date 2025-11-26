@@ -164,13 +164,13 @@ export class PlaylistAndDevices implements OnInit {
 
   getDeviceIcon(type: string): string {
     const icons: { [key: string]: string } = {
-      computer: '💻',
-      smartphone: '📱',
-      tablet: '📟',
-      speaker: '🔊',
-      tv: '📺'
+      computer: 'computer',
+      smartphone: 'smartphone',
+      tablet: 'tablet',
+      speaker: 'speaker',
+      tv: 'tv'
     };
-    return icons[type.toLowerCase()] || '📱';
+    return icons[type.toLowerCase()] || 'devices';
   }
 
   // Filtrar playlists según la búsqueda

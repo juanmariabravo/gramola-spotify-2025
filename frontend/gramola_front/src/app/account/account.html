@@ -4,7 +4,7 @@
   <div class="account-card">
     <!-- Botón de volver -->
     <button type="button" class="btn-back" (click)="goBack()" aria-label="Volver">
-      <span class="back-icon">←</span>
+      <span class="back-icon material-icons">arrow_back</span>
       <span>Volver</span>
     </button>
 
@@ -36,7 +36,7 @@
     <!-- Sección: Cambiar nombre del bar -->
     <div class="config-section">
       <button type="button" class="btn-toggle-section" (click)="toggleBarNameSection()">
-        <span class="toggle-icon">{{showBarNameSection ? '▼' : '▶'}}</span>
+        <span class="toggle-icon material-icons">{{showBarNameSection ? 'expand_more' : 'chevron_right'}}</span>
         <span>Cambiar nombre del bar</span>
         <span class="current-value">Actual: {{barName}}</span>
       </button>
@@ -64,14 +64,14 @@
 
         @if (barNameSuccess === true) {
         <div class="success-message-inline">
-          <span class="success-icon">✓</span>
+          <span class="success-icon material-icons">check_circle</span>
           <span>Nombre actualizado correctamente</span>
         </div>
         }
 
         @if (barNameSuccess === false && barNameError) {
         <div class="error-message-inline">
-          <span class="error-icon">⚠️</span>
+          <span class="error-icon material-icons">warning</span>
           <span>{{barNameError}}</span>
         </div>
         }
@@ -82,7 +82,7 @@
     <!-- Sección: Cambiar precio por canción -->
     <div class="config-section">
       <button type="button" class="btn-toggle-section" (click)="togglePriceSection()">
-        <span class="toggle-icon">{{showPriceSection ? '▼' : '▶'}}</span>
+        <span class="toggle-icon material-icons">{{showPriceSection ? 'expand_more' : 'chevron_right'}}</span>
         <span>Cambiar precio por canción</span>
         <span class="current-value">Actual: {{getFormattedCurrentPrice()}}€</span>
       </button>
@@ -125,14 +125,14 @@
 
         @if (priceSuccess === true) {
         <div class="success-message-inline">
-          <span class="success-icon">✓</span>
+          <span class="success-icon material-icons">check_circle</span>
           <span>Precio actualizado correctamente</span>
         </div>
         }
 
         @if (priceSuccess === false && priceError) {
         <div class="error-message-inline">
-          <span class="error-icon">⚠️</span>
+          <span class="error-icon material-icons">warning</span>
           <span>{{priceError}}</span>
         </div>
         }
@@ -143,7 +143,7 @@
     <!-- Sección: Cambiar contraseña -->
     <div class="config-section">
       <button type="button" class="btn-toggle-section" (click)="togglePasswordSection()">
-        <span class="toggle-icon">{{showPasswordSection ? '▼' : '▶'}}</span>
+        <span class="toggle-icon material-icons">{{showPasswordSection ? 'expand_more' : 'chevron_right'}}</span>
         <span>Cambiar contraseña</span>
       </button>
 
@@ -192,14 +192,14 @@
 
         @if (passwordSuccess === true) {
         <div class="success-message-inline">
-          <span class="success-icon">✓</span>
+          <span class="success-icon material-icons">check_circle</span>
           <span>Contraseña cambiada correctamente</span>
         </div>
         }
 
         @if (passwordSuccess === false && passwordError) {
         <div class="error-message-inline">
-          <span class="error-icon">⚠️</span>
+          <span class="error-icon material-icons">warning</span>
           <span>{{passwordError}}</span>
         </div>
         }

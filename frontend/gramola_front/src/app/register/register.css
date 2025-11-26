@@ -234,6 +234,12 @@
     line-height: 1.5;
 }
 
+/* Iconos dentro de párrafos */
+.help-step p .material-icons {
+    font-size: 1.2rem !important;
+    vertical-align: middle;
+    color: #1DB954 !important;
+}
 .help-link {
     color: #1DB954;
     text-decoration: none;
@@ -288,6 +294,11 @@
     line-height: 1.5;
 }
 
+.help-note .material-icons {
+    font-size: 1.5rem !important;
+    color: #ffc107 !important;
+    flex-shrink: 0;
+}
 /* Spinner pequeño para botón */
 .spinner-small {
   display: inline-block;
@@ -379,6 +390,25 @@
   color: #1ed760;
 }
 
+/* Asegurar que Material Icons funcione globalmente en este componente */
+.material-icons {
+    font-family: 'Material Icons' !important;
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: 'liga';
+    vertical-align: middle;
+}
 /* Responsive */
 @media (max-width: 768px) {
     .help-button {

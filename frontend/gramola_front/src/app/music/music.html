@@ -6,7 +6,7 @@
         <div class="current-playing">
             <h1 class="bar-name">Gramola de {{barName}}</h1>
             <div *ngIf="currentTrack">
-                <div class="now-playing-indicator">▶ REPRODUCIENDO AHORA</div>
+                <div class="now-playing-indicator"><span class="material-icons">play_arrow</span> REPRODUCIENDO AHORA</div>
                 <div class="current-track-info">
                     <img [src]="currentTrack.album?.images?.[2]?.url || 'assets/default-album.png'" [alt]="currentTrack.album?.name"
                         class="current-album-cover">
@@ -23,7 +23,7 @@
             </div>
             <div class="device-info">
                 <div class="device-status" *ngIf="currentDevice">
-                <span class="device-icon">{{getDeviceIcon(currentDevice.type)}}</span>
+                <span class="device-icon material-icons">{{getDeviceIcon(currentDevice.type)}}</span>
                 <span class="device-name">{{currentDevice.name}}</span>
                 <span class="device-type">{{currentDevice.type}}</span>
                 </div>
@@ -40,7 +40,7 @@
             <input type="text" [(ngModel)]="searchQuery" (keyup.enter)="searchTracks()"
                 placeholder="Buscar canciones, artistas, álbumes..." class="search-input">
             <button (click)="searchTracks()" class="search-btn">
-                <span class="search-icon">🔍</span>
+                <span class="search-icon material-icons">search</span>
                 Buscar
             </button>
         </div>
@@ -51,7 +51,7 @@
         <div class="search-results-header">
             <h3>Resultados de búsqueda</h3>
             <button class="close-search-btn" (click)="clearSearch()" aria-label="Cerrar búsqueda" title="Cerrar">
-                ✕
+                <span class="material-icons">close</span>
             </button>
         </div>
         <div class="tracks-list">
@@ -66,7 +66,7 @@
                     </div>
                 </div>
                 <button (click)="addToQueue(track)" class="add-to-queue-btn">
-                    <span class="add-icon">➕</span>
+                    <span class="add-icon material-icons">add</span>
                     Añadir a Cola
                 </button>
             </div>
@@ -98,7 +98,7 @@
         </div>
         
         <div class="empty-queue" *ngIf="queue.length === 0">
-            <div class="empty-icon">🎵</div>
+            <div class="empty-icon material-icons">music_note</div>
             <p>No hay canciones en la cola</p>
             <p class="empty-hint">Busca canciones y añádelas para reproducirlas</p>
         </div>
@@ -106,7 +106,7 @@
 
     <!-- Mensajes de error -->
     <div *ngIf="songError" class="error-banner">
-        <span class="error-icon">⚠️</span>
+        <span class="error-icon material-icons">warning</span>
         {{songError}}
     </div>
 </div>

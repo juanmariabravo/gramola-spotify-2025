@@ -24,7 +24,7 @@ export class Payments implements OnInit {
   isSongPayment = false;
   paymentTitle = '';
   paymentDescription = '';
-  paymentIcon = '💳';
+  paymentIcon = 'credit_card';
 
   constructor(private paymentService: PaymentService, private router : Router, private spotiService: SpotiService) { }
 
@@ -40,16 +40,16 @@ export class Payments implements OnInit {
       this.isSubscription = true;
       this.paymentTitle = 'Suscripción a esipotify';
       this.paymentDescription = 'Acceso ilimitado a todas las funciones de nuestra gramola';
-      this.paymentIcon = '⭐';
+      this.paymentIcon = 'star';
     } else if (amountValue > 0 && amountValue < 1000) {
       this.isSongPayment = true;
       this.paymentTitle = 'Añadir canción a la cola';
       this.paymentDescription = 'Tu canción se reproducirá después de las actuales';
-      this.paymentIcon = '🎵';
+      this.paymentIcon = 'music_note';
     } else {
       this.paymentTitle = 'Pago';
       this.paymentDescription = 'Completa tu pago de forma segura';
-      this.paymentIcon = '💳';
+      this.paymentIcon = 'credit_card';
     }
 
     // Iniciar proceso de pago automáticamente
@@ -208,7 +208,7 @@ export class Payments implements OnInit {
       const parent = document.querySelector('.payment-card') ?? document.body;
       parent.appendChild(msg);
     }
-    msg.innerHTML = '<div style="font-size:2.5rem;margin-bottom:10px;">🎵</div><p style="margin:0 0 10px 0;">¡Gracias! Añadiendo tu canción a la cola...</p>';
+    msg.innerHTML = '<div style="font-size:2.5rem;margin-bottom:10px;"><span class="material-icons" style="font-size:2.5rem;">music_note</span></div><p style="margin:0 0 10px 0;">¡Gracias! Añadiendo tu canción a la cola...</p>';
     
     // spinner pequeño
     const spinner = document.createElement('span');
@@ -228,7 +228,7 @@ export class Payments implements OnInit {
       parent.appendChild(msg);
     }
     msg.innerHTML = `
-      <div style="font-size:3rem;margin-bottom:15px;">⭐</div>
+      <div style="font-size:3rem;margin-bottom:15px;"><span class="material-icons" style="font-size:3rem;">star</span></div>
       <h3 style="margin:0 0 10px 0;color:#064e28;font-size:1.3rem;">¡Gracias!</h3>
       <p style="margin:0 0 20px 0;font-size:1rem;line-height:1.5;">Tu pago se ha confirmado correctamente y ya puedes disfrutar de nuestro servicio.</p>
       <a href="/login" style="display:inline-block;padding:12px 30px;background:#1DB954;color:white;text-decoration:none;border-radius:25px;font-weight:600;transition:background 0.3s ease;" onmouseover="this.style.background='#1ed760'" onmouseout="this.style.background='#1DB954'">Inicia sesión para comenzar</a>
@@ -244,7 +244,7 @@ export class Payments implements OnInit {
       const parent = document.querySelector('.payment-card') ?? document.body;
       parent.appendChild(msg);
     }
-    msg.innerHTML = '<div style="font-size:2.5rem;margin-bottom:10px;">✓</div><p style="margin:0;">Pago realizado con éxito.</p>';
+    msg.innerHTML = '<div style="font-size:2.5rem;margin-bottom:10px;"><span class="material-icons" style="font-size:2.5rem;">check_circle</span></div><p style="margin:0;">Pago realizado con éxito.</p>';
   }
 
   addSpinnerStyles() {

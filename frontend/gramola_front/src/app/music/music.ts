@@ -186,13 +186,13 @@ export class Music implements OnInit, OnDestroy {
 
   getDeviceIcon(deviceType: string): string {
     const icons: { [key: string]: string } = {
-      'computer': '💻',
-      'smartphone': '📱',
-      'tablet': '📟',
-      'speaker': '🔊',
-      'tv': '📺'
+      'computer': 'computer',
+      'smartphone': 'smartphone',
+      'tablet': 'tablet',
+      'speaker': 'speaker',
+      'tv': 'tv'
     };
-    return icons[deviceType.toLowerCase()] || '📱';
+    return icons[deviceType.toLowerCase()] || 'devices';
   }
 
   searchTracks() {

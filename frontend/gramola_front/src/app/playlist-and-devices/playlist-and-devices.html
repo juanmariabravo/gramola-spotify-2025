@@ -64,23 +64,24 @@
               role="button"
               tabindex="0"
               (keydown.enter)="selectDevice(device.id)">
-          <span class="device-icon">{{getDeviceIcon(device.type)}}</span>
+          <span class="device-icon material-icons">{{getDeviceIcon(device.type)}}</span>
           <div class="device-details">
             <h4 class="device-name">{{device.name}}</h4>
             <p class="device-type">{{device.type}}</p>
           </div>
-          <span *ngIf="device.id === selectedDeviceId" class="device-badge">✓ Activo</span>
+          <span *ngIf="device.id === selectedDeviceId" class="device-badge"><span class="material-icons">check_circle</span>
+            Activo</span>
           </div>
           }
       </div>
 
       <div *ngIf="deviceError" class="error-message">
-        <span class="error-icon">⚠️</span>
+        <span class="error-icon material-icons">warning</span>
         {{deviceError}}
       </div>
 
       <div *ngIf="devices.length === 0 && !deviceError" class="empty-message">
-        <span class="empty-icon">📱</span>
+        <span class="empty-icon material-icons">devices</span>
         <p>No se encontraron dispositivos disponibles.</p>
         <p class="hint">Asegúrate de tener Spotify abierto en algún dispositivo.</p>
       </div>
@@ -110,13 +111,14 @@
                placeholder="Buscar playlist..."
                class="search-input"
                aria-label="Buscar playlists" />
-        <span class="search-icon">🔍</span>
+        <span class="search-icon material-icons">search</span>
       </div>
 
       <!-- Toggle para mostrar todas las playlists -->
       <div class="playlist-view-toggle" *ngIf="filteredPlaylists().length > 6">
         <button class="toggle-btn" (click)="showAllPlaylists = !showAllPlaylists">
-          {{ showAllPlaylists ? '▲ Mostrar menos' : '▼ Ver todas las playlists (' + filteredPlaylists().length + ')' }}
+          {{ showAllPlaylists ? 'Mostrar menos' : 'Ver todas las playlists (' + filteredPlaylists().length + ')' }}
+          <span class="material-icons">{{ showAllPlaylists ? 'expand_less' : 'expand_more' }}</span>
         </button>
       </div>
 
@@ -134,21 +136,22 @@
                  [alt]="playlist.name"
                  class="playlist-img" />
             <div *ngIf="!playlist.images || playlist.images.length === 0" class="playlist-placeholder">
-              🎵
+              <span class="material-icons">music_note</span>
             </div>
           </div>
           <h4 class="playlist-card-name">{{playlist.name}}</h4>
-          <span *ngIf="playlist.id === selectedPlaylistId" class="selected-badge-small">✓</span>
+          <span *ngIf="playlist.id === selectedPlaylistId" class="selected-badge-small"><span
+              class="material-icons">check_circle</span></span>
         </div>
       </div>
 
       <div *ngIf="playlistError" class="error-message">
-        <span class="error-icon">⚠️</span>
+        <span class="error-icon material-icons">warning</span>
         {{playlistError}}
       </div>
 
       <div *ngIf="filteredPlaylists().length === 0 && !playlistError" class="empty-message">
-        <span class="empty-icon">🎶</span>
+        <span class="empty-icon material-icons">library_music</span>
         <p *ngIf="!playlistSearchQuery">No se encontraron playlists en tu cuenta.</p>
         <p *ngIf="playlistSearchQuery">No se encontraron playlists (propias ni públicas) que coincidan con "{{playlistSearchQuery}}".</p>
       </div>
