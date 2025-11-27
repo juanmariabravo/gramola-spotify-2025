@@ -30,6 +30,12 @@ public class ResponseFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String resource = request.getRequestURI();
+        String method = request.getMethod();
+
+        // Permitir peticiones OPTIONS (CORS preflight) sin autenticación
+        if ("OPTIONS".equals(method)) {
+            return true;
+        }
 
         // Rutas públicas que NO requieren autenticación
         return resource.equals("/users/login")
