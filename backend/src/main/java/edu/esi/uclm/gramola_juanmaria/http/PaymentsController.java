@@ -54,8 +54,15 @@ public class PaymentsController {
 
         if (sentTransactionId.equals(receivedTransactionId) && sentClientSecret.equals(receivedClientSecret)) {
             this.service.confirmTransaction(transactionDetails, userToken);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Los detalles de la transacción no coinciden");
         }
 
         session.removeAttribute("transactionDetails");
+    }
+
+    @GetMapping("/getPublicKey")
+    public String getPublicKey() {
+        return ConfigurationLoader.get().getJsonConfig().getJSONObject("stripe").getString("public_key");
     }
 }

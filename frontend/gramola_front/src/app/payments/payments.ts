@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PaymentService } from '../payment-service';
 import { Router } from '@angular/router';
-import { environment } from '../../environments/environment';
+import { environment } from '../../environments/environment.development';
 import { SpotiService } from '../spoti-service';
 
 declare let Stripe: any
@@ -15,7 +15,7 @@ declare let Stripe: any
 })
 export class Payments implements OnInit {
 
-  stripe = new Stripe(environment.StripePublicKey)
+  stripe: any;
   transactionDetails: any;
   token? : string
   amount? : number
@@ -33,6 +33,14 @@ export class Payments implements OnInit {
     this.token = params['token'] ?? '';
     this.amount = params['amount'];
     this.trackUri = params['trackUri'] ?? '';
+    // Inicializar Stripe, llamando al backend para obtener la clave pública
+    const publicKeySub = this.paymentService.getPublicKey().subscribe({
+      next: (response: any) => {
+        const publicKey = response.body;
+        this.stripe = Stripe(publicKey);
+          publicKeySub.unsubscribe();
+      }
+    });
 
     // Detectar tipo de pago
     const amountValue = Number(this.amount || 0);

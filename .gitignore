@@ -1,3 +1,10 @@
 backend/target/
 frontend/node_modules/
 Gramola Help.md
+backend/src/main/java/edu/esi/uclm/gramola_juanmaria/Scrapping.java
+backend/src/main/resources/config.json
+backend/src/test/java/edu/esi/uclm/gramola_juanmaria/TestMercadona.java
+frontend/gramola_front/src/app/geolocalizacion/geolocalizacion.css
+frontend/gramola_front/src/app/geolocalizacion/geolocalizacion.html
+frontend/gramola_front/src/app/geolocalizacion/geolocalizacion.ts
+imgs/

@@ -1,19 +1,17 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-import { environment } from '../environments/environment';
+import { environment } from '../environments/environment.development';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SpotiService {
 
-  // Use a safe any-cast for environment and provide sensible defaults to avoid TS2339
-  private _env: any = (environment as any) || {};
-  spoti_authUrl = this._env.spoti_authUrl;
-  apiUrl = this._env.URL_API + '/spoti';
-  redirectUri = this._env.redirectUri;
-  spotiV1Url = this._env.spotiV1Url;
+  spoti_authUrl = environment.spoti_authUrl;
+  apiUrl = environment.url_api + '/spoti';
+  redirectUri = environment.redirectUri;
+  spotiV1Url = environment.spotiV1Url;
   clientId?: string = '';
   //queue: TrackObject[] = [];
   constructor(private http: HttpClient) { }
