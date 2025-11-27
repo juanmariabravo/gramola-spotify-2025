@@ -81,4 +81,9 @@ export class UserService {
     };
     return this.http.put(url, body, { withCredentials: true });
   }
+
+  logout(): Observable<any> {
+    const url = `${this.apiUrl}/logout`;
+    return this.http.post(url, null, { withCredentials: true });
+  }
 }

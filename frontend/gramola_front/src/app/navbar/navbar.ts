@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { UserService } from '../user-service';
 
 @Component({
   selector: 'app-navbar',
@@ -12,7 +13,7 @@ import { Router } from '@angular/router';
 export class Navbar implements OnInit {
   barName: string = '';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private userService: UserService) { }
 
   ngOnInit(): void {
   }
@@ -32,6 +33,8 @@ export class Navbar implements OnInit {
     if (confirmLogout) {
       // Limpiar sessionStorage
       sessionStorage.clear();
+      // Enviar petición al backend para que elimine la cookie
+      this.userService.logout().subscribe();
       // Redirigir a home
       this.router.navigate(['/']);
     }
