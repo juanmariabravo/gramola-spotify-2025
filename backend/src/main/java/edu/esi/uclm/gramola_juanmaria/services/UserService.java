@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import edu.esi.uclm.gramola_juanmaria.dao.UserDao;
+import edu.esi.uclm.gramola_juanmaria.http.ConfigurationLoader;
 import edu.esi.uclm.gramola_juanmaria.model.Token;
 import edu.esi.uclm.gramola_juanmaria.model.User;
 import edu.esi.uclm.gramola_juanmaria.util.PasswordEncryptor;
@@ -40,7 +41,7 @@ public class UserService {
             // (code_profesor) return user.getCreationToken().getId();
             System.out.println("Usuario " + email + " registrado correctamente");
             // Se enviaría un email con el token de confirmación, pero de momento imprimimos aquí el link
-            String base = "http://127.0.0.1:8080";
+            String base = ConfigurationLoader.get().getJsonConfig().getJSONObject("urls").getString("backend_base");
             String confirmUrl = String.format("%s/users/confirm/%s?token=%s",
                 base,
                 URLEncoder.encode(email, StandardCharsets.UTF_8),

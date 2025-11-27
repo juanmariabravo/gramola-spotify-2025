@@ -13,6 +13,7 @@ import com.stripe.param.PaymentIntentCreateParams;
 
 import edu.esi.uclm.gramola_juanmaria.dao.StripeTransactionDao;
 import edu.esi.uclm.gramola_juanmaria.dao.UserDao;
+import edu.esi.uclm.gramola_juanmaria.http.ConfigurationLoader;
 import edu.esi.uclm.gramola_juanmaria.model.StripeTransaction;
 import edu.esi.uclm.gramola_juanmaria.model.User;
 
@@ -21,9 +22,7 @@ import edu.esi.uclm.gramola_juanmaria.model.User;
 public class PaymentService {
 
     static {
-        /* clave privada de stripe, debemos ponerla en una variable de entorno */
-        Stripe.apiKey = "sk_test_51SIV2MCIboBkcLKy7XvN2wIgVdfcP3UVlAKLm43jsQA82UBsGBJ4t7G3P37I23fFcNg4vhZdMnKloS1yAr69UsLG00r6nw2DST";
-        //Stripe.apiKey = System.getenv("STRIPE_API_KEY");
+        Stripe.apiKey = ConfigurationLoader.get().getJsonConfig().getJSONObject("stripe").getString("secret_key");
     }
 
     @Autowired

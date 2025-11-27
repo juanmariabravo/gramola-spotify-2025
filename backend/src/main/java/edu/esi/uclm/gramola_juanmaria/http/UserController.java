@@ -143,7 +143,9 @@ public class UserController {
         // Solo validamos el token (no lo marcamos como usado ni confirmamos al usuario aún)
         this.service.validateToken(email, token);
         // Redirigir a la página de pago - la confirmación real ocurrirá después del pago exitoso
-        response.sendRedirect("http://127.0.0.1:4200/payments?token=" + token + "&amount=1000");
+        String frontBase = ConfigurationLoader.get().getJsonConfig().getJSONObject("urls").getString("frontend_base");
+        String suscription_amount = ConfigurationLoader.get().getJsonConfig().getJSONObject("stripe").getString("suscription_price");
+        response.sendRedirect(frontBase + "/payments?token=" + token + "&amount=" + suscription_amount);
     }
 
     @PutMapping("/update-barname")

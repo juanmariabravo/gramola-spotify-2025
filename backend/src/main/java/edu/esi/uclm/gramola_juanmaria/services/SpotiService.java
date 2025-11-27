@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import edu.esi.uclm.gramola_juanmaria.dao.AddedSongDao;
 import edu.esi.uclm.gramola_juanmaria.dao.UserDao;
+import edu.esi.uclm.gramola_juanmaria.http.ConfigurationLoader;
 import edu.esi.uclm.gramola_juanmaria.model.AddedSong;
 import edu.esi.uclm.gramola_juanmaria.model.SpotiToken;
 import edu.esi.uclm.gramola_juanmaria.model.User;
@@ -33,7 +34,7 @@ public class SpotiService {
 
     RestClient restClient = RestClient.create();
 
-    private final String tokenUrl = "https://accounts.spotify.com/api/token";
+    private final String tokenUrl = ConfigurationLoader.get().getJsonConfig().getJSONObject("urls").getString("token_spotify");
 
     public String getClientId(String email) {
         Optional<User> optUser = this.userDao.findById(email);
@@ -53,7 +54,7 @@ public class SpotiService {
         MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
         form.add("code", code);
         form.add("grant_type", "authorization_code");
-        form.add("redirect_uri", "http://127.0.0.1:4200/callback");
+        form.add("redirect_uri", ConfigurationLoader.get().getJsonConfig().getJSONObject("urls").getString("redirect_uri"));
 
         // Realizar la solicitud a la API de Spotify
         String header = this.basicAuth(clientId, clientSecret);
