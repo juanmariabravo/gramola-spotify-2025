@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PaymentService } from '../payment-service';
 import { Router } from '@angular/router';
-import { environment } from '../../environments/environment.development';
 import { SpotiService } from '../spoti-service';
 
 declare let Stripe: any
