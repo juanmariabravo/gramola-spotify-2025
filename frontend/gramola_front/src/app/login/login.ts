@@ -25,8 +25,7 @@ export class Login {
   constructor(private fb: FormBuilder, private userService: UserService, private router: Router, private spotiService: SpotiService) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8)]],
-      rememberMe: [false]
+      password: ['', [Validators.required, Validators.minLength(8)]]
     });
   }
 

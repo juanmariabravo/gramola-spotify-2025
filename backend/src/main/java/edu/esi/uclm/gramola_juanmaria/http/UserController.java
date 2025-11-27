@@ -30,7 +30,11 @@ public class UserController {
     @Autowired
     private UserService service; // Spring se encarga de instanciar el objeto ya que UserService es un @Service
 
-    /* register es un servicio web que recibe un JSON con email, pwd1 y pwd2, barName, client_id, client_secret y signature (firma del propietario codificada en Base64) */
+    /*
+     * register es un servicio web que recibe un JSON con email, pwd1 y pwd2,
+     * barName, client_id, client_secret y signature (firma del propietario
+     * codificada en Base64)
+     */
     @PostMapping("/register") // podríamos especificar: (value="/register", consumes="application/json")
     public void register(@RequestBody Map<String, String> body) {
         String barName = body.get("barName");
@@ -40,7 +44,8 @@ public class UserController {
         String client_id = body.get("clientId");
         String client_secret = body.get("clientSecret");
         String signature = body.get("signature");
-        if (email == null || pwd1 == null || pwd2 == null || barName == null || client_id == null || client_secret == null || signature == null) {
+        if (email == null || pwd1 == null || pwd2 == null || barName == null || client_id == null
+                || client_secret == null || signature == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Faltan parámetros");
         }
 
@@ -49,7 +54,8 @@ public class UserController {
         }
 
         if (pwd1.length() < 8) {
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "La contraseña debe tener al menos 8 caracteres");
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,
+                    "La contraseña debe tener al menos 8 caracteres");
         }
 
         if (!email.contains("@") || !email.contains(".")) {
@@ -80,6 +86,9 @@ public class UserController {
         Cookie gramolaCookie = new Cookie("gramolaCookie", cookieValue);
         gramolaCookie.setPath("/");
         gramolaCookie.setHttpOnly(true);
+        gramolaCookie.setMaxAge(7 * 24 * 60 * 60); // 7 días
+        // gramolaCookie.setSecure(true); // requiere HTTPS
+        // gramolaCookie.setAttribute("SameSite", "Strict");
         response.addCookie(gramolaCookie);
 
         // Guardar el valor de la cookie en el usuario
@@ -88,13 +97,42 @@ public class UserController {
         // Devuelve Map con client_id y user_token
         return Map.of(
                 "client_id", user.getClientId() != null ? user.getClientId() : "",
-                "user_token", user.getCreationToken() != null ? user.getCreationToken().getId() : ""
-        );
+                "user_token", user.getCreationToken() != null ? user.getCreationToken().getId() : "");
     }
 
+    /* logout - invalida la cookie de sesión */
+    @PostMapping("/logout")
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
+        User user = (User) request.getAttribute("user");
+
+        // Invalidar la cookie en la base de datos
+        service.updateGramolaCookie(user.getEmail(), null);
+
+        // Eliminar la cookie del navegador
+        Cookie gramolaCookie = new Cookie("gramolaCookie", "");
+        gramolaCookie.setPath("/");
+        gramolaCookie.setHttpOnly(true);
+        gramolaCookie.setMaxAge(0); // Eliminar inmediatamente
+        response.addCookie(gramolaCookie);
+    }
+
+    /* delete - elimina la cuenta del usuario autenticado */
     @DeleteMapping("/delete")
-    public void delete(@RequestParam String email) { // con @RequestParam se indica que el parámetro viene en la URL (URL/users/delete?email=...)
+    public void delete(HttpServletRequest request, HttpServletResponse response, @RequestParam String email) {
+        User user = (User) request.getAttribute("user");
+
+        if (!user.getEmail().equals(email)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para eliminar esta cuenta");
+        }
+        // Eliminar el usuario
         this.service.delete(email);
+
+        // Eliminar la cookie del navegador
+        Cookie gramolaCookie = new Cookie("gramolaCookie", "");
+        gramolaCookie.setPath("/");
+        gramolaCookie.setHttpOnly(true);
+        gramolaCookie.setMaxAge(0);
+        response.addCookie(gramolaCookie);
     }
 
     @PostMapping("/recover-password")
@@ -117,10 +155,6 @@ public class UserController {
     @GetMapping("/me")
     public Map<String, Object> getCurrentUser(HttpServletRequest request) {
         User user = (User) request.getAttribute("user");
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No hay sesión activa");
-        }
-
         return Map.of(
                 "email", user.getEmail(),
                 "barName", user.getBarName() != null ? user.getBarName() : "",
@@ -143,22 +177,22 @@ public class UserController {
     }
 
     @GetMapping("/confirm/{email}")
-    public void confirmToken(@PathVariable String email, @RequestParam String token, HttpServletResponse response) throws IOException { // @PathVariable para email porque está en el path, @RequestParam para token porque está después del ?
-        // Solo validamos el token (no lo marcamos como usado ni confirmamos al usuario aún)
+    public void confirmToken(@PathVariable String email, @RequestParam String token, HttpServletResponse response)
+            throws IOException {
+        // Solo validamos el token (no lo marcamos como usado ni confirmamos al usuario
+        // aún)
         this.service.validateToken(email, token);
-        // Redirigir a la página de pago - la confirmación real ocurrirá después del pago exitoso
+        // Redirigir a la página de pago - la confirmación real ocurrirá después del
+        // pago exitoso
         String frontBase = ConfigurationLoader.get().getJsonConfig().getJSONObject("urls").getString("frontend_base");
-        String suscription_amount = ConfigurationLoader.get().getJsonConfig().getJSONObject("stripe").getString("suscription_price");
+        String suscription_amount = ConfigurationLoader.get().getJsonConfig().getJSONObject("stripe")
+                .getString("suscription_price");
         response.sendRedirect(frontBase + "/payments?token=" + token + "&amount=" + suscription_amount);
     }
 
     @PutMapping("/update-barname")
     public void updateBarName(HttpServletRequest request, @RequestBody Map<String, String> body) {
         User user = (User) request.getAttribute("user");
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No hay sesión activa");
-        }
-
         String barName = body.get("barName");
         this.service.updateBarName(user.getEmail(), barName);
     }
@@ -166,10 +200,6 @@ public class UserController {
     @PutMapping("/update-songprice")
     public void updateSongPrice(HttpServletRequest request, @RequestBody Map<String, String> body) {
         User user = (User) request.getAttribute("user");
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No hay sesión activa");
-        }
-
         String songPrice = body.get("songPrice");
         this.service.updateSongPrice(user.getEmail(), songPrice);
     }
@@ -177,10 +207,6 @@ public class UserController {
     @PutMapping("/change-password")
     public void changePassword(HttpServletRequest request, @RequestBody Map<String, String> body) {
         User user = (User) request.getAttribute("user");
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No hay sesión activa");
-        }
-
         String currentPassword = body.get("currentPassword");
         String newPassword = body.get("newPassword");
         this.service.changePassword(user.getEmail(), currentPassword, newPassword);
