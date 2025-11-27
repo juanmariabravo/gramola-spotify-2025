@@ -20,8 +20,8 @@ import org.springframework.web.server.ResponseStatusException;
 import edu.esi.uclm.gramola_juanmaria.model.User;
 import edu.esi.uclm.gramola_juanmaria.services.UserService;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("users")
@@ -61,7 +61,7 @@ public class UserController {
 
     /* login es un servicio web que recibe un JSON con email y pwd */
     @PostMapping("/login")
-    public Map<String, String> login(HttpServletResponse response, HttpSession session, @RequestBody Map<String, String> body) {
+    public Map<String, String> login(HttpServletResponse response, @RequestBody Map<String, String> body) {
         String email = body.get("email");
         String pwd = body.get("password");
         if (email == null || pwd == null) {
@@ -72,16 +72,20 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Email inválido");
         }
 
-        // Cookie 
-        Cookie gramolaCookie;
-        gramolaCookie = new Cookie("gramola_session", UUID.randomUUID().toString());
+        // Autenticar usuario
+        User user = service.login(email, pwd);
+
+        // Crear cookie y guardarla en la base de datos
+        String cookieValue = UUID.randomUUID().toString();
+        Cookie gramolaCookie = new Cookie("gramolaCookie", cookieValue);
         gramolaCookie.setPath("/");
         gramolaCookie.setHttpOnly(true);
         response.addCookie(gramolaCookie);
 
-        // Devuelve Map con client_id y signature
-        User user = service.login(email, pwd);
-        session.setAttribute("user", user);
+        // Guardar el valor de la cookie en el usuario
+        service.updateGramolaCookie(user.getEmail(), cookieValue);
+
+        // Devuelve Map con client_id y user_token
         return Map.of(
                 "client_id", user.getClientId() != null ? user.getClientId() : "",
                 "user_token", user.getCreationToken() != null ? user.getCreationToken().getId() : ""
@@ -111,8 +115,8 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public Map<String, Object> getCurrentUser(HttpSession session) {
-        User user = (User) session.getAttribute("user");
+    public Map<String, Object> getCurrentUser(HttpServletRequest request) {
+        User user = (User) request.getAttribute("user");
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No hay sesión activa");
         }
@@ -149,38 +153,30 @@ public class UserController {
     }
 
     @PutMapping("/update-barname")
-    public void updateBarName(HttpSession session, @RequestBody Map<String, String> body) {
-        User user = (User) session.getAttribute("user");
+    public void updateBarName(HttpServletRequest request, @RequestBody Map<String, String> body) {
+        User user = (User) request.getAttribute("user");
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No hay sesión activa");
         }
 
         String barName = body.get("barName");
         this.service.updateBarName(user.getEmail(), barName);
-
-        // Actualizar el usuario en la sesión con los datos más recientes
-        User updatedUser = this.service.getUserByEmail(user.getEmail());
-        session.setAttribute("user", updatedUser);
     }
 
     @PutMapping("/update-songprice")
-    public void updateSongPrice(HttpSession session, @RequestBody Map<String, String> body) {
-        User user = (User) session.getAttribute("user");
+    public void updateSongPrice(HttpServletRequest request, @RequestBody Map<String, String> body) {
+        User user = (User) request.getAttribute("user");
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No hay sesión activa");
         }
 
         String songPrice = body.get("songPrice");
         this.service.updateSongPrice(user.getEmail(), songPrice);
-
-        // Actualizar el usuario en la sesión con los datos más recientes
-        User updatedUser = this.service.getUserByEmail(user.getEmail());
-        session.setAttribute("user", updatedUser);
     }
 
     @PutMapping("/change-password")
-    public void changePassword(HttpSession session, @RequestBody Map<String, String> body) {
-        User user = (User) session.getAttribute("user");
+    public void changePassword(HttpServletRequest request, @RequestBody Map<String, String> body) {
+        User user = (User) request.getAttribute("user");
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No hay sesión activa");
         }
@@ -188,9 +184,5 @@ public class UserController {
         String currentPassword = body.get("currentPassword");
         String newPassword = body.get("newPassword");
         this.service.changePassword(user.getEmail(), currentPassword, newPassword);
-
-        // Actualizar el usuario en la sesión con los datos más recientes
-        User updatedUser = this.service.getUserByEmail(user.getEmail());
-        session.setAttribute("user", updatedUser);
     }
 }

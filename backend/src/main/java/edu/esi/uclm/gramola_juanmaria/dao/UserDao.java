@@ -15,4 +15,6 @@ public interface UserDao extends JpaRepository<User, String> {
 	java.util.Optional<User> findByCreationTokenId(String token);
 
 	java.util.Optional<User> findByEmail(String email);
+
+	java.util.Optional<User> findByGramolaCookie(String cookie);
 }

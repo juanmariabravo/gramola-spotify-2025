@@ -23,6 +23,7 @@ public class User {
     private String pwd;
     private String clientId;
     private String clientSecret;
+    private String gramolaCookie;
     private boolean confirmed = false; // si el usuario ha confirmado su email
     @Column(columnDefinition = "TEXT") // Imagen codificada en base64 (puede ser muy grande, hasta 65KB)
     private String signature;
@@ -113,5 +114,13 @@ public class User {
 
     public void setSongPrice(String songPrice) {
         this.songPrice = songPrice;
+    }
+
+    public String getGramolaCookie() {
+        return gramolaCookie;
+    }
+
+    public void setGramolaCookie(String gramolaCookie) {
+        this.gramolaCookie = gramolaCookie;
     }
 }

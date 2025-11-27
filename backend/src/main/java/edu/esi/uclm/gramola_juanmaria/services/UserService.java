@@ -285,4 +285,15 @@ public class UserService {
         this.userDao.save(user);
         System.out.println("Contraseña actualizada correctamente para usuario " + email);
     }
+
+    public void updateGramolaCookie(String email, String cookieValue) {
+        Optional<User> optUser = this.userDao.findById(email);
+        if (optUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "El email no está registrado");
+        }
+        User user = optUser.get();
+        user.setGramolaCookie(cookieValue);
+        this.userDao.save(user);
+        System.out.println("Cookie de sesión actualizada para usuario " + email);
+    }
 }
