@@ -1,11 +1,13 @@
 <div class="payment-container">
 <div class="payment-card">
+    @if (!paymentSuccess && !isSubscription) {
     <!-- Botón de volver -->
     <button type="button" class="btn-back" (click)="goBack()" aria-label="Volver">
         <span class="material-icons back-icon">arrow_back</span>
         <span>Volver</span>
     </button>
-
+    }
+    @if (!paymentSuccess) {
     <!-- Header dinámico según tipo de pago -->
     <div class="payment-header">
     <div class="payment-icon"><span class="material-icons">{{paymentIcon}}</span></div>
@@ -56,15 +58,32 @@
         <span class="security-badge"><span class="material-icons">lock</span> Pago seguro</span>
         <span class="security-badge"><span class="material-icons">check_circle</span> Encriptado SSL</span>
     </div>
-    
-    <p class="result-message hidden">
-        Pago completado con éxito.
-        </p>
     </form>
 <!-- Mensaje de carga mientras se prepara el pago -->
 <div id="loading-prepay" class="loading-prepay">
     <div class="spinner-large"></div>
     <p>Preparando el pago...</p>
 </div>
+    } @else {
+    <div class="success-container">
+        @if (isSongPayment) {
+        <div class="success-icon"><span class="material-icons">music_note</span></div>
+        <p class="success-message">¡Gracias! Añadiendo tu canción a la cola...</p>
+        <div class="spinner"
+            style="display:inline-block; border-top-color: #064e28; border-right-color: rgba(0,0,0,0.1); border-bottom-color: rgba(0,0,0,0.1); border-left-color: rgba(0,0,0,0.1);">
+        </div>
+        }
+        @if (isSubscription) {
+        <div class="success-icon"><span class="material-icons">star</span></div>
+        <h3 class="success-title">¡Gracias!</h3>
+        <p class="success-message">Tu pago se ha confirmado correctamente y ya puedes disfrutar de nuestro servicio.</p>
+        <a href="/login" class="success-btn">Inicia sesión para comenzar</a>
+        }
+        @if (!isSongPayment && !isSubscription) {
+        <div class="success-icon"><span class="material-icons">check_circle</span></div>
+        <p class="success-message">Pago realizado con éxito.</p>
+        }
+    </div>
+    }
 </div>
 </div>

@@ -521,7 +521,7 @@ font-size: 1.3rem;
 .payment-submit-btn,
 #submit {
     width: 100%;
-padding: 16px;
+    padding: 16px;
     background: linear-gradient(135deg, #1DB954, #1ed760);
     color: white;
     border: none;
@@ -578,7 +578,7 @@ border-radius: 12px;
 }
 
 #card-element {
-    min-height: 40px;
+    min-height: 20px;
     /* eliminar padding/border previos para que el container los maneje */
     padding: 0;
     border: none;
@@ -668,6 +668,67 @@ text-align: center;
     text-decoration: underline;
 }
 
+/* Estilos para mensajes de éxito */
+.success-container {
+    text-align: center;
+    padding: 30px 20px;
+    background: #e6ffed;
+    border-radius: 12px;
+    color: #064e28;
+    animation: fadeIn 0.5s ease;
+}
+
+.success-icon {
+    margin-bottom: 20px;
+}
+
+.success-icon .material-icons {
+    font-size: 4rem;
+    color: #1DB954;
+}
+
+.success-title {
+    font-size: 1.8rem;
+    margin: 0 0 15px 0;
+    color: #064e28;
+    font-weight: 700;
+}
+
+.success-message {
+    font-size: 1.1rem;
+    margin: 0 0 25px 0;
+    line-height: 1.6;
+}
+
+.success-btn {
+    display: inline-block;
+    padding: 14px 35px;
+    background: #1DB954;
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
+}
+
+.success-btn:hover {
+    background: #1ed760;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(29, 185, 84, 0.4);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 /* Responsive */
 @media (max-width: 768px) {
     .payment-container {
