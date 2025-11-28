@@ -22,6 +22,9 @@ public class UserService {
     @Autowired
     UserDao userDao;
 
+    @Autowired
+    MailService mailService;
+
     public void register(String barName, String email, String pwd, String client_id, String client_secret, String signature) {
         Optional<User> optUser = this.userDao.findById(email); // Optional<User> es una caja que puede contener un User o no. Hasta que no mires dentro, no sabes si está o no.
         if (optUser.isEmpty()) {
@@ -47,7 +50,7 @@ public class UserService {
                 URLEncoder.encode(email, StandardCharsets.UTF_8),
                 URLEncoder.encode(user.getCreationToken().getId(), StandardCharsets.UTF_8)
             );
-            System.out.println(confirmUrl);
+            mailService.sendConfirmationEmail(email, barName, confirmUrl);
         } else {
             // El email ya está registrado
             throw new ResponseStatusException(HttpStatus.CONFLICT, "El email ya está registrado");
@@ -180,7 +183,7 @@ public class UserService {
         this.userDao.save(user);
 
         // Construir URL de recuperación
-        String base = "http://127.0.0.1:4200";
+        String base = ConfigurationLoader.get().getJsonConfig().getJSONObject("urls").getString("frontend_base");
         String recoveryUrl = String.format("%s/reset-password?email=%s&token=%s",
             base,
             URLEncoder.encode(email, StandardCharsets.UTF_8),
@@ -194,8 +197,7 @@ public class UserService {
         System.out.println("Token válido por 30 minutos");
         System.out.println("============================");
         
-        // TODO: Enviar email real usando MailService
-        // mailService.sendRecoveryEmail(email, recoveryUrl);
+        mailService.sendRecoveryEmail(email, user.getBarName(), recoveryUrl);
     }
 
     public void validateResetToken(String email, String token) {
