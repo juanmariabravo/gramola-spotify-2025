@@ -17,7 +17,7 @@ import com.stripe.exception.StripeException;
 
 import edu.esi.uclm.gramola_juanmaria.model.StripeTransaction;
 import edu.esi.uclm.gramola_juanmaria.services.PaymentService;
-import jakarta.servlet.http.HttpSession;
+
 
 
 @RestController
@@ -28,37 +28,43 @@ public class PaymentsController {
     private PaymentService service;
 
     @GetMapping("/prepay/{amount}")
-    public StripeTransaction prepay(HttpSession session, @PathVariable("amount") Long amount) {
+    public StripeTransaction prepay(@PathVariable("amount") Long amount) {
+
+        if (amount < 50) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "La cantidad mínima para un pago de Stripe es de 50 céntimos (0.50 EUR). Recibido: " + amount);
+        }
+
         try {
             StripeTransaction transactionDetails = this.service.prepay(amount);
-            session.setAttribute("transactionDetails", transactionDetails);
             return transactionDetails;
         } catch (StripeException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error al iniciar el pago: " + e.getMessage());
         }
     }
 
     @PostMapping("/confirm")
-    public void confirm(HttpSession session, @RequestBody Map<String, Object> finalData) {
-        // System.out.println("Confirmando pago..." + finalData);
-        StripeTransaction transactionDetails = (StripeTransaction) session.getAttribute("transactionDetails");
-        JSONObject jso = new JSONObject(transactionDetails.getData());
-
-        String sentTransactionId = transactionDetails.getId();
-        String sentClientSecret = jso.getString("client_secret");
-
+    public void confirm(@RequestBody Map<String, Object> finalData) {
         JSONObject finalDataJson = new JSONObject(finalData);
-        String userToken = finalDataJson.getString("token");
         String receivedTransactionId = finalDataJson.getString("transactionId");
-        String receivedClientSecret = finalDataJson.getJSONObject("paymentIntent").getString("client_secret");
 
-        if (sentTransactionId.equals(receivedTransactionId) && sentClientSecret.equals(receivedClientSecret)) {
+        // Recuperar la transacción de la base de datos en lugar de la sesión
+        StripeTransaction transactionDetails = this.service.getTransactionById(receivedTransactionId);
+
+        if (transactionDetails == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Transacción no encontrada");
+        }
+
+        JSONObject jso = new JSONObject(transactionDetails.getData());
+        String sentClientSecret = jso.getString("client_secret");
+        String receivedClientSecret = finalDataJson.getJSONObject("paymentIntent").getString("client_secret");
+        String userToken = finalDataJson.optString("token", null); // Usar optString para evitar error si no existe
+
+        if (sentClientSecret.equals(receivedClientSecret)) {
             this.service.confirmTransaction(transactionDetails, userToken);
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Los detalles de la transacción no coinciden");
         }
-
-        session.removeAttribute("transactionDetails");
     }
 
     @GetMapping("/getPublicKey")

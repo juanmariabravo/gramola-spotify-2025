@@ -93,7 +93,7 @@
           <label for="songPrice">Precio por canción</label>
           <div class="price-config-container">
             <div class="price-slider-container">
-              <input type="range" id="songPrice" formControlName="songPrice" 
+              <input type="range" id="songPrice" formControlName="songPrice" (ngModelChange)="onPriceChange()"
                      [min]="minPrice" [max]="maxPrice" step="10"
                      class="price-slider" aria-label="Precio por canción en céntimos" />
             </div>

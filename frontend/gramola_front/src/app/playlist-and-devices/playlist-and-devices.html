@@ -33,7 +33,8 @@
         
             <div class="price-config-container">
                 <div class="price-slider-container">
-                    <input type="range" id="songPrice" [(ngModel)]="songPrice" [min]="minPrice" [max]="maxPrice" step="10"
+                    <input type="range" id="songPrice" [(ngModel)]="songPrice" (ngModelChange)="onPriceChange()" [min]="minPrice"
+                      [max]="maxPrice" step="10"
                         class="price-slider" aria-label="Precio por canción en céntimos" />
                 </div>
         

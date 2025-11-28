@@ -212,6 +212,13 @@ export class PlaylistAndDevices implements OnInit {
     return (this.songPrice / 100).toFixed(2);
   }
 
+  // Permitir 0. El siguiente salto 50. Luego 60, 70, 80... (Stripe no permite precios inferiores a 50 céntimos)
+  onPriceChange() {
+    if (this.songPrice > 0 && this.songPrice < 50) {
+      this.songPrice = 50;
+    }
+  }
+
   confirmSelection() {
     // validar que haya seleccionado al menos un dispositivo
     if (!this.selectedDeviceId) {

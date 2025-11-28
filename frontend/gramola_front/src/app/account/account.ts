@@ -324,6 +324,13 @@ export class Account implements OnInit {
     }
   }
 
+  // Permitir 0. El siguiente salto 50. Luego 60, 70, 80... (Stripe no permite precios inferiores a 50 céntimos)
+  onPriceChange() {
+    if (this.songPriceForm.value.songPrice > 0 && this.songPriceForm.value.songPrice < 50) {
+      this.songPriceForm.value.songPrice = 50;
+    }
+  }
+
   get passwordsMatch(): boolean {
     const newPwd = this.passwordForm.get('newPassword')?.value;
     const confirmPwd = this.passwordForm.get('confirmPassword')?.value;

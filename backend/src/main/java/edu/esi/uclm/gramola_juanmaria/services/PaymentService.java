@@ -73,6 +73,10 @@ public class PaymentService {
         
         this.dao.save(transactionDetails);
     }
+
+    public StripeTransaction getTransactionById(String id) {
+        return this.dao.findById(id).orElse(null);
+    }
 }
 
     
