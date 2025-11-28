@@ -19,24 +19,27 @@ export class Navbar implements OnInit {
   }
 
   navigateToAccount() {
-    // Redirigir a página de cuenta (por implementar)
     this.router.navigate(['/account']);
   }
 
   navigateToMusic() {
-    // Redirigir a página de música (por implementar)
     this.router.navigate(['/music']);
   }
 
   logout() {
-    const confirmLogout = confirm('¿Estás seguro de que deseas cerrar sesión?');
-    if (confirmLogout) {
-      // Limpiar sessionStorage
+    if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+    // Limpiar sessionStorage inmediatamente
       sessionStorage.clear();
-      // Enviar petición al backend para que elimine la cookie
-      this.userService.logout().subscribe();
-      // Redirigir a home
+
+      // Navegar inmediatamente a /home
       this.router.navigate(['/']);
+
+      // Enviar petición al backend en segundo plano para invalidar cookie
+      setTimeout(() => {
+        this.userService.logout().subscribe({
+          error: (err) => console.warn('Error en logout backend (ignorable):', err)
+        });
+      }, 10);
     }
   }
 }

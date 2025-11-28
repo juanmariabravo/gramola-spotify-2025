@@ -43,7 +43,7 @@ export class RecoverPassword {
       next: (response) => {
         this.isLoading = false;
         this.feedbackType = 'success';
-        this.feedbackMessage = 'Se ha enviado un enlace de recuperación a tu correo electrónico. Por favor revisa tu bandeja de entrada.';
+        this.feedbackMessage = 'Si tu email existe en nuestra base de datos, se te enviará un correo de recuperación.';
         
         // Limpiar formulario
         this.recoverForm.reset();
@@ -54,10 +54,16 @@ export class RecoverPassword {
         }, 5000);
       },
       error: (error) => {
+        // Por seguridad, mostramos el mismo mensaje incluso si el email no existe
         this.isLoading = false;
-        this.feedbackType = 'error';
-        this.feedbackMessage = error?.error?.message || 'No se pudo enviar el correo de recuperación. Por favor verifica que el email sea correcto.';
-        console.error('Recovery error:', error);
+        this.feedbackType = 'success'; // Mostramos como éxito visualmente
+        this.feedbackMessage = 'Si tu email existe en nuestra base de datos, se te enviará un correo de recuperación.';
+        console.error('Recovery error (hidden from user):', error);
+
+        this.recoverForm.reset();
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 5000);
       }
     });
   }

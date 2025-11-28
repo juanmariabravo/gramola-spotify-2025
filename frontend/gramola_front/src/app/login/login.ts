@@ -62,8 +62,8 @@ export class Login {
       error: (error) => {
         this.isLoading = false;
         this.feedbackType = 'error';
-        this.feedbackMessage = error?.error?.message || 'Usuario o contraseña incorrectos';
-        console.error('Login error:', error);
+        this.feedbackMessage = 'Email o contraseña inválidos';
+        //console.error('Login error:', error);
       }
     });
   }

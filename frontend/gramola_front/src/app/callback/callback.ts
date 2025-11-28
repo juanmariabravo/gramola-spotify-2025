@@ -41,7 +41,7 @@ export class Callback {
     history.replaceState({}, '', '/callback');
 
     const clientId = sessionStorage.getItem('clientId');
-    console.log("clientId:", clientId);
+    //console.log("clientId:", clientId);
     if (!clientId) {
       this.showErrorMessage('No se encontró el Client ID. Por favor inicia sesión de nuevo.');
       return;
@@ -50,12 +50,12 @@ export class Callback {
     // Ask Spotify for the Authorization Token
     this.spotiService.getAuthorizationToken(code).subscribe({
       next: (data) => {
-        console.log('Authorization token received:', data);
+        //console.log('Authorization token received:', data);
         sessionStorage.setItem('accessToken', data.access_token);
         this.router.navigateByUrl('/playlist-and-devices');
       },
       error: (error) => {
-        console.error('Error fetching authorization token:', error);
+        //console.error('Error fetching authorization token:', error);
         this.handleAuthorizationError(error);
       }
     });
