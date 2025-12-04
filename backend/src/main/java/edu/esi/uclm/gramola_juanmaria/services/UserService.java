@@ -189,14 +189,7 @@ public class UserService {
             URLEncoder.encode(email, StandardCharsets.UTF_8),
             URLEncoder.encode(recoveryToken.getId(), StandardCharsets.UTF_8)
         );
-        
-        System.out.println("=== EMAIL DE RECUPERACIÓN ===");
-        System.out.println("Para: " + email);
-        System.out.println("Asunto: Recuperación de contraseña - Gramola");
-        System.out.println("Enlace de recuperación: " + recoveryUrl);
-        System.out.println("Token válido por 30 minutos");
-        System.out.println("============================");
-        
+
         mailService.sendRecoveryEmail(email, user.getBarName(), recoveryUrl);
     }
 
