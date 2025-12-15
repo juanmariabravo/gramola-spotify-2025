@@ -8,3 +8,4 @@ frontend/gramola_front/src/app/geolocalizacion/geolocalizacion.css
 frontend/gramola_front/src/app/geolocalizacion/geolocalizacion.html
 frontend/gramola_front/src/app/geolocalizacion/geolocalizacion.ts
 imgs/
+backend/src/main/resources/application.properties
