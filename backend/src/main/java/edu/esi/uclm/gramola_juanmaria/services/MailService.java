@@ -1,18 +1,17 @@
 package edu.esi.uclm.gramola_juanmaria.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StreamUtils;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
+
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import org.springframework.mail.javamail.MimeMessageHelper;
 
 
 @Service
@@ -52,7 +51,6 @@ public class MailService {
 
             emailSender.send(message);
         } catch (MessagingException e) {
-            e.printStackTrace();
         }
     }
 
@@ -61,7 +59,6 @@ public class MailService {
             ClassPathResource resource = new ClassPathResource(filename);
             return StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            e.printStackTrace();
             return null;
         }
     }
