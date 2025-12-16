@@ -44,7 +44,7 @@ class GramolaJuanmariaApplicationTests {
     @Autowired
     private UserDao userDao;
 
-    private static final String SPOTIFY_TOKEN = "BQABuqCoOIRp6w6iqGMaAu1_kMa5CxWBAV2q9IPXtVYhkltKtBFM5wgQpPyJZ-VSfUyXYERbkUdDyA9V9J-pGk8QgLkNhGLC2e02kyQeyOxOSl0coCFLBP3HLVjysE1CBG5QlpJPBLhxzkSx4VzgvHHHUfQn4wMmZttuaVi6nPYuteQHGrvvNZYfMFJ6dkVsbjYPXXjwz3ZjNgbMSoJ39TWcG8S5kbRXu88RAw_LRnJp9qffCBqRnTBe3a09HCM42JtBL4e8gjkS3xoOi1sOewSd-HcvFWB8khy8ydswrlvryMveMV4Z";
+    private static final String SPOTIFY_TOKEN = "BQCcsLN83oj5ibOZzBiOB5n0f8iRmZtLtM-GCuZKtXWEfQj4SxMkQCXq61wGM0X1k-2RPhyLmKNJappa-SdY8BJ4o3q3QfLyHq_k07D51vRZFQyQxEd0QVWd9ZOQ26zk51rqHz3PtZETdi8Wcz8FErlWGdC6yhFDxWrHtwUCdQxZ7xhkzrvjCoDWuX3iGEbpqfl6P7K0s7PTxdUwxD6aSD-Cr_nfGzXdhNZRWHArfAitoQPej3itihGFKszNeI4lBsn6jx-KZXGGGXAIZ76SWKbKtjh6pbLsWY5qgMt9FaNOKgYZ9ihf";
     private static final String URL_BASE = "http://127.0.0.1:4200/";
     private static final String CORREO = "juanmariabravo12@gmail.com";
     private static final String CONTRASENA = "mellamo12";
@@ -52,6 +52,11 @@ class GramolaJuanmariaApplicationTests {
     private static final String NUM_TARJETA = "4242 4242 4242 4242";
     private static final String CADUCIDAD_TARJETA = "0330";
     private static final String CVC_TARJETA = "123";
+    private static final String NUM_TARJETA_RECHAZADA = "4000 0000 0000 0002"; // Tarjeta que siempre es rechazada por Stripe (Tu tarjeta ha sido rechazada.)
+    private static final String NUM_TARJETA_INVALIDO = "1231 2312 3123 2131"; // Tarjeta inválida (El número de tu tarjeta no es válido.)
+    private static final String NUM_TARJETA_INCOMPLETO = "4242 4242 4242"; // Número de tarjeta incompleto (El número de tu tarjeta está incompleto.)
+    private static final String CADUCIDAD_TARJETA_PASADA = "0120"; // Fecha de caducidad pasada (El año de caducidad de tu tarjeta ya ha pasado.)
+    private static final String CADUCIDAD_TARJETA_INVALIDA = "1299"; // Fecha de caducidad demasiado lejana, rechazada por Stripe (El año de caducidad de la tarjeta no es válido.)
 
     @BeforeEach
     public void setUp() {
@@ -75,12 +80,10 @@ class GramolaJuanmariaApplicationTests {
         this.driver.manage().window().maximize();
     }
 
-    @Test
-    public void testBuscarYPagarCancion() {
-        // Contar transacciones y canciones añadidas antes del test
-        long transaccionesAntes = stripeTransactionDao.count();
-        long cancionesAntes = addedSongDao.count();
-
+    /*
+     * Desde la página principal, navegar a /music, realizando todo el proceso de login y seleccionar dispositivo
+     */
+    private void fromHomeToMusic() {
         // Clic en "Iniciar sesión"
         new WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.elementToBeClickable(
@@ -128,8 +131,10 @@ class GramolaJuanmariaApplicationTests {
 
         // Hacemos scroll hacia arriba para ver la barra de búsqueda
         js.executeScript("window.scrollTo(0, 0);");
+    }
 
-        // Clic en barra de búsqueda
+    private void addSongToQueue() {
+        // Esperar a que esté disponible la barra de búsqueda
         WebElement searchInput = new WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.elementToBeClickable(By.cssSelector(".search-input")));
 
@@ -161,7 +166,9 @@ class GramolaJuanmariaApplicationTests {
 
         // Aceptar alert() "¿Desea añadir la canción a la cola y proceder al pago?"
         driver.switchTo().alert().accept();
+    }
 
+    private void payForSong(String numeroTarjeta, String caducidadTarjeta, String cvcTarjeta) {
         // Hacemos scroll down para ver el formulario de pago
         js.executeScript("window.scrollTo(0, screen.height);");
 
@@ -175,19 +182,19 @@ class GramolaJuanmariaApplicationTests {
                 .until(ExpectedConditions.elementToBeClickable(By.name("cardnumber")));
 
         cardNumberInput.sendKeys(
-                NUM_TARJETA);
+                numeroTarjeta);
 
         // Escribir fecha de caducidad
         WebElement expDateInput = driver.findElement(By.name("exp-date"));
 
         expDateInput.sendKeys(
-                CADUCIDAD_TARJETA);
+                caducidadTarjeta);
 
         // Escribir CVC
         WebElement cvcInput = driver.findElement(By.name("cvc"));
 
         cvcInput.sendKeys(
-                CVC_TARJETA);
+                cvcTarjeta);
 
         // Salir del iframe de Stripe
         driver.switchTo()
@@ -195,6 +202,17 @@ class GramolaJuanmariaApplicationTests {
 
         // Clic en "Completar pago..."
         driver.findElement(By.id("submit")).click();
+    }
+
+    @Test
+    public void testBuscarYPagarCancion() {
+        // Contar transacciones y canciones añadidas antes del test
+        long transaccionesAntes = stripeTransactionDao.count();
+        long cancionesAntes = addedSongDao.count();
+
+        fromHomeToMusic();
+        addSongToQueue();
+        payForSong(NUM_TARJETA, CADUCIDAD_TARJETA, CVC_TARJETA);
 
         // Esperamos a que cargue de nuevo la página de /music
         new WebDriverWait(driver, Duration.ofSeconds(10))
@@ -218,6 +236,7 @@ class GramolaJuanmariaApplicationTests {
             }
         }
 
+        // Verificar que se ha encontrado la canción en la cola
         assertTrue(found, "La canción no se encuentra en la cola");
 
         // Esperar un momento para que se complete la transacción en el backend
@@ -238,14 +257,20 @@ class GramolaJuanmariaApplicationTests {
         StripeTransaction ultimaTransaccion = todasTransacciones.get(todasTransacciones.size()
                 - 1);
 
+        // Verificar que la última transacción no es null
         assertNotNull(ultimaTransaccion, "La última transacción no debería ser null");
 
-       Map<String, Object> transactionData = ultimaTransaccion.getData();
+        // Verificar que el estado de la transacción es "completed"
+        Map<String, Object> transactionData = ultimaTransaccion.getData();
         assertTrue("completed".equals(transactionData.get("status")),
                 "La última transacción debería tener el estado 'completed'");
+        // Verificar que la transacción pertenece al usuario correcto
+        assertTrue(ultimaTransaccion.getEmail().equalsIgnoreCase(CORREO),
+                "La transacción debería pertenecer al usuario que realizó la compra");
+
         // Verificar que la canción se ha añadido al backend
         long cancionesDespues = addedSongDao.count();
-        assertTrue(cancionesDespues - cancionesAntes == 1,
+        assertTrue(cancionesDespues - cancionesAntes >= 1,
                 "Debería haber al menos una nueva canción añadida en la base de datos");
 
         // Verificar que la canción añadida pertenece al usuario correcto
@@ -255,9 +280,100 @@ class GramolaJuanmariaApplicationTests {
         List<AddedSong> cancionesAñadidas = addedSongDao.findAll();
         AddedSong ultimaCancionAñadida = cancionesAñadidas.get(cancionesAñadidas.size() - 1);
 
+        // Verificar que la última canción añadida no es null y pertenece al usuario correcto
         assertNotNull(ultimaCancionAñadida, "La última canción añadida no debería ser null");
         assertTrue(ultimaCancionAñadida.getUser().getEmail().equalsIgnoreCase(CORREO),
                 "La canción añadida debería pertenecer al usuario que realizó la compra");
+    }
+
+    @Test
+    public void testPagoTarjetaRechazada() {
+        fromHomeToMusic();
+        addSongToQueue();
+        payForSong(NUM_TARJETA_RECHAZADA, CADUCIDAD_TARJETA, CVC_TARJETA);
+
+        // Esperar a que aparezca el mensaje de error en el frontend
+        WebElement errorMessage = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(
+                        By.cssSelector(".card-error-message")));
+
+        // Verificar que el mensaje de error es el esperado
+        String expectedMessage = "Tu tarjeta ha sido rechazada.";
+        String actualMessage = errorMessage.getText();
+        assertTrue(actualMessage.contains(expectedMessage),
+                "El mensaje de error debería indicar que la tarjeta ha sido rechazada");
+    }
+
+    @Test
+    public void testPagoTarjetaInvalida() {
+        fromHomeToMusic();
+        addSongToQueue();
+        payForSong(NUM_TARJETA_INVALIDO, CADUCIDAD_TARJETA, CVC_TARJETA);
+
+        // Esperar a que aparezca el mensaje de error en el frontend
+        WebElement errorMessage = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(
+                        By.cssSelector(".card-error-message")));
+
+        // Verificar que el mensaje de error es el esperado
+        String expectedMessage = "El número de tu tarjeta no es válido.";
+        String actualMessage = errorMessage.getText();
+        assertTrue(actualMessage.contains(expectedMessage),
+                "El mensaje de error debería indicar que la tarjeta ha sido rechazada");
+    }
+
+    @Test
+    public void testPagoTarjetaIncompleta() {
+        fromHomeToMusic();
+        addSongToQueue();
+        payForSong(NUM_TARJETA_INCOMPLETO, CADUCIDAD_TARJETA, CVC_TARJETA);
+
+        // Esperar a que aparezca el mensaje de error en el frontend
+        WebElement errorMessage = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(
+                        By.cssSelector(".card-error-message")));
+
+        // Verificar que el mensaje de error es el esperado
+        String expectedMessage = "El número de tu tarjeta está incompleto.";
+        String actualMessage = errorMessage.getText();
+        assertTrue(actualMessage.contains(expectedMessage),
+                "El mensaje de error debería indicar que el número de la tarjeta está incompleto");
+    }
+
+    @Test
+    public void testPagoCaducidadPasada() {
+        fromHomeToMusic();
+        addSongToQueue();
+        payForSong(NUM_TARJETA, CADUCIDAD_TARJETA_PASADA, CVC_TARJETA);
+
+        // Esperar a que aparezca el mensaje de error en el frontend
+        WebElement errorMessage = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(
+                        By.cssSelector(".card-error-message")));
+
+        // Verificar que el mensaje de error es el esperado
+        String expectedMessage = "El año de caducidad de tu tarjeta ya ha pasado.";
+        String actualMessage = errorMessage.getText();
+        assertTrue(actualMessage.contains(expectedMessage),
+                "El mensaje de error debería indicar que el año de caducidad de la tarjeta ya ha pasado");
+    }
+
+    @Test
+    public void testPagoCaducidadInvalida() {
+        fromHomeToMusic();
+        addSongToQueue();
+        payForSong(NUM_TARJETA, CADUCIDAD_TARJETA_INVALIDA, CVC_TARJETA);
+
+        // Esperar a que aparezca el mensaje de error en el frontend
+        WebElement errorMessage = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(
+                        By.cssSelector(".card-error-message")));
+
+        // Verificar que el mensaje de error es el esperado
+        String expectedMessage = "El año de caducidad de la tarjeta no es válido.";
+        String actualMessage = errorMessage.getText();
+        assertTrue(actualMessage.contains(expectedMessage),
+                "El mensaje de error debería indicar que el año de caducidad de la tarjeta no es válido");
     }
 
     @AfterEach
