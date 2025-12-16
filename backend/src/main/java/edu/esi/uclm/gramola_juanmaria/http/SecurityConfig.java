@@ -13,32 +13,30 @@ public class SecurityConfig {
 
     // @Bean
     // SecurityFilterChain securityFilter(HttpSecurity http) throws Exception {
-    //     http
-    //             .csrf().disable()
-    //             .authorizeHttpRequests()
-    //             .requestMatchers("/**")
-    //             .permitAll();
-    //     DefaultSecurityFilterChain filterChain = http.build();
-    //     return filterChain;
+        // http
+    // .csrf().disable()
+    // .authorizeHttpRequests()
+    // .requestMatchers("/**")
+    // .permitAll();
+    // DefaultSecurityFilterChain filterChain = http.build();
+    // return filterChain;
     // }
     @Bean
     SecurityFilterChain securityFilter(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Desactivar CSRF (Cross-Site Request Forgery). 
-                //                              CSRF es una protección contra ataques que intentan 
-                //                              hacer peticiones maliciosas utilizando las cookies de sesión
-                //                              que se han quedado en el navegador del usuario.
+                .csrf(csrf -> csrf.disable()) // Desactivar CSRF (Cross-Site Request Forgery).
+                                // CSRF es una protección contra ataques que intentan
+                // hacer peticiones maliciosas utilizando las cookies de sesión
+                // que se han quedado en el navegador del usuario.
                 //
-                //                              Lo desactivamos porque aquí no hay riesgo de CSRF
+                                // Lo desactivamos porque aquí no hay riesgo de CSRF
                 .authorizeHttpRequests(
                         auth -> auth
-                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                                .requestMatchers("/users/login", "/users/register", "/users/recover-password",
-                                        "/users/reset-password", "/users/validate-reset-token",
-                                        "/users/confirm/**", "/payments/**").permitAll()
-                                .anyRequest().authenticated() // Todas las demás peticiones requieren autenticación
-                )
-                .httpBasic(Customizer.withDefaults()); // Habilitar autenticación con HTTP Basic
+                                .requestMatchers("/**").permitAll() // Permitir todas las peticiones
+                // La autenticación se maneja en ResponseFilter
+                );
+        // .httpBasic(Customizer.withDefaults()); // HTTP Basic desactivado para evitar
+        // popup del navegador
 
         DefaultSecurityFilterChain filterChain = http.build();
         return filterChain;

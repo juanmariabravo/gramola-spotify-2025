@@ -44,7 +44,8 @@ public class ResponseFilter extends OncePerRequestFilter {
                 || resource.equals("/users/reset-password")
                 || resource.equals("/users/validate-reset-token")
                 || resource.startsWith("/users/confirm/") // Confirmación de email
-                || resource.startsWith("/payments"); // Pagos (por ahora públicos)
+                || resource.startsWith("/payments") // Pagos (por ahora públicos)
+                || resource.startsWith("/spoti/"); // Spotify callbacks
     }
 
     @Override
