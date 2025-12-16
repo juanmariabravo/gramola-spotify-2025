@@ -61,7 +61,15 @@ export class ResetPassword implements OnInit {
         this.isValidatingToken = false;
         this.tokenValid = false;
         this.feedbackType = 'error';
-        this.feedbackMessage = error?.error?.message || 'El enlace de recuperación ha expirado o no es válido. Por favor solicita uno nuevo.';
+        
+        const status = error.status;
+        if (status === 0) {
+          this.feedbackMessage = 'No se puede conectar con el servidor. Verifica tu conexión a internet o intenta más tarde.';
+        } else if (status === 500) {
+          this.feedbackMessage = 'Error del servidor. Por favor intenta de nuevo más tarde.';
+        } else {
+          this.feedbackMessage = error?.error?.message || 'El enlace de recuperación ha expirado o no es válido. Por favor solicita uno nuevo.';
+        }
       }
     });
   }
@@ -107,7 +115,15 @@ export class ResetPassword implements OnInit {
       error: (error) => {
         this.isLoading = false;
         this.feedbackType = 'error';
-        this.feedbackMessage = error?.error?.message || 'No se pudo restablecer la contraseña. Por favor intenta de nuevo.';
+        
+        const status = error.status;
+        if (status === 0) {
+          this.feedbackMessage = 'No se puede conectar con el servidor. Verifica tu conexión a internet o intenta más tarde.';
+        } else if (status === 500) {
+          this.feedbackMessage = 'Error del servidor. Por favor intenta de nuevo más tarde.';
+        } else {
+          this.feedbackMessage = error?.error?.message || 'No se pudo restablecer la contraseña. Por favor intenta de nuevo.';
+        }
         console.error('Reset password error:', error);
       }
     });

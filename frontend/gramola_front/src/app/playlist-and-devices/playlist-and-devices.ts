@@ -67,6 +67,17 @@ export class PlaylistAndDevices implements OnInit {
       },
       error: (err) => {
         console.error('Error al cargar datos del usuario:', err);
+        const status = err.status;
+
+        if (status === 0) {
+          // Error de CORS o servidor no disponible
+          console.error('Error de CORS: El servidor backend no está configurado correctamente para permitir peticiones desde el frontend. Verifica la configuración CORS del backend.');
+        } else if (status === 401) {
+          // Sesión expirada
+          this.router.navigate(['/login']);
+          return;
+        }
+
         // Usar valor por defecto si falla
         this.songPrice = 50;
       }
@@ -270,10 +281,8 @@ export class PlaylistAndDevices implements OnInit {
         this.router.navigate(['/music']);
       },
       error: (err) => {
-        console.warn('No se pudo iniciar la reproducción:', err);
         // informar al usuario pero permitir continuar (puede que la reproducción ya estuviera activa)
         const msg = err?.error?.error?.message || err?.message || 'Error al iniciar reproducción';
-        alert(`Aviso: ${msg}\nPuedes continuar pero verifica que el dispositivo esté disponible.`);
         // redirigir de todas formas
         this.router.navigate(['/music']);
       }

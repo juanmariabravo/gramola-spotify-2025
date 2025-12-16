@@ -54,16 +54,26 @@ export class RecoverPassword {
         }, 5000);
       },
       error: (error) => {
-        // Por seguridad, mostramos el mismo mensaje incluso si el email no existe
         this.isLoading = false;
-        this.feedbackType = 'success'; // Mostramos como éxito visualmente
-        this.feedbackMessage = 'Si tu email existe en nuestra base de datos, se te enviará un correo de recuperación.';
+        const status = error.status;
+        
+        if (status === 0) {
+          // Error de red - servidor no disponible
+          this.feedbackType = 'error';
+          this.feedbackMessage = 'No se puede conectar con el servidor. Verifica tu conexión a internet o intenta más tarde.';
+        } else if (status === 500) {
+          this.feedbackType = 'error';
+          this.feedbackMessage = 'Error del servidor. Por favor intenta de nuevo más tarde.';
+        } else {
+          // Por seguridad, mostramos el mismo mensaje para otros errores
+          this.feedbackType = 'success'; // Mostramos como éxito visualmente
+          this.feedbackMessage = 'Si tu email existe en nuestra base de datos, se te enviará un correo de recuperación.';
+          this.recoverForm.reset();
+          setTimeout(() => {
+            this.router.navigate(['/login']);
+          }, 5000);
+        }
         console.error('Recovery error (hidden from user):', error);
-
-        this.recoverForm.reset();
-        setTimeout(() => {
-          this.router.navigate(['/login']);
-        }, 5000);
       }
     });
   }

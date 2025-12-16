@@ -57,13 +57,31 @@ export class Login {
           this.userSignature = response.signature;
         }
 
-        this.getToken(); // redirigir a Spotify para autorización
+        if (sessionStorage.getItem('accessToken')) {
+          // si ya tenemos token de acceso, redirigir a la app directamente
+          this.router.navigate(['/playlist-and-devices']);
+          return;
+        }
+        this.getToken(); // redirigir a Spotify para autorización si no hay token de acceso
       },
       error: (error) => {
         this.isLoading = false;
         this.feedbackType = 'error';
-        this.feedbackMessage = 'Email o contraseña inválidos';
-        //console.error('Login error:', error);
+        
+        // Distinguir entre error de conexión y error de credenciales
+        const status = error.status;
+        
+        if (status === 0) {
+          // Error de red - servidor no disponible
+          this.feedbackMessage = 'No se puede conectar con el servidor. Verifica tu conexión a internet o intenta más tarde.';
+        } else if (status === 401 || status === 403) {
+          // Credenciales inválidas
+          this.feedbackMessage = 'Email o contraseña inválidos';
+        } else if (status === 500) {
+          this.feedbackMessage = 'Error del servidor. Por favor intenta de nuevo más tarde.';
+        } else {
+          this.feedbackMessage = error.error?.message || 'Error al iniciar sesión. Por favor intenta de nuevo.';
+        }
       }
     });
   }

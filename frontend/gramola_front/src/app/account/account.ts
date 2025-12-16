@@ -95,9 +95,14 @@ export class Account implements OnInit {
       },
       error: (error) => {
         console.error('Error al cargar datos del usuario:', error);
-        if (error.status === 401) {
+        const status = error.status;
+        
+        if (status === 401) {
           // Sesión expirada, redirigir al login
           this.router.navigate(['/login']);
+        } else if (status === 0) {
+          // Error de conexión
+          console.error('No se puede conectar con el servidor');
         }
       }
     });
@@ -184,10 +189,14 @@ export class Account implements OnInit {
         const status = error.status;
         const message = error.error?.message || error.message || '';
         
-        if (status === 404) {
+        if (status === 0) {
+          this.barNameError = 'No se puede conectar con el servidor. Verifica tu conexión a internet.';
+        } else if (status === 404) {
           this.barNameError = 'Usuario no encontrado';
         } else if (status === 400) {
           this.barNameError = 'Nombre de bar inválido';
+        } else if (status === 500) {
+          this.barNameError = 'Error del servidor. Por favor intenta de nuevo más tarde.';
         } else {
           this.barNameError = message || 'Error al actualizar el nombre del bar';
         }
@@ -239,10 +248,14 @@ export class Account implements OnInit {
         const status = error.status;
         const message = error.error?.message || error.message || '';
         
-        if (status === 404) {
+        if (status === 0) {
+          this.priceError = 'No se puede conectar con el servidor. Verifica tu conexión a internet.';
+        } else if (status === 404) {
           this.priceError = 'Usuario no encontrado';
         } else if (status === 400 || status === 406) {
           this.priceError = 'Precio inválido. Debe estar entre 0€ y 5€';
+        } else if (status === 500) {
+          this.priceError = 'Error del servidor. Por favor intenta de nuevo más tarde.';
         } else {
           this.priceError = message || 'Error al actualizar el precio';
         }
@@ -290,7 +303,9 @@ export class Account implements OnInit {
         const status = error.status;
         const message = error.error?.message || error.message || '';
         
-        if (status === 401) {
+        if (status === 0) {
+          this.passwordError = 'No se puede conectar con el servidor. Verifica tu conexión a internet.';
+        } else if (status === 401) {
           this.passwordError = 'La contraseña actual es incorrecta';
         } else if (status === 406) {
           if (message.includes('8 caracteres')) {
@@ -300,6 +315,8 @@ export class Account implements OnInit {
           }
         } else if (status === 404) {
           this.passwordError = 'Usuario no encontrado';
+        } else if (status === 500) {
+          this.passwordError = 'Error del servidor. Por favor intenta de nuevo más tarde.';
         } else {
           this.passwordError = message || 'Error al cambiar la contraseña';
         }
