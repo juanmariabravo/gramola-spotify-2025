@@ -24,7 +24,7 @@ public class MailService {
     private String fromEmail;
 
     public void sendConfirmationEmail(String to, String nombre, String enlace) {
-        String template = loadTemplate("CorreoConfirmacion.html");
+        String template = loadTemplate("${mail.template.confirmacion}");
         if (template != null) {
             String body = template.replace("%NOMBRE%", nombre).replace("%ENLACE%", enlace);
             sendEmail(to, "Confirmación de cuenta - Gramola", body);
@@ -32,7 +32,7 @@ public class MailService {
     }
 
     public void sendRecoveryEmail(String to, String nombre, String enlace) {
-        String template = loadTemplate("CorreoRecuperacion.html");
+        String template = loadTemplate("${mail.template.recuperacion}");
         if (template != null) {
             String body = template.replace("%NOMBRE%", nombre).replace("%ENLACE%", enlace);
             sendEmail(to, "Recuperación de contraseña - Gramola", body);
