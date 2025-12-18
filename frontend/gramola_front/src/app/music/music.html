@@ -39,10 +39,18 @@
         <div class="search-container">
             <input type="text" [(ngModel)]="searchQuery" (keyup.enter)="searchTracks()"
                 placeholder="Buscar canciones, artistas, álbumes..." class="search-input">
+            <button (click)="toggleVoiceSearch()" class="mic-btn" [class.listening]="isListening" 
+                [title]="isListening ? 'Detener reconocimiento de voz' : 'Buscar con voz'">
+                <span class="mic-icon material-icons">{{isListening ? 'mic' : 'mic_none'}}</span>
+            </button>
             <button (click)="searchTracks()" class="search-btn">
                 <span class="search-icon material-icons">search</span>
                 Buscar
             </button>
+        </div>
+        <div *ngIf="isListening" class="voice-feedback">
+            <span class="pulse-indicator"></span>
+            <span class="listening-text">Escuchando... {{voiceTranscript || 'Habla ahora'}}</span>
         </div>
     </section>
 

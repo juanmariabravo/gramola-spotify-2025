@@ -49,6 +49,12 @@ export class Music implements OnInit, OnDestroy {
   barName: string = 'Mi Bar';
   searchQuery: string = '';
 
+  // Propiedades para reconocimiento de voz
+  isListening: boolean = false;
+  voiceTranscript: string = '';
+  private recognition: any;
+  private voiceTimeout: any;
+
   constructor(private spotiService: SpotiService, private userService: UserService) { }
 
   ngOnInit(): void {
@@ -88,6 +94,9 @@ export class Music implements OnInit, OnDestroy {
 
     // Listener para cerrar búsqueda con ESC
     document.addEventListener('keydown', this.handleEscapeKey.bind(this));
+
+    // Inicializar Web Speech API
+    this.initVoiceRecognition();
   }
 
   // para cola en tiempo real
@@ -100,6 +109,11 @@ export class Music implements OnInit, OnDestroy {
     }
     // Remover listener de ESC
     document.removeEventListener('keydown', this.handleEscapeKey.bind(this));
+
+    // Detener reconocimiento de voz
+    if (this.recognition) {
+      this.recognition.stop();
+    }
   }
 
   handleEscapeKey(event: KeyboardEvent) {
@@ -299,6 +313,119 @@ export class Music implements OnInit, OnDestroy {
 
   clearQueue() {
     this.queue = [];
+  }
+
+  // Inicializar reconocimiento de voz
+  initVoiceRecognition() {
+    // Verificar compatibilidad del navegador
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      // Mostrar feedback al usuario en lugar de solo consola
+      setTimeout(() => {
+        alert('El reconocimiento de voz no está soportado en este navegador. Por favor, usa Chrome, Edge o Safari.');
+      }, 100);
+      return;
+    }
+
+    this.recognition = new SpeechRecognition();
+    this.recognition.lang = 'es-ES'; // Español
+    this.recognition.continuous = true; // Reconocimiento continuo
+    this.recognition.interimResults = true; // Resultados intermedios en tiempo real
+
+    // Evento cuando se recibe un resultado
+    this.recognition.onresult = (event: any) => {
+      let interimTranscript = '';
+      let finalTranscript = '';
+
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalTranscript += transcript + ' ';
+        } else {
+          interimTranscript += transcript;
+        }
+      }
+
+      // Actualizar transcripción en tiempo real
+      this.voiceTranscript = interimTranscript || finalTranscript;
+      this.searchQuery = (finalTranscript || interimTranscript).trim();
+
+      // Si hay una transcripción final, realizar la búsqueda
+      if (finalTranscript.trim()) {
+        this.searchTracks();
+      }
+    };
+
+    // Evento cuando termina el reconocimiento
+    this.recognition.onend = () => {
+      if (this.isListening) {
+        // Reiniciar automáticamente si aún está en modo escucha
+        this.recognition.start();
+      }
+    };
+
+    // Evento de error
+    this.recognition.onerror = (event: any) => {
+      if (event.error === 'no-speech') {
+        this.voiceTranscript = 'No se detectó voz. Intenta de nuevo.';
+        setTimeout(() => this.voiceTranscript = '', 3000);
+      } else if (event.error === 'not-allowed') {
+        this.voiceTranscript = 'Permiso de micrófono denegado';
+        this.isListening = false;
+        alert('Permiso de micrófono denegado.\n\nPor favor, permite el acceso al micrófono en la configuración de tu navegador para usar esta función.');
+      } else if (event.error === 'network') {
+        this.voiceTranscript = 'Error de conexión';
+        this.isListening = false;
+        alert('Error de red. Verifica tu conexión a internet.');
+      } else if (event.error === 'aborted') {
+        this.voiceTranscript = 'Reconocimiento cancelado';
+        this.isListening = false;
+      } else {
+        this.voiceTranscript = 'Error en el reconocimiento de voz';
+        this.isListening = false;
+        alert(`Error en el reconocimiento de voz: ${event.error}`);
+      }
+    };
+  }
+
+  // Alternar reconocimiento de voz
+  toggleVoiceSearch() {
+    if (!this.recognition) {
+      alert('El reconocimiento de voz no está soportado en este navegador. Por favor, usa Chrome, Edge o Safari.');
+      return;
+    }
+
+    if (this.isListening) {
+      // Detener reconocimiento
+      this.recognition.stop();
+      this.isListening = false;
+      this.voiceTranscript = '';
+
+      // Limpiar timeout si existe
+      if (this.voiceTimeout) {
+        clearTimeout(this.voiceTimeout);
+        this.voiceTimeout = null;
+      }
+    } else {
+      // Iniciar reconocimiento
+      this.voiceTranscript = '';
+      this.recognition.start();
+      this.isListening = true;
+
+      // Establecer timeout de 8 segundos
+      this.voiceTimeout = setTimeout(() => {
+        if (this.isListening) {
+          this.recognition.stop();
+          this.isListening = false;
+          // Si hay algo escrito, realizar la búsqueda
+          if (this.searchQuery.trim()) {
+            this.searchTracks();
+          }
+          this.voiceTranscript = '';
+        }
+      }, 8000);
+    }
   }
 
 }
