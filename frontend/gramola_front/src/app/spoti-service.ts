@@ -38,6 +38,18 @@ export class SpotiService {
     return this.http.get<any>(`${this.spotiV1Url}/me/player/currently-playing`, { headers });
   }
 
+  // Obtener estado completo del reproductor (incluye device, currently_playing, etc.)
+  getPlayerState(): Observable<any> {
+    if (!this.getSpotifyToken()) {
+      throw new Error('Spotify token is not set.');
+    }
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.getSpotifyToken()}`,
+      'Accept': 'application/json'
+    });
+    return this.http.get<any>(`${this.spotiV1Url}/me/player`, { headers });
+  }
+
   getDevices() : Observable<any> {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.getSpotifyToken()}`
@@ -77,13 +89,6 @@ export class SpotiService {
     });
 
     return this.http.get<any>(`${this.spotiV1Url}/me/playlists`, { headers });
-  }
-  
-  getCurrentPlayList() : Observable<any> {
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.getSpotifyToken()}`
-    });
-    return this.http.get<any>(`${this.spotiV1Url}/me/player/currently-playing`, { headers });
   }
 
   getTracks(playlistId : string) : Observable<any> {

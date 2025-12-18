@@ -5,7 +5,6 @@ import { SpotiService } from '../spoti-service';
 import { Navbar } from '../navbar/navbar';
 import { UserService } from '../user-service';
 import { Track } from '../model/Track';
-import { Playlist } from '../model/Playlist';
 import { Device } from '../model/Device';
 
 @Component({
@@ -18,9 +17,7 @@ import { Device } from '../model/Device';
 
 export class Music implements OnInit, OnDestroy {
 
-  devices: Device[] = [];
   currentDevice?: Device;
-  playlists: Playlist[] = [];
   queue: Track[] = [];
   tracks: Track[] = []; // resultados de búsqueda
 
@@ -65,20 +62,13 @@ export class Music implements OnInit, OnDestroy {
       }
     });
     
-    
-    this.getDevices()
-    this.getPlaylists()
-    this.getCurrentPlayList();
+    this.getCurrentPlaying();
     // también actualizar la lista actual cada 8000 ms
-    this.currentPlaylistPollIntervalId = setInterval(() => this.getCurrentPlayList(), 8000);
+    this.currentPlaylistPollIntervalId = setInterval(() => this.getCurrentPlaying(), 8000);
+
     // obtener cola real de Spotify y mantenerla actualizada (cada 8000 ms)
     this.getQueue();
     this.queuePollIntervalId = setInterval(() => this.getQueue(), 8000);
-    // leer precio por canción desde sessionStorage o backend
-    const storedPrice = sessionStorage.getItem('songPrice');
-    if (storedPrice) {
-      this.songPrice = Number(storedPrice);
-    }
 
     // Listener para cerrar búsqueda con ESC
     document.addEventListener('keydown', this.handleEscapeKey.bind(this));
@@ -110,70 +100,30 @@ export class Music implements OnInit, OnDestroy {
     }
   }
 
-  getDevices() {
-    this.resetErrors()
-    this.spotiService.getDevices().subscribe({
-      next: (result) => {
-        this.devices = result.devices;
-        this.currentDevice = this.devices.find(d => d.is_active);
-        if (!this.currentDevice)
-          this.deviceError = "No hay ningún dispositivo conectado"
-      },
-      error: (err) => {
-        this.deviceError = err.message;
-      }
-    });
-  }
-
-  // Selecciona un dispositivo (si es distinto del actual) y llama al backend de Spotify para transferir la reproducción
-  selectDevice(device: Device) {
+  getCurrentPlaying() {
     this.resetErrors();
-    if (!device || !device.id) {
-      this.deviceError = 'Dispositivo inválido';
-      return;
-    }
-    // Si ya es el dispositivo activo, no hacer nada
-    if (this.currentDevice && this.currentDevice.id === device.id) {
-      return;
-    }
-
-    this.spotiService.setCurrentDevice(device.id).subscribe({
-      next: () => {
-        // Refrescar lista de dispositivos y marcar el seleccionado como activo
-        // Spotify puede tardar en transferir; pedir de nuevo los dispositivos
-        this.getDevices();
-      },
-      error: (err) => {
-        this.deviceError = err?.message || 'Error al seleccionar el dispositivo';
-      }
-    });
-  }
-
-  getPlaylists() {
-    this.resetErrors();
-    this.spotiService.getPlaylists().subscribe({
+    // Usar getPlayerState() en lugar de getCurrentlyPlaying() para obtener también el dispositivo
+    this.spotiService.getPlayerState().subscribe({
       next: (result) => {
-        this.playlists = result.items;
-      },
-      error: (err) => {
-        this.playlistError = err.message;
-      }
-    });
-  }
-
-  getCurrentPlayList() {
-    this.resetErrors();
-    this.spotiService.getCurrentlyPlaying().subscribe({
-      next: (result) => {
+        // result.item contiene la canción actual
         if (result && result.item) {
           this.currentTrack = result.item;
+        }
+        // result.device contiene el dispositivo activo
+        if (result && result.device) {
+          this.currentDevice = {
+            id: result.device.id,
+            name: result.device.name,
+            type: result.device.type,
+            is_active: result.device.is_active,
+            volume_percent: result.device.volume_percent
+          };
         }
       },
       error: (err) => {
         this.currentPlaylistError = err.message;
       }
     });
-
   }
 
   resetErrors() {
