@@ -7,19 +7,8 @@ import { UserService } from '../user-service';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { Navbar } from '../navbar/navbar';
-
-interface Device {
-  id: string;
-  name: string;
-  type: string;
-  is_active: boolean;
-}
-
-interface Playlist {
-  id: string;
-  name: string;
-  images?: { url: string }[];
-}
+import { Device } from '../model/Device';
+import { Playlist } from '../model/Playlist';
 
 @Component({
   selector: 'app-playlist-and-devices',
@@ -173,17 +162,6 @@ export class PlaylistAndDevices implements OnInit {
     this.selectedPlaylistId = playlistId;
   }
 
-  getDeviceIcon(type: string): string {
-    const icons: { [key: string]: string } = {
-      computer: 'computer',
-      smartphone: 'smartphone',
-      tablet: 'tablet',
-      speaker: 'speaker',
-      tv: 'tv'
-    };
-    return icons[type.toLowerCase()] || 'devices';
-  }
-
   // Filtrar playlists según la búsqueda
   filteredPlaylists(): Playlist[] {
     const query = (this.playlistSearchQuery || '').trim().toLowerCase();
@@ -192,12 +170,11 @@ export class PlaylistAndDevices implements OnInit {
       return this.myPlaylists;
     }
     // combinar: primero las del usuario que coincidan, luego las públicas encontradas
-    const myFiltered = this.myPlaylists.filter(p => p.name.toLowerCase().includes(query));
+    const myFiltered = this.myPlaylists.filter(p => p.name?.toLowerCase().includes(query));
     // evitar duplicados (por si una playlist pública ya está en myPlaylists)
-    // filtrar elementos nulos/sin id antes de comparar para evitar "Cannot read properties of null"
     const publicFiltered = this.searchedPlaylists
-      .filter(sp => sp && sp.id) // validar que sp existe y tiene id
-      .filter(sp => !this.myPlaylists.some(mp => mp && mp.id === sp.id));
+      .filter(sp => sp?.id) // validar que sp existe y tiene id
+      .filter(sp => !this.myPlaylists.some(mp => mp?.id === sp.id));
     return [...myFiltered, ...publicFiltered];
   }
 

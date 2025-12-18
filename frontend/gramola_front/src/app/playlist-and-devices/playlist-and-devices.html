@@ -65,7 +65,7 @@
               role="button"
               tabindex="0"
               (keydown.enter)="selectDevice(device.id)">
-          <span class="device-icon material-icons">{{getDeviceIcon(device.type)}}</span>
+          <span class="device-icon material-icons">{{device.type.toLowerCase()}}</span>
           <div class="device-details">
             <h4 class="device-name">{{device.name}}</h4>
             <p class="device-type">{{device.type}}</p>
@@ -127,10 +127,10 @@
         <div *ngFor="let playlist of getVisiblePlaylists()"
              class="playlist-card"
              [class.selected]="playlist.id === selectedPlaylistId"
-             (click)="selectPlaylist(playlist.id)"
+             (click)="selectPlaylist(playlist.id!)"
              role="button"
              tabindex="0"
-             (keydown.enter)="selectPlaylist(playlist.id)">
+             (keydown.enter)="selectPlaylist(playlist.id!)">
           <div class="playlist-cover">
             <img *ngIf="playlist.images && playlist.images.length > 0"
                  [src]="playlist.images[0]?.url"
