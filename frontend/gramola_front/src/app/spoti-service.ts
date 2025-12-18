@@ -13,7 +13,7 @@ export class SpotiService {
   redirectUri = environment.redirectUri;
   spotiV1Url = environment.spotiV1Url;
   clientId?: string = '';
-  //queue: TrackObject[] = [];
+  
   constructor(private http: HttpClient) { }
 
   getAuthorizationToken(code : string) : Observable<any> {
@@ -25,17 +25,6 @@ export class SpotiService {
     // leer de sessionStorage
     let token = sessionStorage.getItem('accessToken');
     return token;
-  }
-  
-  getCurrentlyPlaying(): Observable<any> {
-    if (!this.getSpotifyToken()) {
-      throw new Error('Spotify token is not set.');
-    }
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.getSpotifyToken()}`,
-      'Accept': 'application/json'
-    });
-    return this.http.get<any>(`${this.spotiV1Url}/me/player/currently-playing`, { headers });
   }
 
   // Obtener estado completo del reproductor (incluye device, currently_playing, etc.)
@@ -89,13 +78,6 @@ export class SpotiService {
     });
 
     return this.http.get<any>(`${this.spotiV1Url}/me/playlists`, { headers });
-  }
-
-  getTracks(playlistId : string) : Observable<any> {
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.getSpotifyToken()}`
-    });
-    return this.http.get<any>(`${this.spotiV1Url}/playlists/${playlistId}/tracks`, { headers });
   }
 
   addToQueue(uri : string) : Observable<any> {

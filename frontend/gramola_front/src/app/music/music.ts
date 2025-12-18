@@ -28,7 +28,6 @@ export class Music implements OnInit, OnDestroy {
   private currentPlaylistPollIntervalId?: any; // para actualización periódica de la reproducción actual
 
   deviceError? : string
-  playlistError? : string
   currentPlaylistError? : string
   songError? : string
   barName: string = 'Mi Bar';
@@ -128,7 +127,6 @@ export class Music implements OnInit, OnDestroy {
 
   resetErrors() {
     this.deviceError = undefined;
-    this.playlistError = undefined;
     this.currentPlaylistError = undefined;
     this.songError = undefined;
   }
