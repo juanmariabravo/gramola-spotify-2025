@@ -23,7 +23,7 @@
             </div>
             <div class="device-info">
                 <div class="device-status" *ngIf="currentDevice">
-                <span class="device-icon material-icons">{{getDeviceIcon(currentDevice.type)}}</span>
+                <span class="device-icon material-icons">{{currentDevice.type.toLowerCase()}}</span>
                 <span class="device-name">{{currentDevice.name}}</span>
                 <span class="device-type">{{currentDevice.type}}</span>
                 </div>

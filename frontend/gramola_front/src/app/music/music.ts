@@ -4,21 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { SpotiService } from '../spoti-service';
 import { Navbar } from '../navbar/navbar';
 import { UserService } from '../user-service';
-
-interface TrackObject {
-  id?: string;
-  name?: string;
-  uri?: string;
-  album?: { name: string; images: { url: string }[] };
-  artists?: { name: string }[];
-  // add other fields you use (artists, album, duration_ms, etc.)
-}
-
-interface PlayList {
-  id?: string;
-  name?: string;
-  // add other playlist fields you need
-}
+import { Track } from '../model/Track';
+import { Playlist } from '../model/Playlist';
+import { Device } from '../model/Device';
 
 @Component({
   selector: 'app-music',
@@ -30,13 +18,13 @@ interface PlayList {
 
 export class Music implements OnInit, OnDestroy {
 
-  devices: any[] = [];
-  currentDevice: any;
-  playlists : PlayList[] = [];
-  queue : TrackObject[] = [];
-  tracks : TrackObject[] = []; // resultados de búsqueda
+  devices: Device[] = [];
+  currentDevice?: Device;
+  playlists: Playlist[] = [];
+  queue: Track[] = [];
+  tracks: Track[] = []; // resultados de búsqueda
 
-  currentTrack? : TrackObject
+  currentTrack?: Track;
   songPrice: number = 50; // precio por canción en céntimos (se leerá de la base de datos desde el backend)
 
   private queuePollIntervalId?: any; // para cola en tiempo real
@@ -138,7 +126,7 @@ export class Music implements OnInit, OnDestroy {
   }
 
   // Selecciona un dispositivo (si es distinto del actual) y llama al backend de Spotify para transferir la reproducción
-  selectDevice(device: any) {
+  selectDevice(device: Device) {
     this.resetErrors();
     if (!device || !device.id) {
       this.deviceError = 'Dispositivo inválido';
@@ -196,20 +184,10 @@ export class Music implements OnInit, OnDestroy {
   }
 
   // Métodos adicionales
-  getArtists(track: TrackObject): string {
+  getArtists(track: Track): string {
     return track.artists?.map(artist => artist.name).join(', ') || 'Artista desconocido';
   }
 
-  getDeviceIcon(deviceType: string): string {
-    const icons: { [key: string]: string } = {
-      'computer': 'computer',
-      'smartphone': 'smartphone',
-      'tablet': 'tablet',
-      'speaker': 'speaker',
-      'tv': 'tv'
-    };
-    return icons[deviceType.toLowerCase()] || 'devices';
-  }
 
   searchTracks() {
     if (!this.searchQuery.trim()) return;
@@ -231,7 +209,7 @@ export class Music implements OnInit, OnDestroy {
     this.songError = undefined;
   }
 
-  addToQueue(track: TrackObject) {
+  addToQueue(track: Track) {
     this.resetErrors();
     if (this.songPrice <= 0) {
       // Si el precio es 0 o negativo, añadir directamente a la cola sin pago
@@ -288,7 +266,7 @@ export class Music implements OnInit, OnDestroy {
            // La respuesta de Spotify suele incluir una propiedad `queue` con los elementos.
            // Si no existe, dejar la cola vacía.
           const spotifyQueue = (res && (res.queue || res.items)) ? (res.queue || res.items) : [];
-           // Mapear a TrackObject si es necesario (la estructura suele ser track o item.track)
+          // Mapear a Track si es necesario (la estructura suele ser track o item.track)
           this.queue = spotifyQueue.map((qItem: any) => {
             const t = qItem.track ? qItem.track : qItem;
             return {
@@ -297,7 +275,7 @@ export class Music implements OnInit, OnDestroy {
               uri: t.uri,
               album: t.album,
               artists: t.artists,
-            } as TrackObject;
+            } as Track;
           });
         },
         error: (err) => {
