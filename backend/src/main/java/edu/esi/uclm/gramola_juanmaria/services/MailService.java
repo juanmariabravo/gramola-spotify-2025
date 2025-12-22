@@ -23,19 +23,31 @@ public class MailService {
     @org.springframework.beans.factory.annotation.Value("${spring.mail.username}")
     private String fromEmail;
 
+    @org.springframework.beans.factory.annotation.Value("${mail.template.confirmacion}")
+    private String confirmacionTemplate;
+
+    @org.springframework.beans.factory.annotation.Value("${mail.template.recuperacion}")
+    private String recuperacionTemplate;
+
     public void sendConfirmationEmail(String to, String nombre, String enlace) {
-        String template = loadTemplate("${mail.template.confirmacion}");
+        String template = loadTemplate(confirmacionTemplate);
         if (template != null) {
             String body = template.replace("%NOMBRE%", nombre).replace("%ENLACE%", enlace);
             sendEmail(to, "Confirmación de cuenta - Gramola", body);
         }
+        else {
+            System.out.println("No se pudo cargar la plantilla de correo electrónico de confirmación.");
+        }
     }
 
     public void sendRecoveryEmail(String to, String nombre, String enlace) {
-        String template = loadTemplate("${mail.template.recuperacion}");
+        String template = loadTemplate(recuperacionTemplate);
         if (template != null) {
             String body = template.replace("%NOMBRE%", nombre).replace("%ENLACE%", enlace);
             sendEmail(to, "Recuperación de contraseña - Gramola", body);
+        }
+        else {
+            System.out.println("No se pudo cargar la plantilla de correo electrónico de recuperación.");
         }
     }
 
