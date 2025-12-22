@@ -26,6 +26,14 @@ export class Navbar implements OnInit {
     this.router.navigate(['/music']);
   }
 
+  navigateToPlaylistAndDevices() {
+    this.router.navigate(['/playlist-and-devices']);
+  }
+
+  navigateToGramola() {
+    this.router.navigate(['/music']);
+  }
+
   logout() {
     if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
     // Limpiar sessionStorage inmediatamente
