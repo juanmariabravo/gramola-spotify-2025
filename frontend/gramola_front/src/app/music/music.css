@@ -1,5 +1,3 @@
-/* ===== ESTILOS PARA EL COMPONENTE MUSIC ===== */
-
 :host {
     display: block;
     width: 100vw;
@@ -7,9 +5,10 @@
 }
 
 .music-container {
-    max-width: 100%;
+    max-width: 1400px;
         width: 100%;
-        padding: 20px 20px 40px;
+    margin: 0 auto;
+        padding: 40px 50px;
     background-color: #f6f6f6;
     min-height: 100vh;
 }
@@ -47,13 +46,23 @@
     font-weight: 600;
     opacity: 0.9;
     letter-spacing: 1px;
+    align-items: center;
+    gap: 5px;
+    border-radius: 8px;
+    padding: 0px;
+}
+
+.now-playing-indicator .material-icons {
+    vertical-align: middle;
+    font-size: 1.4rem;
+    line-height: 1;
 }
 
 /* Botón de micrófono */
 .mic-btn {
     background-color: #fff;
     border: 2px solid #1DB954;
-    border-radius: 8px;
+    border-radius: 35px;
     padding: 10px 16px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -376,7 +385,7 @@
     background: #1DB954;
     color: white;
     border: none;
-    border-radius: 50px;
+    border-radius: 35px;
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
@@ -503,7 +512,7 @@ flex: 1;
     background: #1DB954;
     color: white;
     border: none;
-    border-radius: 20px;
+    border-radius: 30px;
     font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
@@ -563,13 +572,11 @@ flex: 1;
     background: #f8f9fa;
     border-radius: 8px;
     transition: all 0.3s ease;
-    border-left: 4px solid transparent;
 }
 
 .queue-item.next-up {
     background: linear-gradient(135deg, #1DB954, #1ed760);
     color: white;
-    border-left-color: #ff6b6b;
 }
 
 .queue-item:hover {
@@ -618,7 +625,7 @@ flex: 1;
 .next-up-label {
     background: rgba(255, 255, 255, 0.3);
     padding: 4px 8px;
-    border-radius: 10px;
+    border-radius: 8px;
 }
 
 .waiting-label {
@@ -649,7 +656,7 @@ flex: 1;
     background: #ffffff;
     color: #1DB954;
     border: 2px solid #1DB954;
-    border-radius: 24px;
+    border-radius: 35px;
     font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;

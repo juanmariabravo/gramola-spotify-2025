@@ -1,16 +1,23 @@
+/* ===== ESTILOS PARA ACCOUNT ===== */
+
 .account-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 30px 20px;
-  min-height: calc(100vh - 80px);
+  width: 100vw;
+  min-width: 100vw;
+  margin: 0;
   background-color: #f6f6f6;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px 50px;
 }
 
 .account-card {
-  background: white;
-  border-radius: 12px;
-  padding: 40px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: transparent;
+  border-radius: 0px;
+  padding: 0px 50px;
+  box-shadow: none;
   position: relative;
 }
 
@@ -47,51 +54,47 @@
   transform: translateX(-3px);
 }
 
+/* Header */
 .account-header {
-  margin-bottom: 30px;
-  padding-bottom: 20px;
-  border-bottom: 2px solid #1DB954;
+  text-align: center;
+  margin-bottom: 40px;
 }
 
 .account-title {
-  font-size: 2rem;
+  font-size: 2.5rem;
   color: #1f1f1f;
-  margin: 0 0 8px 0;
-  font-weight: 700;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 
 .account-subtitle {
   color: #666;
-  font-size: 1rem;
+  font-size: 1.1rem;
   margin: 0;
 }
 
-/* User info section */
+/* User info section - estilo card como en playlist-and-devices */
 .user-info-section {
-  background: #f8f9fa;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 30px;
+  background: linear-gradient(135deg, #e6ffed, #f0fff4);
+  border: 2px solid #1DB954;
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 40px;
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
-.info-item {
+.info-item,
+.info-item-signature {
   display: flex;
   flex-direction: column;
   gap: 5px;
 }
 
-.info-item-signature {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
 .info-label {
   font-weight: 600;
-  color: #666;
+  color: #064e28;
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -107,8 +110,8 @@
 .signature-display {
   background: white;
   padding: 15px;
-  border-radius: 8px;
-  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   display: inline-block;
   max-width: fit-content;
 }
@@ -117,21 +120,14 @@
   max-width: 300px;
   width: 100%;
   height: auto;
-  max-height: 100px;
+  max-height: 120px;
   display: block;
+  border-radius: 6px;
 }
 
-/* Config sections */
+/* Config sections - estilo similar a sections en playlist-and-devices */
 .config-section {
-  margin-bottom: 20px;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  overflow: hidden;
-  transition: border-color 0.3s ease;
-}
-
-.config-section:hover {
-  border-color: #1DB954;
+  margin-bottom: 40px;
 }
 
 .btn-toggle-section {
@@ -141,7 +137,8 @@
   gap: 12px;
   padding: 16px 20px;
   background: #f8f9fa;
-  border: none;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
   font-size: 1rem;
   font-weight: 600;
   color: #333;
@@ -153,10 +150,13 @@
 .btn-toggle-section:hover {
   background: white;
   color: #1DB954;
+  border-color: #1DB954;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .toggle-icon {
-  font-size: 0.8rem;
+  font-size: 1.4rem;
   transition: transform 0.3s ease;
   flex-shrink: 0;
 }
@@ -166,16 +166,23 @@
   font-size: 0.9rem;
   color: #666;
   font-weight: 500;
+  background: #e0e0e0;
+  padding: 4px 12px;
+  border-radius: 15px;
 }
 
 /* Section forms */
 .section-form {
-  padding: 20px;
+  padding: 25px;
   background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  margin-top: 15px;
   display: flex;
   flex-direction: column;
   gap: 20px;
   animation: slideDown 0.3s ease-out;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 @keyframes slideDown {
@@ -217,16 +224,66 @@
   box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.1);
 }
 
-/* Price slider (igual que en playlist-and-devices) */
-.price-config-container {
+/* Signature upload area */
+.signature-upload-area {
+  border: 2px dashed #e0e0e0;
+  border-radius: 12px;
+  padding: 30px;
+  text-align: center;
   background: #f8f9fa;
+  transition: all 0.3s ease;
+}
+
+.signature-upload-area:hover {
+  border-color: #1DB954;
+  background: white;
+}
+
+.upload-icon {
+  font-size: 3rem;
+  color: #1DB954;
+  margin-bottom: 15px;
+}
+
+.upload-text {
+  color: #666;
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+}
+
+.signature-preview {
+  margin-top: 20px;
+  padding: 15px;
+  background: white;
   border-radius: 8px;
-  padding: 20px;
   border: 2px solid #e0e0e0;
 }
 
+.signature-preview-img {
+  max-width: 300px;
+  width: 100%;
+  height: auto;
+  max-height: 120px;
+  display: block;
+  margin: 0 auto;
+  border-radius: 6px;
+}
+
+/* Price slider - igual que en playlist-and-devices */
+.price-config-container {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 25px;
+  border: 2px solid #e0e0e0;
+  transition: border-color 0.3s ease;
+}
+
+.price-config-container:hover {
+  border-color: #1DB954;
+}
+
 .price-slider-container {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .price-slider {
@@ -257,6 +314,10 @@
   box-shadow: 0 4px 12px rgba(29, 185, 84, 0.4);
 }
 
+.price-slider::-webkit-slider-thumb:active {
+  transform: scale(1.1);
+}
+
 .price-slider::-moz-range-thumb {
   width: 24px;
   height: 24px;
@@ -273,6 +334,10 @@
   box-shadow: 0 4px 12px rgba(29, 185, 84, 0.4);
 }
 
+.price-slider::-moz-range-thumb:active {
+  transform: scale(1.1);
+}
+
 .price-display {
   text-align: center;
   margin-bottom: 15px;
@@ -280,7 +345,7 @@
 
 .price-value {
   display: block;
-  font-size: 2rem;
+  font-size: 2.3rem;
   font-weight: bold;
   color: #1DB954;
   line-height: 1;
@@ -289,7 +354,7 @@
 
 .price-label {
   display: block;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: #666;
   font-weight: 500;
 }
@@ -307,10 +372,10 @@
   font-weight: 500;
 }
 
-/* Buttons */
+/* Buttons - estilo similar a playlist-and-devices */
 .btn {
   padding: 12px 30px;
-  border-radius: 8px;
+  border-radius: 25px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -330,7 +395,7 @@
 .btn-primary:hover:not(:disabled) {
   background: #1ed760;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
+  box-shadow: 0 4px 15px rgba(29, 185, 84, 0.3);
 }
 
 .btn-secondary {
@@ -350,7 +415,7 @@
   transform: none;
 }
 
-/* Spinner */
+/* Spinner - animación de carga */
 .spinner-small {
   display: inline-block;
   width: 16px;
@@ -362,19 +427,22 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-/* Inline messages */
+/* Inline messages - estilo similar a playlist-and-devices */
 .success-message-inline,
 .error-message-inline {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 15px;
-  border-radius: 6px;
+  gap: 10px;
+  padding: 12px 15px;
+  border-radius: 8px;
   font-size: 0.9rem;
   animation: slideIn 0.3s ease-out;
+  margin-top: 10px;
 }
 
 @keyframes slideIn {
@@ -389,15 +457,17 @@
 }
 
 .success-message-inline {
-  background: #e6ffed;
+  background: rgba(29, 185, 84, 0.1);
   color: #064e28;
-  border: 1px solid #1DB954;
+  border: 2px solid #1DB954;
+  border-left: 4px solid #1DB954;
 }
 
 .error-message-inline {
-  background: #ffe6e6;
+  background: rgba(226, 33, 52, 0.1);
   color: #7a0e1a;
-  border: 1px solid #e22134;
+  border: 2px solid #e22134;
+  border-left: 4px solid #e22134;
 }
 
 .success-icon {
@@ -417,11 +487,11 @@
   }
 
   .account-card {
-    padding: 25px 20px;
+    padding: 0px 20px;
   }
 
   .account-title {
-    font-size: 1.6rem;
+    font-size: 2rem;
   }
 
   .btn-back {
@@ -429,8 +499,10 @@
     font-size: 0.9rem;
   }
 
-  .signature-img {
-    max-width: 200px;
+  .signature-img,
+  .signature-preview-img {
+    max-width: 250px;
+    max-height: 100px;
   }
 
   .btn-toggle-section {
@@ -441,16 +513,30 @@
   .current-value {
     font-size: 0.85rem;
   }
+
+  .section-form {
+    padding: 20px;
+  }
 }
 
 @media (max-width: 480px) {
   .price-value {
-    font-size: 1.8rem;
+    font-size: 2rem;
   }
 
   .current-value {
     display: block;
     margin-left: 0;
     margin-top: 5px;
+  }
+
+  .signature-img,
+  .signature-preview-img {
+    max-width: 200px;
+    max-height: 80px;
+  }
+
+  .account-title {
+    font-size: 1.8rem;
   }
 }

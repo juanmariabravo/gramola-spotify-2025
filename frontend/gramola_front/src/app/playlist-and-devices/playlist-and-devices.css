@@ -1,19 +1,24 @@
 /* ===== ESTILOS PARA PLAYLIST-AND-DEVICES ===== */
 
 .setup-container {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 20px;
+  width: 100vw;
+    min-width: 100vw;
+    margin: 0;
   background-color: #f6f6f6;
   min-height: 100vh;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 1400px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 20px 50px;
+        background-color: #f6f6f6;
 }
 
 .setup-card {
-  background: white;
-  border-radius: 12px;
-  padding: 40px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: transparent;
+    border-radius: 0px;
+    padding: 0px 50px;
+    box-shadow: none;
   position: relative;
 }
 
@@ -489,8 +494,11 @@
 
 /* Toggle para mostrar/ocultar playlists */
 .playlist-view-toggle {
-  text-align: center;
+  display: flex;
+    justify-content: center;
+    align-items: center;
   margin-bottom: 15px;
+  width: 100%;
 }
 
 .toggle-btn {
@@ -503,6 +511,10 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
 .toggle-btn:hover {

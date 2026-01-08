@@ -1,14 +1,15 @@
 /* ===== ESTILOS PARA EL COMPONENTE PAYMENT ===== */
 
 .payment-container {
-    max-width: 800px;
+    max-width: 1400px;
+    width: 50vw;
     margin: 0 auto;
-    padding: 20px;
+    padding: 20px 50px;
     background-color: #f6f6f6;
     min-height: 100vh;
     box-sizing: border-box;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
 }
 
@@ -671,51 +672,66 @@ text-align: center;
 /* Estilos para mensajes de éxito */
 .success-container {
     text-align: center;
-    padding: 30px 20px;
-    background: #e6ffed;
+    padding: 50px 40px;
+    background: linear-gradient(135deg, #e6ffed, #f0fff4);
+    border: 2px solid #1DB954;
     border-radius: 12px;
     color: #064e28;
     animation: fadeIn 0.5s ease;
+    box-shadow: 0 4px 12px rgba(29, 185, 84, 0.15);
 }
 
 .success-icon {
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
 .success-icon .material-icons {
-    font-size: 4rem;
+    font-size: 5rem;
     color: #1DB954;
+    animation: iconPulse 1s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
 }
 
 .success-title {
-    font-size: 1.8rem;
-    margin: 0 0 15px 0;
+    font-size: 2rem;
+    margin: 0 0 20px 0;
     color: #064e28;
     font-weight: 700;
 }
 
 .success-message {
-    font-size: 1.1rem;
-    margin: 0 0 25px 0;
+    font-size: 1.2rem;
+    margin: 0 0 30px 0;
     line-height: 1.6;
+    color: #064e28;
+    font-weight: 600;
 }
 
 .success-btn {
     display: inline-block;
-    padding: 14px 35px;
+    padding: 15px 40px;
     background: #1DB954;
     color: white;
     text-decoration: none;
-    border-radius: 25px;
+    border-radius: 50px;
     font-weight: 600;
+    font-size: 1.1rem;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
+    box-shadow: 0 4px 15px rgba(29, 185, 84, 0.3);
 }
 
 .success-btn:hover {
     background: #1ed760;
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(29, 185, 84, 0.4);
+    box-shadow: 0 6px 20px rgba(29, 185, 84, 0.4);
 }
 
 @keyframes fadeIn {

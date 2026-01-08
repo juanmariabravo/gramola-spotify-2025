@@ -10,9 +10,9 @@
   border-bottom: 0.5px solid rgba(0, 0, 0, 0.04);
 }
 
+
 .navbar-container {
-  max-width: 1400px;
-  margin: 0 auto;
+  width: 100%;
   padding: 15px 30px;
   display: flex;
   justify-content: space-between;

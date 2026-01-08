@@ -37,7 +37,7 @@ body::-webkit-scrollbar {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    width: 100%;
+    width: 100vw;
     background-color: #f6f6f6;
 }
 
@@ -50,13 +50,13 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    width: 100%;
+    width: 100vw;
 }
 
 /* Contenedor principal */
 .container {
-    width: 100%;
-    max-width: 500px;
+    width: 100vw;
+    max-width: 600px;
     padding: 20px;
 }
 
