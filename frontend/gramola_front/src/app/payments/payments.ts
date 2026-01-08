@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { PaymentService } from '../payment-service';
 import { Router } from '@angular/router';
 import { SpotiService } from '../spoti-service';
+import { DialogService } from '../dialog.service';
 
 declare let Stripe: any
 
@@ -26,7 +27,7 @@ export class Payments implements OnInit {
   paymentIcon = 'credit_card';
   paymentSuccess = false;
 
-  constructor(private paymentService: PaymentService, private router: Router, private spotiService: SpotiService) { }
+  constructor(private paymentService: PaymentService, private router: Router, private spotiService: SpotiService, private dialogService: DialogService) { }
 
   ngOnInit(): void {
     const params = this.router.parseUrl(this.router.url).queryParams;
@@ -77,7 +78,7 @@ export class Payments implements OnInit {
       },
       error: (response: any) => {
         console.error('Error en prepay:', response);
-        alert('Error al iniciar el pago. Por favor intenta de nuevo.');
+        this.dialogService.alert('Error al iniciar el pago. Por favor intenta de nuevo.');
         // si el pago es de suscripción, redirigir a /login
         if (this.isSubscription) {
           this.router.navigate(['/login']);
@@ -213,7 +214,7 @@ export class Payments implements OnInit {
             },
             error: (error: any) => {
               console.error('Error confirming payment:', error);
-              alert('Error al confirmar el pago. Por favor contacta con soporte.');
+              this.dialogService.alert('Error al confirmar el pago. Por favor contacta con soporte.');
             }
           })
         }
@@ -221,21 +222,21 @@ export class Payments implements OnInit {
     });
   }
 
-  goBack() {
+  async goBack() {
     // Cancelar el pago y volver a la página anterior
-    const confirmCancel = confirm('¿Estás seguro de que deseas cancelar el pago?');
-    if (confirmCancel) {
-      // Intentar volver a la página anterior, o a /music si no hay historial
-      if (window.history.length > 1) {
-        window.history.back();
+    const confirmCancel = await this.dialogService.confirm('¿Estás seguro de que deseas cancelar el pago?');
+    if (!confirmCancel) return;
+
+    // Intentar volver a la página anterior, o a /music si no hay historial
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      // Si es pago de suscripción, ir a login
+      if (this.isSubscription) {
+        this.router.navigate(['/login']);
       } else {
-        // Si es pago de suscripción, ir a login
-        if (this.isSubscription) {
-          this.router.navigate(['/login']);
-        } else {
-          // Si es pago de canción, ir a music
-          this.router.navigate(['/music']);
-        }
+        // Si es pago de canción, ir a music
+        this.router.navigate(['/music']);
       }
     }
   }

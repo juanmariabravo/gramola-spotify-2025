@@ -1,0 +1,142 @@
+/* Dialog backdrop */
+.dialog-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Dialog container */
+.dialog-container {
+  background: white;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease;
+  overflow: hidden;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Dialog header */
+.dialog-header {
+  padding: 25px 25px 20px;
+  border-bottom: 2px solid #1db954;
+}
+
+.dialog-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f1f1f;
+}
+
+/* Dialog content */
+.dialog-content {
+  padding: 25px;
+}
+
+.dialog-message {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #333;
+}
+
+/* Dialog actions */
+.dialog-actions {
+  padding: 20px 25px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  background: #f8f9fa;
+}
+
+.dialog-btn {
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.dialog-btn-cancel {
+  background: white;
+  color: #666;
+  border: 2px solid #e0e0e0;
+}
+
+.dialog-btn-cancel:hover {
+  background: #f8f9fa;
+  border-color: #1db954;
+  color: #1db954;
+  transform: translateY(-2px);
+}
+
+.dialog-btn-confirm {
+  background: #1db954;
+  color: white;
+}
+
+.dialog-btn-confirm:hover {
+  background: #1ed760;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(29, 185, 84, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .dialog-container {
+    width: 95%;
+  }
+
+  .dialog-header {
+    padding: 20px;
+  }
+
+  .dialog-title {
+    font-size: 1.3rem;
+  }
+
+  .dialog-content {
+    padding: 20px;
+  }
+
+  .dialog-actions {
+    flex-direction: column-reverse;
+    padding: 15px 20px;
+  }
+
+  .dialog-btn {
+    width: 100%;
+  }
+}

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { UserService } from '../user-service';
+import { DialogService } from '../dialog.service';
 
 @Component({
   selector: 'app-navbar',
@@ -13,7 +14,11 @@ import { UserService } from '../user-service';
 export class Navbar implements OnInit {
   barName: string = '';
 
-  constructor(private router: Router, private userService: UserService) { }
+  constructor(
+    private router: Router,
+    private userService: UserService,
+    private dialogService: DialogService
+  ) { }
 
   ngOnInit(): void {
   }
@@ -34,9 +39,14 @@ export class Navbar implements OnInit {
     this.router.navigate(['/music']);
   }
 
-  logout() {
-    if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-    // Limpiar sessionStorage inmediatamente
+  async logout() {
+    const confirmed = await this.dialogService.confirm(
+      '¿Estás seguro de que deseas cerrar sesión?',
+      'Cerrar sesión'
+    );
+
+    if (confirmed) {
+  // Limpiar sessionStorage inmediatamente
       sessionStorage.clear();
 
       // Navegar inmediatamente a /home
