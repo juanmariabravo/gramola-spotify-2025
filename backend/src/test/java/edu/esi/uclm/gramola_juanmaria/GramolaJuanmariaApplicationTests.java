@@ -44,11 +44,11 @@ class GramolaJuanmariaApplicationTests {
     @Autowired
     private UserDao userDao;
 
-    private static final String SPOTIFY_TOKEN = "BQCcsLN83oj5ibOZzBiOB5n0f8iRmZtLtM-GCuZKtXWEfQj4SxMkQCXq61wGM0X1k-2RPhyLmKNJappa-SdY8BJ4o3q3QfLyHq_k07D51vRZFQyQxEd0QVWd9ZOQ26zk51rqHz3PtZETdi8Wcz8FErlWGdC6yhFDxWrHtwUCdQxZ7xhkzrvjCoDWuX3iGEbpqfl6P7K0s7PTxdUwxD6aSD-Cr_nfGzXdhNZRWHArfAitoQPej3itihGFKszNeI4lBsn6jx-KZXGGGXAIZ76SWKbKtjh6pbLsWY5qgMt9FaNOKgYZ9ihf";
+    private static final String SPOTIFY_TOKEN = "BQAsWNYVnW0lBuxDMeaFPmtj0pYNuE7-6M2uiHhYwWu7qw7gts86wH4wBa5H-2NL5oKqD_fERY9b8Yr_hiWbavR0SgLaeMcu45i2fbWS_DSS0mXNr8PhejB5G6Bp6KvOzWkXMe_nlFIfsgIYfqgJOc-hE92egGVHvLBpLKVTOJw89jQhcTVRDBxBzWumgGz3lo5nuwOvy42ZZoIRYoLs9KZe_s-Kx5SuvIASUnf_G1zneI0YTKiQA72oBffYEcllfgywcdocPxTRAJfIn9poC2XsFrz4CHVu42wHaCNTNYVYz0G5Kcv2";
     private static final String URL_BASE = "http://127.0.0.1:4200/";
     private static final String CORREO = "juanmariabravo12@gmail.com";
     private static final String CONTRASENA = "mellamo12";
-    private static final String CANCION = "Afterglow"; // * Importante escribir el nombre exacto de la canción tal cual aparece en Spotify
+    private static final String CANCION = "Clair de Lune"; // * Importante escribir el nombre exacto de la canción tal cual aparece en Spotify
     private static final String NUM_TARJETA = "4242 4242 4242 4242";
     private static final String CADUCIDAD_TARJETA = "0330";
     private static final String CVC_TARJETA = "123";
@@ -121,9 +121,11 @@ class GramolaJuanmariaApplicationTests {
         // Clic en "Continuar"
         driver.findElement(By.cssSelector(".confirm-btn")).click();
 
-        // Clic en "Aceptar" del alert de playlist no seleccionada (se pondrá una por
-        // defecto)
-        driver.switchTo().alert().accept();
+        // Clic en "Aceptar" del diálogo personalizado para continuar sin seleccionar playlist
+        WebElement aceptarDialogBtn = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.elementToBeClickable(
+                        By.cssSelector(".dialog-btn.dialog-btn-confirm")));
+        aceptarDialogBtn.click();
 
         // Wait hasta que cargue la página de /music
         new WebDriverWait(driver, Duration.ofSeconds(10))
@@ -164,8 +166,11 @@ class GramolaJuanmariaApplicationTests {
 
         firstTrackAddBtn.click();
 
-        // Aceptar alert() "¿Desea añadir la canción a la cola y proceder al pago?"
-        driver.switchTo().alert().accept();
+        // Esperar a que aparezca el botón "Aceptar" para confirmar la compra de la canción
+        WebElement aceptarDialogBtn = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.elementToBeClickable(
+                        By.cssSelector(".dialog-btn.dialog-btn-confirm")));
+        aceptarDialogBtn.click();
     }
 
     private void payForSong(String numeroTarjeta, String caducidadTarjeta, String cvcTarjeta) {
@@ -299,6 +304,9 @@ class GramolaJuanmariaApplicationTests {
 
         // Verificar que el mensaje de error es el esperado
         String expectedMessage = "Tu tarjeta ha sido rechazada.";
+        // Esperar unos segundos extra para que el mensaje de error aparezca completamente
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(d -> !errorMessage.getText().isEmpty());
         String actualMessage = errorMessage.getText();
         assertTrue(actualMessage.contains(expectedMessage),
                 "El mensaje de error debería indicar que la tarjeta ha sido rechazada");
