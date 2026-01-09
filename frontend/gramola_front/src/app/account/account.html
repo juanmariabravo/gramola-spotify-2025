@@ -207,5 +207,31 @@
       }
     </div>
 
+    <!-- Sección: Zona de peligro - Eliminar cuenta -->
+    <div class="config-section danger-section">
+    
+      <div class="danger-zone-content">
+        <button type="button" class="btn btn-danger" (click)="onDeleteAccount()" [disabled]="isDeletingAccount">
+          @if (isDeletingAccount) {
+          <span class="spinner-small"></span>
+          <span>Eliminando...</span>
+          } @else {
+          <span class="danger-icon material-icons">delete_forever</span>
+          <span>Eliminar cuenta permanentemente</span>
+          }
+        </button>
+        <p class="danger-description">
+          Una vez que elimines tu cuenta, no hay vuelta atrás. Por favor, asegúrate de que realmente deseas hacer esto.
+        </p>
+    
+        @if (deleteAccountError) {
+        <div class="error-message-inline">
+          <span class="error-icon material-icons">warning</span>
+          <span>{{deleteAccountError}}</span>
+        </div>
+        }
+      </div>
+    </div>
+
   </div>
 </div>

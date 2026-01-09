@@ -480,6 +480,58 @@
   font-size: 1.2rem;
 }
 
+/* Danger Zone Section */
+.danger-section {
+  margin-top: 50px;
+  border: 2px solid #e22134;
+  background: linear-gradient(135deg, #fff0f0, #ffe6e6);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.danger-zone-content {
+  padding: 25px;
+}
+
+.danger-description {
+  color: #7a0e1a;
+  font-size: 1rem;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  background: #e22134;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(226, 33, 52, 0.2);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #b91828;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(226, 33, 52, 0.3);
+}
+
+.btn-danger:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn-danger .danger-icon {
+  font-size: 1.3rem;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .account-container {

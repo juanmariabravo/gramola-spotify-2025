@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from '../user-service';
+import { DialogService } from '../dialog.service';
 import { Navbar } from '../navbar/navbar';
 
 @Component({
@@ -30,6 +31,7 @@ export class Account implements OnInit {
   isSubmittingBarName = false;
   isSubmittingPrice = false;
   isSubmittingPassword = false;
+  isDeletingAccount = false;
   
   barNameSuccess?: boolean;
   barNameError?: string;
@@ -37,6 +39,7 @@ export class Account implements OnInit {
   priceError?: string;
   passwordSuccess?: boolean;
   passwordError?: string;
+  deleteAccountError?: string;
 
   minPrice = 0;
   maxPrice = 500;
@@ -44,6 +47,7 @@ export class Account implements OnInit {
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
+    private dialogService: DialogService,
     private router: Router
   ) {
     this.barNameForm = this.fb.group({
@@ -352,5 +356,65 @@ export class Account implements OnInit {
     const newPwd = this.passwordForm.get('newPassword')?.value;
     const confirmPwd = this.passwordForm.get('confirmPassword')?.value;
     return newPwd === confirmPwd;
+  }
+
+  async onDeleteAccount() {
+    this.deleteAccountError = undefined;
+
+    try {
+      // Mostrar diálogo de confirmación
+      const confirmed = await this.dialogService.confirm(
+        '¿Estás seguro de que deseas eliminar tu cuenta? Esta acción es irreversible y perderás todos tus datos.',
+        'Confirmar eliminación de cuenta'
+      );
+
+      if (!confirmed) {
+        return;
+      }
+
+      this.isDeletingAccount = true;
+
+      this.userService.deleteAccount().subscribe({
+        next: () => {
+          this.isDeletingAccount = false;
+
+          // Limpiar todo el sessionStorage
+          sessionStorage.clear();
+
+          // Mostrar mensaje de éxito
+          this.dialogService.alert(
+            'Tu cuenta ha sido eliminada exitosamente.',
+            'Cuenta eliminada'
+          ).then(() => {
+            // Redirigir al usuario a la página de registro
+            this.router.navigate(['/register']);
+          });
+        },
+        error: (error) => {
+          this.isDeletingAccount = false;
+
+          const status = error.status;
+          const message = error.error?.message || error.message || '';
+
+          if (status === 0) {
+            this.deleteAccountError = 'No se puede conectar con el servidor. Verifica tu conexión a internet.';
+          } else if (status === 401) {
+            this.deleteAccountError = 'Sesión expirada. Por favor inicia sesión de nuevo.';
+            setTimeout(() => {
+              this.router.navigate(['/login']);
+            }, 2000);
+          } else if (status === 404) {
+            this.deleteAccountError = 'Usuario no encontrado.';
+          } else if (status === 500) {
+            this.deleteAccountError = 'Error del servidor. Por favor intenta de nuevo más tarde.';
+          } else {
+            this.deleteAccountError = message || 'Error al eliminar la cuenta. Por favor intenta de nuevo.';
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Error al mostrar diálogo de confirmación:', error);
+      this.deleteAccountError = 'Error al mostrar el diálogo de confirmación.';
+    }
   }
 }

@@ -86,4 +86,9 @@ export class UserService {
     const url = `${this.apiUrl}/logout`;
     return this.http.post(url, null, { withCredentials: true });
   }
+
+  deleteAccount(): Observable<any> {
+    const url = `${this.apiUrl}/delete`;
+    return this.http.delete(url, { withCredentials: true });
+  }
 }
