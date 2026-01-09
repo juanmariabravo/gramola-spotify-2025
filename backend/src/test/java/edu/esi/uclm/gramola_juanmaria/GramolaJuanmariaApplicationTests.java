@@ -44,7 +44,7 @@ class GramolaJuanmariaApplicationTests {
     @Autowired
     private UserDao userDao;
 
-    private static final String SPOTIFY_TOKEN = "BQAsWNYVnW0lBuxDMeaFPmtj0pYNuE7-6M2uiHhYwWu7qw7gts86wH4wBa5H-2NL5oKqD_fERY9b8Yr_hiWbavR0SgLaeMcu45i2fbWS_DSS0mXNr8PhejB5G6Bp6KvOzWkXMe_nlFIfsgIYfqgJOc-hE92egGVHvLBpLKVTOJw89jQhcTVRDBxBzWumgGz3lo5nuwOvy42ZZoIRYoLs9KZe_s-Kx5SuvIASUnf_G1zneI0YTKiQA72oBffYEcllfgywcdocPxTRAJfIn9poC2XsFrz4CHVu42wHaCNTNYVYz0G5Kcv2";
+    private static final String SPOTIFY_TOKEN = "BQA5e-z6xDlBPeloKX5CE6NydbGc0qNfIyx1TP12sQlBbaLl5LOJqGO5mk7uazV9TDiHVqcjhrr-EtUy2sUUcJyoLy87SRmrmHOgsSnUnWhpZkz_nthSS8hLWsSeYtgwZXe4BPdf2fHKP2XgRqpfgdBovhZ7V2L8t89qNwW6Xkvtfzcl2XdlYMYiAvlN6ayz1jIa6pZac4STyJ3YauiV0XyWOuPP1QqecmMjvSu-x5ji4e_pOGvuxbbTspIQZ-UaStytGftTxwimP1BsJyF0Gtqjw3Xwo_E6IQkc1qUxSEO0I-OxfzxS";
     private static final String URL_BASE = "http://127.0.0.1:4200/";
     private static final String CORREO = "juanmariabravo12@gmail.com";
     private static final String CONTRASENA = "mellamo12";
@@ -325,9 +325,12 @@ class GramolaJuanmariaApplicationTests {
 
         // Verificar que el mensaje de error es el esperado
         String expectedMessage = "El número de tu tarjeta no es válido.";
+        // Esperar unos segundos extra para que el mensaje de error aparezca completamente
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(d -> !errorMessage.getText().isEmpty());
         String actualMessage = errorMessage.getText();
         assertTrue(actualMessage.contains(expectedMessage),
-                "El mensaje de error debería indicar que la tarjeta ha sido rechazada");
+                "El mensaje de error debería indicar que la tarjeta es inválida");
     }
 
     @Test
@@ -343,6 +346,9 @@ class GramolaJuanmariaApplicationTests {
 
         // Verificar que el mensaje de error es el esperado
         String expectedMessage = "El número de tu tarjeta está incompleto.";
+        // Esperar unos segundos extra para que el mensaje de error aparezca completamente
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(d -> !errorMessage.getText().isEmpty());
         String actualMessage = errorMessage.getText();
         assertTrue(actualMessage.contains(expectedMessage),
                 "El mensaje de error debería indicar que el número de la tarjeta está incompleto");
@@ -361,6 +367,9 @@ class GramolaJuanmariaApplicationTests {
 
         // Verificar que el mensaje de error es el esperado
         String expectedMessage = "El año de caducidad de tu tarjeta ya ha pasado.";
+        // Esperar unos segundos extra para que el mensaje de error aparezca completamente
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(d -> !errorMessage.getText().isEmpty());
         String actualMessage = errorMessage.getText();
         assertTrue(actualMessage.contains(expectedMessage),
                 "El mensaje de error debería indicar que el año de caducidad de la tarjeta ya ha pasado");
@@ -379,6 +388,9 @@ class GramolaJuanmariaApplicationTests {
 
         // Verificar que el mensaje de error es el esperado
         String expectedMessage = "El año de caducidad de la tarjeta no es válido.";
+        // Esperar unos segundos extra para que el mensaje de error aparezca completamente
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(d -> !errorMessage.getText().isEmpty());
         String actualMessage = errorMessage.getText();
         assertTrue(actualMessage.contains(expectedMessage),
                 "El mensaje de error debería indicar que el año de caducidad de la tarjeta no es válido");
