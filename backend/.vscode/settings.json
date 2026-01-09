@@ -1,5 +1,12 @@
 {
   "java.compile.nullAnalysis.mode": "automatic",
   "java.configuration.updateBuildConfiguration": "automatic",
-  "java.debug.settings.onBuildFailureProceed": true
+  "java.debug.settings.onBuildFailureProceed": true,
+  "java.test.config": [
+    {
+      "vmArgs": [
+        "-Djunit.jupiter.execution.parallel.enabled=false"
+      ]
+    }
+  ]
 }

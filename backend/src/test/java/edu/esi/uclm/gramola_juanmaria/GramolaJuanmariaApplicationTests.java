@@ -8,9 +8,14 @@ import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -30,6 +35,8 @@ import edu.esi.uclm.gramola_juanmaria.model.User;
 
 @SpringBootTest
 @TestInstance(Lifecycle.PER_CLASS)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Execution(ExecutionMode.SAME_THREAD)
 class GramolaJuanmariaApplicationTests {
 
     private WebDriver driver;
@@ -210,6 +217,7 @@ class GramolaJuanmariaApplicationTests {
     }
 
     @Test
+    @Order(1)
     public void testBuscarYPagarCancion() {
         // Contar transacciones y canciones añadidas antes del test
         long transaccionesAntes = stripeTransactionDao.count();
@@ -292,6 +300,7 @@ class GramolaJuanmariaApplicationTests {
     }
 
     @Test
+    @Order(2)
     public void testPagoTarjetaRechazada() {
         fromHomeToMusic();
         addSongToQueue();
@@ -313,6 +322,7 @@ class GramolaJuanmariaApplicationTests {
     }
 
     @Test
+    @Order(3)
     public void testPagoTarjetaInvalida() {
         fromHomeToMusic();
         addSongToQueue();
@@ -334,6 +344,7 @@ class GramolaJuanmariaApplicationTests {
     }
 
     @Test
+    @Order(4)
     public void testPagoTarjetaIncompleta() {
         fromHomeToMusic();
         addSongToQueue();
@@ -355,6 +366,7 @@ class GramolaJuanmariaApplicationTests {
     }
 
     @Test
+    @Order(5)
     public void testPagoCaducidadPasada() {
         fromHomeToMusic();
         addSongToQueue();
@@ -376,6 +388,7 @@ class GramolaJuanmariaApplicationTests {
     }
 
     @Test
+    @Order(6)
     public void testPagoCaducidadInvalida() {
         fromHomeToMusic();
         addSongToQueue();
@@ -400,6 +413,7 @@ class GramolaJuanmariaApplicationTests {
     public void tearDown() {
         if (this.driver != null) {
             this.driver.quit();
+            this.driver = null;
         }
     }
 }
