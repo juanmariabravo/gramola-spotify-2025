@@ -105,7 +105,7 @@ export class Account implements OnInit {
         if (status === 401) {
           // Sesión expirada, redirigir al login
           this.dialogService.alert(
-            'Tu sesión ha expirado. Por favor inicia sesión de nuevo.',
+            'Tu sesión ha expirado. Por favor, inicia sesión de nuevo.',
             'Sesión expirada'
           ).then(() => {
             this.router.navigate(['/login']);
@@ -113,7 +113,7 @@ export class Account implements OnInit {
         } else if (status === 500 && (errorMessage.includes('No autenticado') || errorMessage.includes('cookie inválida'))) {
           // Error de autenticación en el backend
           this.dialogService.alert(
-            'Tu sesión no es válida. Por favor inicia sesión de nuevo.',
+            'Tu sesión no es válida. Por favor, inicia sesión de nuevo.',
             'Error de autenticación'
           ).then(() => {
             sessionStorage.clear();
@@ -178,7 +178,7 @@ export class Account implements OnInit {
 
     if (this.barNameForm.invalid) {
       this.barNameForm.markAllAsTouched();
-      this.barNameError = 'Por favor introduce un nombre válido para el bar';
+      this.barNameError = 'Por favor, introduce un nombre válido para el bar';
       return;
     }
 
@@ -218,7 +218,7 @@ export class Account implements OnInit {
         } else if (status === 400) {
           this.barNameError = 'Nombre de bar inválido';
         } else if (status === 500) {
-          this.barNameError = 'Error del servidor. Por favor intenta de nuevo más tarde.';
+          this.barNameError = 'Error del servidor. Por favor, intenta de nuevo más tarde.';
         } else {
           this.barNameError = message || 'Error al actualizar el nombre del bar';
         }
@@ -232,7 +232,7 @@ export class Account implements OnInit {
 
     if (this.songPriceForm.invalid) {
       this.songPriceForm.markAllAsTouched();
-      this.priceError = 'Por favor introduce un precio válido';
+      this.priceError = 'Por favor, introduce un precio válido';
       return;
     }
 
@@ -277,7 +277,7 @@ export class Account implements OnInit {
         } else if (status === 400 || status === 406) {
           this.priceError = 'Precio inválido. Debe estar entre 0€ y 5€';
         } else if (status === 500) {
-          this.priceError = 'Error del servidor. Por favor intenta de nuevo más tarde.';
+          this.priceError = 'Error del servidor. Por favor, intenta de nuevo más tarde.';
         } else {
           this.priceError = message || 'Error al actualizar el precio';
         }
@@ -295,7 +295,7 @@ export class Account implements OnInit {
       if (this.passwordForm.hasError('passwordsMismatch')) {
         this.passwordError = 'Las contraseñas nuevas no coinciden';
       } else {
-        this.passwordError = 'Por favor completa todos los campos correctamente';
+        this.passwordError = 'Por favor, completa todos los campos correctamente';
       }
       return;
     }
@@ -338,7 +338,7 @@ export class Account implements OnInit {
         } else if (status === 404) {
           this.passwordError = 'Usuario no encontrado';
         } else if (status === 500) {
-          this.passwordError = 'Error del servidor. Por favor intenta de nuevo más tarde.';
+          this.passwordError = 'Error del servidor. Por favor, intenta de nuevo más tarde.';
         } else {
           this.passwordError = message || 'Error al cambiar la contraseña';
         }
@@ -417,16 +417,16 @@ export class Account implements OnInit {
           if (status === 0) {
             this.deleteAccountError = 'No se puede conectar con el servidor. Verifica tu conexión a internet.';
           } else if (status === 401) {
-            this.deleteAccountError = 'Sesión expirada. Por favor inicia sesión de nuevo.';
+            this.deleteAccountError = 'Sesión expirada. Por favor, inicia sesión de nuevo.';
             setTimeout(() => {
               this.router.navigate(['/login']);
             }, 2000);
           } else if (status === 404) {
             this.deleteAccountError = 'Usuario no encontrado.';
           } else if (status === 500) {
-            this.deleteAccountError = 'Error del servidor. Por favor intenta de nuevo más tarde.';
+            this.deleteAccountError = 'Error del servidor. Por favor, intenta de nuevo más tarde.';
           } else {
-            this.deleteAccountError = message || 'Error al eliminar la cuenta. Por favor intenta de nuevo.';
+            this.deleteAccountError = message || 'Error al eliminar la cuenta. Por favor, intenta de nuevo.';
           }
         }
       });

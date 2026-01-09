@@ -85,7 +85,7 @@ export class Music implements OnInit, OnDestroy {
 
         if (status === 401) {
           this.dialogService.alert(
-            'Tu sesión ha expirado. Por favor inicia sesión de nuevo.',
+            'Tu sesión ha expirado. Por favor, inicia sesión de nuevo.',
             'Sesión expirada'
           ).then(() => {
             window.location.href = '/login';
@@ -93,7 +93,7 @@ export class Music implements OnInit, OnDestroy {
           return;
         } else if (status === 500 && (errorMessage.includes('No autenticado') || errorMessage.includes('cookie inválida'))) {
           this.dialogService.alert(
-            'Tu sesión no es válida. Por favor inicia sesión de nuevo.',
+            'Tu sesión no es válida. Por favor, inicia sesión de nuevo.',
             'Error de autenticación'
           ).then(() => {
             sessionStorage.clear();

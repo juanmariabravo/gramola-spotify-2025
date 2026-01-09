@@ -79,7 +79,7 @@ export class PlaylistAndDevices implements OnInit {
         } else if (status === 401) {
           // Sesión expirada
           this.dialogService.alert(
-            'Tu sesión ha expirado. Por favor inicia sesión de nuevo.',
+            'Tu sesión ha expirado. Por favor, inicia sesión de nuevo.',
             'Sesión expirada'
           ).then(() => {
             this.router.navigate(['/login']);
@@ -88,7 +88,7 @@ export class PlaylistAndDevices implements OnInit {
         } else if (status === 500 && (errorMessage.includes('No autenticado') || errorMessage.includes('cookie inválida'))) {
           // Error de autenticación en el backend
           this.dialogService.alert(
-            'Tu sesión no es válida. Por favor inicia sesión de nuevo.',
+            'Tu sesión no es válida. Por favor, inicia sesión de nuevo.',
             'Error de autenticación'
           ).then(() => {
             sessionStorage.clear();
@@ -260,7 +260,7 @@ export class PlaylistAndDevices implements OnInit {
   async confirmSelection() {
     // validar que haya seleccionado al menos un dispositivo
     if (!this.selectedDeviceId) {
-      await this.dialogService.alert('Por favor selecciona un dispositivo de reproducción');
+      await this.dialogService.alert('Por favor, selecciona un dispositivo de reproducción');
       return;
     }
     // validar precio
