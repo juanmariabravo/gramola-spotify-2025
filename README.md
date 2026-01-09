@@ -173,15 +173,8 @@ spring.datasource.username=tysweb2025
 spring.datasource.password=tysweb2025
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
-
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
 spring.jpa.hibernate.ddl-auto=update
-
-# Mostrar las consultas SQL por consola (útil para debugging)
-spring.jpa.show-sql=true
-spring.jpa.properties.hibernate.format_sql=true
-logging.level.org.hibernate.SQL=DEBUG
-logging.level.org.hibernate.type.descriptor.sql=TRACE
 
 # ========================================
 # CONFIGURACIÓN DE SEGURIDAD
