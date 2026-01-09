@@ -1,0 +1,28 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "GramolaJuanmariaApplication",
+      "request": "launch",
+      "mainClass": "edu.esi.uclm.gramola_juanmaria.GramolaJuanmariaApplication",
+      "projectName": "gramola_juanmaria"
+    },
+    {
+      "type": "java",
+      "name": "Run Tests",
+      "request": "launch",
+      "mainClass": "",
+      "projectName": "gramola_juanmaria",
+      "args": [
+        "--select-class=edu.esi.uclm.gramola_juanmaria.GramolaJuanmariaApplicationTests"
+      ],
+      "vmArgs": [
+        "-Djunit.jupiter.execution.parallel.enabled=false",
+        "-Djunit.jupiter.execution.parallel.mode.default=same_thread",
+        "-Djunit.jupiter.execution.parallel.mode.classes.default=same_thread",
+        "-Djunit.jupiter.testinstance.lifecycle.default=per_class"
+      ]
+    }
+  ]
+}

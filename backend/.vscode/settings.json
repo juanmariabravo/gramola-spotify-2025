@@ -4,9 +4,16 @@
   "java.debug.settings.onBuildFailureProceed": true,
   "java.test.config": [
     {
+      "name": "test",
       "vmArgs": [
-        "-Djunit.jupiter.execution.parallel.enabled=false"
+        "-Djunit.jupiter.execution.parallel.enabled=false",
+        "-Djunit.jupiter.execution.parallel.mode.default=same_thread",
+        "-Djunit.jupiter.execution.parallel.mode.classes.default=same_thread",
+        "-Djunit.jupiter.testinstance.lifecycle.default=per_class",
+        "-Djunit.jupiter.testmethod.order.default=org.junit.jupiter.api.MethodOrderer$OrderAnnotation"
       ]
     }
-  ]
+  ],
+  "java.test.defaultConfig": "test",
+  "java.test.forceBuild": true
 }
