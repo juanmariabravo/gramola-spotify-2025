@@ -17,7 +17,6 @@ import edu.esi.uclm.gramola_juanmaria.http.ConfigurationLoader;
 import edu.esi.uclm.gramola_juanmaria.model.StripeTransaction;
 import edu.esi.uclm.gramola_juanmaria.model.User;
 
-
 @Service
 public class PaymentService {
 
@@ -36,11 +35,11 @@ public class PaymentService {
 
     public StripeTransaction prepay(Long amount) throws StripeException {
         PaymentIntentCreateParams createParams = new PaymentIntentCreateParams.Builder()
-                    .setCurrency("eur")
-                    .setAmount(amount)
-                    .build();
+                .setCurrency("eur")
+                .setAmount(amount)
+                .build();
         PaymentIntent intent = PaymentIntent.create(createParams);
-        JSONObject transactionDetails = new JSONObject(intent.toJson()); // esta línea no convierte correctamente a JSON
+        JSONObject transactionDetails = new JSONObject(intent.toJson());
         StripeTransaction st = new StripeTransaction();
         st.setData(transactionDetails);
         this.dao.save(st);
@@ -52,25 +51,34 @@ public class PaymentService {
         JSONObject jso = new JSONObject(transactionDetails.getData());
         jso.put("status", "completed");
         transactionDetails.setData(jso);
-        
-        // Si se proporciona un token de usuario (pago de registro), confirmar el usuario
+
+        // Si se proporciona un token de usuario, intentar confirmar el usuario
+        // Solo confirmamos si el token realmente corresponde a una cuenta pendiente de confirmación
         if (userToken != null && !userToken.isEmpty()) {
             Optional<User> optUser = this.userDao.findByCreationTokenId(userToken);
-            if (optUser.isEmpty()) {
-                throw new IllegalArgumentException("Token de usuario no válido");
+            if (optUser.isPresent()) {
+                User user = optUser.get();
+
+                transactionDetails.setEmail(user.getEmail()); // Asociar la transacción con el usuario
+
+                // Solo confirmar si el usuario NO está confirmado aún (es un pago de suscripción)
+                if (!user.isConfirmed()) {
+                    // Confirmar el token del usuario (marcarlo como usado y confirmar cuenta)
+                    this.userService.confirmToken(user.getEmail(), userToken);
+                    System.out.println("Pago confirmado y usuario " + user.getEmail() + " activado correctamente");
+                } else {
+                    // Usuario ya confirmado - es un pago de canción
+                    System.out.println("Pago de canción confirmado - transacción ID: " + transactionDetails.getId());
+                }
+            } else {
+                // Token no corresponde a ningún usuario - es un pago de canción
+                System.out.println("Pago no corresponde a ningún usuario - transacción ID: " + transactionDetails.getId());
             }
-            
-            User user = optUser.get();
-            transactionDetails.setEmail(user.getEmail()); // Asociar la transacción con el usuario
-            
-            // Confirmar el token del usuario (marcarlo como usado y confirmar cuenta)
-            this.userService.confirmToken(user.getEmail(), userToken);
-            System.out.println("Pago confirmado y usuario " + user.getEmail() + " activado correctamente");
         } else {
-            // Pago de canción u otro tipo - solo marcar la transacción como completada
-            System.out.println("Pago de canción confirmado - transacción ID: " + transactionDetails.getId());
+            // No se proporcionó token - pago de canción u otro tipo
+            System.out.println("Pago sin token - transacción ID: " + transactionDetails.getId());
         }
-        
+
         this.dao.save(transactionDetails);
     }
 
@@ -78,6 +86,3 @@ public class PaymentService {
         return this.dao.findById(id).orElse(null);
     }
 }
-
-    
-
