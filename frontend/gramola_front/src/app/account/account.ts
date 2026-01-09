@@ -116,8 +116,7 @@ export class Account implements OnInit {
             'Tu sesión no es válida. Por favor inicia sesión de nuevo.',
             'Error de autenticación'
           ).then(() => {
-            sessionStorage.removeItem('accessToken');
-            sessionStorage.removeItem('refreshToken');
+            sessionStorage.clear();
             this.router.navigate(['/login']);
           });
         } else if (status === 0) {

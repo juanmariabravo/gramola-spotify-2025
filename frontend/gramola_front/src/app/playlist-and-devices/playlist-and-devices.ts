@@ -58,13 +58,29 @@ export class PlaylistAndDevices implements OnInit {
       error: (err) => {
         console.error('Error al cargar datos del usuario:', err);
         const status = err.status;
+        const errorMessage = err.error?.message || '';
 
         if (status === 0) {
           // Error de CORS o servidor no disponible
           console.error('Error de CORS: El servidor backend no está configurado correctamente para permitir peticiones desde el frontend. Verifica la configuración CORS del backend.');
         } else if (status === 401) {
           // Sesión expirada
-          this.router.navigate(['/login']);
+          this.dialogService.alert(
+            'Tu sesión ha expirado. Por favor inicia sesión de nuevo.',
+            'Sesión expirada'
+          ).then(() => {
+            this.router.navigate(['/login']);
+          });
+          return;
+        } else if (status === 500 && (errorMessage.includes('No autenticado') || errorMessage.includes('cookie inválida'))) {
+          // Error de autenticación en el backend
+          this.dialogService.alert(
+            'Tu sesión no es válida. Por favor inicia sesión de nuevo.',
+            'Error de autenticación'
+          ).then(() => {
+            sessionStorage.clear();
+            this.router.navigate(['/login']);
+          });
           return;
         }
 
