@@ -28,9 +28,9 @@ export class Music implements OnInit, OnDestroy {
   private queuePollIntervalId?: any; // para cola en tiempo real
   private currentPlaylistPollIntervalId?: any; // para actualización periódica de la reproducción actual
 
-  deviceError? : string
-  currentPlaylistError? : string
-  songError? : string
+  deviceError?: string
+  currentPlaylistError?: string
+  songError?: string
   barName: string = 'Mi Bar';
   searchQuery: string = '';
 
@@ -45,6 +45,23 @@ export class Music implements OnInit, OnDestroy {
     private userService: UserService,
     private dialogService: DialogService
   ) { }
+
+  async handleSpotifyAuthError(error: any): Promise<void> {
+    const status = error.status;
+    if (status === 401) {
+      const retry = await this.dialogService.alert(
+        'Tu sesión de Spotify ha expirado. Debes volver a iniciar sesión y autenticarte con Spotify.',
+        'Sesión de Spotify expirada'
+      );
+      if (retry) {
+        // Borrar tokens de sesión
+        sessionStorage.clear();
+        // Redirigir al login para reautenticación
+        window.location.href = '/login';
+      }
+      return;
+    }
+  }
 
   ngOnInit(): void {
 
@@ -61,11 +78,32 @@ export class Music implements OnInit, OnDestroy {
         this.barName = result.barName;
         this.songPrice = result.songPrice; // leer precio por canción desde el backend
       },
-      error: (err) => {
+      error: async (err) => {
         console.error('Error al obtener el usuario actual:', err);
+        const status = err.status;
+        const errorMessage = err.error?.message || '';
+
+        if (status === 401) {
+          this.dialogService.alert(
+            'Tu sesión ha expirado. Por favor inicia sesión de nuevo.',
+            'Sesión expirada'
+          ).then(() => {
+            window.location.href = '/login';
+          });
+          return;
+        } else if (status === 500 && (errorMessage.includes('No autenticado') || errorMessage.includes('cookie inválida'))) {
+          this.dialogService.alert(
+            'Tu sesión no es válida. Por favor inicia sesión de nuevo.',
+            'Error de autenticación'
+          ).then(() => {
+            sessionStorage.clear();
+            window.location.href = '/login';
+          });
+          return;
+        }
       }
     });
-    
+
     this.getCurrentPlaying();
     // también actualizar la lista actual cada 8000 ms
     this.currentPlaylistPollIntervalId = setInterval(() => this.getCurrentPlaying(), 8000);
@@ -124,7 +162,11 @@ export class Music implements OnInit, OnDestroy {
           };
         }
       },
-      error: (err) => {
+      error: async (err) => {
+        if (err.status === 401) {
+          await this.handleSpotifyAuthError(err);
+          return;
+        }
         this.currentPlaylistError = err.message;
       }
     });
@@ -144,13 +186,17 @@ export class Music implements OnInit, OnDestroy {
 
   searchTracks() {
     if (!this.searchQuery.trim()) return;
-    
+
     this.resetErrors();
     this.spotiService.searchTracks(this.searchQuery).subscribe({
       next: (result) => {
         this.tracks = result.tracks.items;
       },
-      error: (err) => {
+      error: async (err) => {
+        if (err.status === 401) {
+          await this.handleSpotifyAuthError(err);
+          return;
+        }
         this.songError = err.message;
       }
     });
@@ -185,7 +231,11 @@ export class Music implements OnInit, OnDestroy {
             });
           }
         },
-        error: (err) => {
+        error: async (err) => {
+          if (err.status === 401) {
+            await this.handleSpotifyAuthError(err);
+            return;
+          }
           this.songError = err.message || 'Error al añadir la canción a la cola';
         }
       });
@@ -215,8 +265,8 @@ export class Music implements OnInit, OnDestroy {
     try {
       this.spotiService.getQueue().subscribe({
         next: (res) => {
-           // La respuesta de Spotify suele incluir una propiedad `queue` con los elementos.
-           // Si no existe, dejar la cola vacía.
+          // La respuesta de Spotify suele incluir una propiedad `queue` con los elementos.
+          // Si no existe, dejar la cola vacía.
           const spotifyQueue = (res && (res.queue || res.items)) ? (res.queue || res.items) : [];
           // Mapear a Track si es necesario (la estructura suele ser track o item.track)
           this.queue = spotifyQueue.map((qItem: any) => {
@@ -230,7 +280,11 @@ export class Music implements OnInit, OnDestroy {
             } as Track;
           });
         },
-        error: (err) => {
+        error: async (err) => {
+          if (err.status === 401) {
+            await this.handleSpotifyAuthError(err);
+            return;
+          }
           // No mostrar error intrusivo si 204 o similar; guardar mensaje para debugging
           this.songError = err?.message || 'No se pudo obtener la cola de Spotify';
         }
@@ -239,7 +293,7 @@ export class Music implements OnInit, OnDestroy {
       this.songError = e?.message || String(e);
     }
   }
-  
+
 
   clearQueue() {
     this.queue = [];

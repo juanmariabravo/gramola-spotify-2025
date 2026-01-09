@@ -39,6 +39,19 @@ export class PlaylistAndDevices implements OnInit {
 
   constructor(private spotiService: SpotiService, private userService: UserService, private router: Router, private dialogService: DialogService) { }
 
+  async handleSpotifyAuthError(error: any): Promise<void> {
+    const status = error.status;
+    if (status === 401) {
+      sessionStorage.clear();
+      await this.dialogService.alert(
+        'Tu sesión de Spotify ha expirado. Por favor, vuelve a iniciar sesión.',
+        'Sesión expirada'
+      );
+      window.location.href = '/login';
+      return;
+    }
+  }
+
   ngOnInit(): void {
     // lo primero, si no hay accessToken, redirigir a login
     const accessToken = sessionStorage.getItem('accessToken');
@@ -111,7 +124,11 @@ export class PlaylistAndDevices implements OnInit {
           this.searchedPlaylists = [];
         }
       },
-      error: (err) => {
+      error: async (err) => {
+        if (err.status === 401) {
+          await this.handleSpotifyAuthError(err);
+          return;
+        }
         this.playlistError = err?.message || 'Error al buscar playlists públicas';
         this.searchedPlaylists = [];
       }
@@ -132,7 +149,11 @@ export class PlaylistAndDevices implements OnInit {
           this.selectedDeviceId = active.id;
         }
       },
-      error: (err) => {
+      error: async (err) => {
+        if (err.status === 401) {
+          await this.handleSpotifyAuthError(err);
+          return;
+        }
         this.deviceError = err?.message || 'No se pudieron cargar los dispositivos';
       }
     });
@@ -143,7 +164,11 @@ export class PlaylistAndDevices implements OnInit {
         this.myPlaylists = res.items || [];
         this.loading = false;
       },
-      error: (err) => {
+      error: async (err) => {
+        if (err.status === 401) {
+          await this.handleSpotifyAuthError(err);
+          return;
+        }
         this.playlistError = err?.message || 'No se pudieron cargar las playlists';
         this.loading = false;
       }
@@ -162,15 +187,23 @@ export class PlaylistAndDevices implements OnInit {
         next: (res) => {
         this.devices = res.devices || [];
         },
-        error: () => {}
+        error: async (err) => {
+          if (err.status === 401) {
+            await this.handleSpotifyAuthError(err);
+          }
+        }
       });
       },
-      error: (err) => {
-      if (err?.status === 404) {
-        this.deviceError = 'Dispositivo no encontrado. Asegúrate de que está encendido y tiene conexión.';
-      } else {
-        this.deviceError = err?.message || 'Error al seleccionar dispositivo';
-      }
+      error: async (err) => {
+        if (err?.status === 401) {
+          await this.handleSpotifyAuthError(err);
+          return;
+        }
+        if (err?.status === 404) {
+          this.deviceError = 'Dispositivo no encontrado. Asegúrate de que está encendido y tiene conexión.';
+        } else {
+          this.deviceError = err?.message || 'Error al seleccionar dispositivo';
+        }
       }
     });
   }
@@ -275,7 +308,11 @@ export class PlaylistAndDevices implements OnInit {
         // redirigir a /music tras iniciar reproducción
         this.router.navigate(['/music']);
       },
-      error: (err) => {
+      error: async (err) => {
+        if (err?.status === 401) {
+          await this.handleSpotifyAuthError(err);
+          return;
+        }
         // informar al usuario pero permitir continuar (puede que la reproducción ya estuviera activa)
         const msg = err?.error?.error?.message || err?.message || 'Error al iniciar reproducción';
         this.dialogService.alert(msg);
