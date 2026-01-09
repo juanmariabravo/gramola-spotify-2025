@@ -118,14 +118,11 @@ public class UserController {
 
     /* delete - elimina la cuenta del usuario autenticado */
     @DeleteMapping("/delete")
-    public void delete(HttpServletRequest request, HttpServletResponse response, @RequestParam String email) {
+    public void delete(HttpServletRequest request, HttpServletResponse response) {
         User user = (User) request.getAttribute("user");
 
-        if (!user.getEmail().equals(email)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para eliminar esta cuenta");
-        }
         // Eliminar el usuario
-        this.service.delete(email);
+        this.service.delete(user.getEmail());
 
         // Eliminar la cookie del navegador
         Cookie gramolaCookie = new Cookie("gramolaCookie", "");

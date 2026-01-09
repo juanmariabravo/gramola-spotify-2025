@@ -7,4 +7,5 @@ import edu.esi.uclm.gramola_juanmaria.model.AddedSong;
 
 @Repository
 public interface AddedSongDao extends JpaRepository<AddedSong, Long> {
+    void deleteByUserEmail(String email);
 }

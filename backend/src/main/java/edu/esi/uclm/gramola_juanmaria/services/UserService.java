@@ -7,8 +7,10 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import edu.esi.uclm.gramola_juanmaria.dao.AddedSongDao;
 import edu.esi.uclm.gramola_juanmaria.dao.UserDao;
 import edu.esi.uclm.gramola_juanmaria.http.ConfigurationLoader;
 import edu.esi.uclm.gramola_juanmaria.model.Token;
@@ -24,6 +26,9 @@ public class UserService {
 
     @Autowired
     MailService mailService;
+
+    @Autowired
+    AddedSongDao addedSongDao;
 
     public void register(String barName, String email, String pwd, String client_id, String client_secret, String signature) {
         Optional<User> optUser = this.userDao.findById(email); // Optional<User> es una caja que puede contener un User o no. Hasta que no mires dentro, no sabes si está o no.
@@ -78,11 +83,15 @@ public class UserService {
         return user;
     }
     
+    @Transactional // Necesario para que la eliminación en cascada funcione correctamente (evita TransactionRequiredException)
     public void delete(String email) {
         Optional<User> optUser = this.userDao.findById(email);
         if (optUser.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "El email no está registrado");
         }
+        // Eliminar primero las canciones agregadas por el usuario
+        this.addedSongDao.deleteByUserEmail(email);
+        // Ahora eliminar el usuario
         this.userDao.deleteById(email);
         System.out.println("Usuario " + email + " borrado correctamente");
     }
@@ -287,8 +296,9 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "El email no está registrado");
         }
         User user = optUser.get();
+        String oldCookie = user.getGramolaCookie();
         user.setGramolaCookie(cookieValue);
         this.userDao.save(user);
-        System.out.println("Cookie de sesión actualizada para usuario " + email);
+        System.out.println("[" + System.currentTimeMillis() + "] Cookie de sesión actualizada para usuario " + email + " - Anterior: " + oldCookie + " - Nueva: " + cookieValue);
     }
 }
