@@ -167,7 +167,17 @@ export class Music implements OnInit, OnDestroy {
           await this.handleSpotifyAuthError(err);
           return;
         }
-        this.currentPlaylistError = err.message;
+        if (err.status === 404) {
+          const proceed = await this.dialogService.confirm(
+            'No hay ningún dispositivo activo. Asegúrate de que tienes Spotify abierto en algún dispositivo y ve a la página de dispositivos para seleccionarlo.',
+            'Dispositivo no activo'
+          );
+          if (proceed) {
+            window.location.href = '/playlist-and-devices';
+          }
+          return;
+        }
+        this.currentPlaylistError = 'Error obteniendo la canción actual. Contacta con soporte.';
       }
     });
   }
@@ -197,7 +207,17 @@ export class Music implements OnInit, OnDestroy {
           await this.handleSpotifyAuthError(err);
           return;
         }
-        this.songError = err.message;
+        if (err.status === 404) {
+          const proceed = await this.dialogService.confirm(
+            'No hay ningún dispositivo activo. Asegúrate de que tienes Spotify abierto en algún dispositivo y ve a la página de dispositivos para seleccionarlo.',
+            'Dispositivo no activo'
+          );
+          if (proceed) {
+            window.location.href = '/playlist-and-devices';
+          }
+          return;
+        }
+        this.songError = 'Error buscando canciones. Contacta con soporte.';
       }
     });
   }
@@ -236,7 +256,17 @@ export class Music implements OnInit, OnDestroy {
             await this.handleSpotifyAuthError(err);
             return;
           }
-          this.songError = err.message || 'Error al añadir la canción a la cola';
+          if (err.status === 404) {
+            const proceed = await this.dialogService.confirm(
+              'No hay ningún dispositivo activo. Asegúrate de que tienes Spotify abierto en algún dispositivo y ve a la página de dispositivos para seleccionarlo.',
+              'Dispositivo no activo'
+            );
+            if (proceed) {
+              window.location.href = '/playlist-and-devices';
+            }
+            return;
+          }
+          this.songError = 'Error al añadir la canción a la cola. Contacta con soporte.';
         }
       });
     }
@@ -285,12 +315,21 @@ export class Music implements OnInit, OnDestroy {
             await this.handleSpotifyAuthError(err);
             return;
           }
-          // No mostrar error intrusivo si 204 o similar; guardar mensaje para debugging
-          this.songError = err?.message || 'No se pudo obtener la cola de Spotify';
+          if (err.status === 404) {
+            const proceed = await this.dialogService.confirm(
+              'No hay ningún dispositivo activo. Asegúrate de que tienes Spotify abierto en algún dispositivo y ve a la página de dispositivos para seleccionarlo.',
+              'Dispositivo no activo'
+            );
+            if (proceed) {
+              window.location.href = '/playlist-and-devices';
+            }
+            return;
+          }
+          this.songError = 'No se pudo obtener la cola de Spotify. Contacta con soporte.';
         }
       });
     } catch (e: any) {
-      this.songError = e?.message || String(e);
+      this.songError = 'Error obteniendo la cola de Spotify. Contacta con soporte.';
     }
   }
 

@@ -787,6 +787,44 @@ flex: 1;
 }
 }
 
+/* Mensajes de error */
+.error-banner {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #ff4444, #cc0000);
+    color: white;
+    padding: 16px 24px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(255, 68, 68, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    z-index: 1000;
+    max-width: 90%;
+    animation: slideDown 0.4s ease-out, shake 0.5s ease-in-out 0.4s;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.error-icon {
+    font-size: 24px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
 @media (max-width: 480px) {
     .bar-name {
         font-size: 1.5rem;
@@ -799,5 +837,12 @@ flex: 1;
 
     .playlists-grid {
         grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+
+    .error-banner {
+        top: 70px;
+        padding: 14px 18px;
+        font-size: 0.9rem;
+        max-width: 95%;
     }
 }
