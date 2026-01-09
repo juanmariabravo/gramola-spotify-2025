@@ -14,8 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -36,7 +34,6 @@ import edu.esi.uclm.gramola_juanmaria.model.User;
 @SpringBootTest
 @TestInstance(Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@Execution(ExecutionMode.SAME_THREAD)
 class GramolaJuanmariaApplicationTests {
 
     private WebDriver driver;
@@ -264,11 +261,11 @@ class GramolaJuanmariaApplicationTests {
         assertTrue(transaccionesDespues > transaccionesAntes,
                 "Debería haber al menos una nueva transacción en la base de datos");
 
-        // Obtener todas las transacciones y verificar que al menos una tiene status "completed"
-        List<StripeTransaction> todasTransacciones = stripeTransactionDao.findAll();
-        // Obtener la última transacción añadida
-        StripeTransaction ultimaTransaccion = todasTransacciones.get(todasTransacciones.size()
-                - 1);
+        // Obtener la transacción más reciente del usuario
+        List<StripeTransaction> transaccionesUsuario = stripeTransactionDao.findByEmailOrderByIdDesc(CORREO);
+        assertTrue(!transaccionesUsuario.isEmpty(), "Debería haber al menos una transacción para el usuario");
+
+        StripeTransaction ultimaTransaccion = transaccionesUsuario.get(0);
 
         // Verificar que la última transacción no es null
         assertNotNull(ultimaTransaccion, "La última transacción no debería ser null");
