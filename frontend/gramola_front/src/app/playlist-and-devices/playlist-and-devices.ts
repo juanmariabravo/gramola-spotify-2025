@@ -260,18 +260,18 @@ export class PlaylistAndDevices implements OnInit {
   async confirmSelection() {
     // validar que haya seleccionado al menos un dispositivo
     if (!this.selectedDeviceId) {
-      await this.dialogService.alert('Por favor, selecciona un dispositivo de reproducción');
+      await this.dialogService.alert('Por favor, selecciona un dispositivo de reproducción', 'Dispositivo no seleccionado');
       return;
     }
     // validar precio
     // Permitir precio 0 (gratis) o dentro del rango 10-500 céntimos
     if (this.songPrice < 0 || this.songPrice > this.maxPrice) {
-      await this.dialogService.alert(`El precio por canción debe estar entre 0€ (gratis) y ${this.maxPrice / 100}€`);
+      await this.dialogService.alert(`El precio por canción debe estar entre 0€ (gratis) y ${this.maxPrice / 100}€`, 'Precio inválido');
       return;
     }
     // opcional: validar playlist (permitir continuar sin playlist)
     if (!this.selectedPlaylistId) {
-      const proceed = await this.dialogService.confirm('No has seleccionado una playlist por defecto. Se reanudará la reproducción actual. ¿Continuar?');
+      const proceed = await this.dialogService.confirm('No has seleccionado una playlist por defecto. Se reanudará la reproducción actual. ¿Continuar?', 'Continuar sin playlist');
       if (!proceed) return;
     }
 
@@ -283,7 +283,7 @@ export class PlaylistAndDevices implements OnInit {
       },
       error: (err) => {
         console.error('Error al guardar el precio:', err);
-        this.dialogService.confirm('No se pudo guardar el precio en la base de datos. ¿Deseas continuar de todas formas?').then((proceed) => {
+        this.dialogService.confirm('No se pudo guardar el precio en la base de datos. ¿Deseas continuar de todas formas?', 'Error al guardar precio').then((proceed) => {
           if (proceed) {
             this.proceedWithPlayback();
           }
@@ -315,7 +315,7 @@ export class PlaylistAndDevices implements OnInit {
         }
         // informar al usuario pero permitir continuar (puede que la reproducción ya estuviera activa)
         const msg = err?.error?.error?.message || err?.message || 'Error al iniciar reproducción';
-        this.dialogService.alert(msg);
+        this.dialogService.alert(msg, 'Error al iniciar reproducción');
         // redirigir de todas formas
         this.router.navigate(['/music']);
       }

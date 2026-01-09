@@ -214,7 +214,7 @@ export class Music implements OnInit, OnDestroy {
       // Si el precio es 0 o negativo, añadir directamente a la cola sin pago
       this.spotiService.addToQueue(track.uri || '').subscribe({
         next: async () => {
-          await this.dialogService.alert(`La canción "${track.name}" ha sido añadida a la cola.`);
+          await this.dialogService.alert(`La canción "${track.name}" ha sido añadida a la cola con éxito.`, 'Canción añadida');
           // Cerrar resultados de búsqueda
           this.clearSearch();
           this.getQueue();  // Actualizar la cola después de añadir
@@ -243,7 +243,7 @@ export class Music implements OnInit, OnDestroy {
     else {
       // Confirmación de pago antes de proceder
       const priceFormatted = (this.songPrice / 100).toFixed(2);
-      const proceed = await this.dialogService.confirm(`La canción "${track.name}" cuesta ${priceFormatted}€. ¿Deseas pagar ahora?`);
+      const proceed = await this.dialogService.confirm(`La canción "${track.name}" cuesta ${priceFormatted}€. ¿Deseas pagar ahora?`, 'Confirmar pago');
       if (!proceed) {
         return;
       }
@@ -307,7 +307,7 @@ export class Music implements OnInit, OnDestroy {
     if (!SpeechRecognition) {
       // Mostrar feedback al usuario en lugar de solo consola
       setTimeout(() => {
-        this.dialogService.alert('El reconocimiento de voz no está soportado en este navegador. Por favor, usa Chrome, Edge o Safari.');
+        this.dialogService.alert('El reconocimiento de voz no está soportado en este navegador. Por favor, usa Chrome, Edge o Safari.', 'No soportado');
       }, 100);
       return;
     }
@@ -357,18 +357,18 @@ export class Music implements OnInit, OnDestroy {
       } else if (event.error === 'not-allowed') {
         this.voiceTranscript = 'Permiso de micrófono denegado';
         this.isListening = false;
-        this.dialogService.alert('Permiso de micrófono denegado.\n\nPor favor, permite el acceso al micrófono en la configuración de tu navegador para usar esta función.');
+        this.dialogService.alert('Por favor, permite el acceso al micrófono en la configuración de tu navegador para usar esta función.', 'Permiso de micrófono denegado');
       } else if (event.error === 'network') {
         this.voiceTranscript = 'Error de conexión';
         this.isListening = false;
-        this.dialogService.alert('Error de red. Verifica tu conexión a internet.');
+        this.dialogService.alert('Verifica tu conexión a internet.', 'Error de red');
       } else if (event.error === 'aborted') {
         this.voiceTranscript = 'Reconocimiento cancelado';
         this.isListening = false;
       } else {
         this.voiceTranscript = 'Error en el reconocimiento de voz';
         this.isListening = false;
-        this.dialogService.alert(`Error en el reconocimiento de voz: ${event.error}`);
+        this.dialogService.alert(`${event.error}`, 'Error en el reconocimiento de voz');
       }
     };
   }
@@ -376,7 +376,7 @@ export class Music implements OnInit, OnDestroy {
   // Alternar reconocimiento de voz
   toggleVoiceSearch() {
     if (!this.recognition) {
-      this.dialogService.alert('El reconocimiento de voz no está soportado en este navegador. Por favor, usa Chrome, Edge o Safari.');
+      this.dialogService.alert('El reconocimiento de voz no está soportado en este navegador. Por favor, usa Chrome, Edge o Safari.', 'No soportado');
       return;
     }
 

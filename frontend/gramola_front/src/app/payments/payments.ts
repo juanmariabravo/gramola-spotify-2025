@@ -78,7 +78,7 @@ export class Payments implements OnInit {
       },
       error: (response: any) => {
         console.error('Error en prepay:', response);
-        this.dialogService.alert('Error al iniciar el pago. Por favor intenta de nuevo.');
+        this.dialogService.alert('Por favor intenta de nuevo o contacta con soporte.', 'Error al iniciar el pago');
         // si el pago es de suscripción, redirigir a /login
         if (this.isSubscription) {
           this.router.navigate(['/login']);
@@ -214,7 +214,7 @@ export class Payments implements OnInit {
             },
             error: (error: any) => {
               console.error('Error confirming payment:', error);
-              this.dialogService.alert('Error al confirmar el pago. Por favor contacta con soporte.');
+              this.dialogService.alert('Por favor contacta con soporte.', 'Error al confirmar el pago');
             }
           })
         }
@@ -224,8 +224,7 @@ export class Payments implements OnInit {
 
   async goBack() {
     // Cancelar el pago y volver a la página anterior
-    const confirmCancel = await this.dialogService.confirm('¿Estás seguro de que deseas cancelar el pago?');
-    if (!confirmCancel) return;
+    const confirmCancel = await this.dialogService.confirm('¿Estás seguro de que deseas cancelar el pago?', 'Cancelar pago');
 
     // Intentar volver a la página anterior, o a /music si no hay historial
     if (window.history.length > 1) {
