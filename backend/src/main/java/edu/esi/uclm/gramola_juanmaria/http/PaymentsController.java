@@ -59,6 +59,7 @@ public class PaymentsController {
         String sentClientSecret = jso.getString("client_secret");
         String receivedClientSecret = finalDataJson.getJSONObject("paymentIntent").getString("client_secret");
         String userToken = finalDataJson.optString("token", null); // Usar optString para evitar error si no existe
+        // Se utiliza el creationToken y no la cookie porque en el pago del servicio aún no se ha iniciado sesión y por tanto no hay cookie
 
         if (sentClientSecret.equals(receivedClientSecret)) {
             this.service.confirmTransaction(transactionDetails, userToken);
