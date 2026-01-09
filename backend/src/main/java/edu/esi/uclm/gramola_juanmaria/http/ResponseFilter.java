@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.server.ResponseStatusException;
 
-import edu.esi.uclm.gramola_juanmaria.model.User;
 import edu.esi.uclm.gramola_juanmaria.dao.UserDao;
+import edu.esi.uclm.gramola_juanmaria.model.User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -44,7 +44,7 @@ public class ResponseFilter extends OncePerRequestFilter {
                 || resource.equals("/users/reset-password")
                 || resource.equals("/users/validate-reset-token")
                 || resource.startsWith("/users/confirm/") // Confirmación de email
-                || resource.startsWith("/payments") // Pagos (por ahora públicos)
+                || resource.startsWith("/payments") // Pagos
                 || resource.startsWith("/spoti/"); // Spotify callbacks
     }
 
@@ -69,8 +69,10 @@ public class ResponseFilter extends OncePerRequestFilter {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No autenticado - cookie no encontrada");
         }
 
-        Optional<User> opt_user = userDao.findByGramolaCookie(gramolaCookie.getValue());
+        String cookieValue = gramolaCookie.getValue();
+        Optional<User> opt_user = userDao.findByGramolaCookie(cookieValue);
         if (opt_user.isEmpty()) {
+            System.err.println("[" + System.currentTimeMillis() + "] Cookie inválida en petición a " + request.getRequestURI() + " - Cookie recibida: " + cookieValue);
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No autenticado - cookie inválida");
         }
 
