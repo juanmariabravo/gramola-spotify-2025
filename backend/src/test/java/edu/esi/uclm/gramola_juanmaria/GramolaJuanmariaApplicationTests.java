@@ -44,10 +44,10 @@ class GramolaJuanmariaApplicationTests {
     @Autowired
     private UserDao userDao;
 
-    private static final String SPOTIFY_TOKEN = "BQA5e-z6xDlBPeloKX5CE6NydbGc0qNfIyx1TP12sQlBbaLl5LOJqGO5mk7uazV9TDiHVqcjhrr-EtUy2sUUcJyoLy87SRmrmHOgsSnUnWhpZkz_nthSS8hLWsSeYtgwZXe4BPdf2fHKP2XgRqpfgdBovhZ7V2L8t89qNwW6Xkvtfzcl2XdlYMYiAvlN6ayz1jIa6pZac4STyJ3YauiV0XyWOuPP1QqecmMjvSu-x5ji4e_pOGvuxbbTspIQZ-UaStytGftTxwimP1BsJyF0Gtqjw3Xwo_E6IQkc1qUxSEO0I-OxfzxS";
+    private static final String SPOTIFY_TOKEN = "BQD3XQ6p4Yl..."; // Token de acceso de Spotify válido
     private static final String URL_BASE = "http://127.0.0.1:4200/";
-    private static final String CORREO = "juanmariabravo12@gmail.com";
-    private static final String CONTRASENA = "mellamo12";
+    private static final String CORREO = "barexample@gmail.com";
+    private static final String CONTRASENA = "********";
     private static final String CANCION = "Clair de Lune"; // * Importante escribir el nombre exacto de la canción tal cual aparece en Spotify
     private static final String NUM_TARJETA = "4242 4242 4242 4242";
     private static final String CADUCIDAD_TARJETA = "0330";
