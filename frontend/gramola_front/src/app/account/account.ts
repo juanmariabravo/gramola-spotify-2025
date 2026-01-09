@@ -100,13 +100,32 @@ export class Account implements OnInit {
       error: (error) => {
         console.error('Error al cargar datos del usuario:', error);
         const status = error.status;
+        const errorMessage = error.error?.message || '';
         
         if (status === 401) {
           // Sesión expirada, redirigir al login
-          this.router.navigate(['/login']);
+          this.dialogService.alert(
+            'Tu sesión ha expirado. Por favor inicia sesión de nuevo.',
+            'Sesión expirada'
+          ).then(() => {
+            this.router.navigate(['/login']);
+          });
+        } else if (status === 500 && (errorMessage.includes('No autenticado') || errorMessage.includes('cookie inválida'))) {
+          // Error de autenticación en el backend
+          this.dialogService.alert(
+            'Tu sesión no es válida. Por favor inicia sesión de nuevo.',
+            'Error de autenticación'
+          ).then(() => {
+            sessionStorage.removeItem('accessToken');
+            sessionStorage.removeItem('refreshToken');
+            this.router.navigate(['/login']);
+          });
         } else if (status === 0) {
           // Error de conexión
-          console.error('No se puede conectar con el servidor');
+          this.dialogService.alert(
+            'No se puede conectar con el servidor. Verifica tu conexión a internet.',
+            'Error de conexión'
+          );
         }
       }
     });
