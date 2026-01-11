@@ -43,9 +43,9 @@
 - **Reproducción de Música**: Permite buscar canciones y añadirlas a la cola de reproducción, pagando por canción si el dueño del bar lo desea
 - **Reproducción de Playlists**: Permite la reproducción de playlists propias y públicas
 - **Sistema de Pagos**: Procesamiento de pagos integrado con Stripe
-- **Geolocalización**: Funcionalidades basadas en ubicación
 - **Gestión de Dispositivos**: Control de dispositivos de reproducción
 - **Notificaciones por Email**: Sistema de correos de confirmación y recuperación
+- **Panel de Administración de Mi Cuenta**: Edición del nombre del propio bar, precio por canción, y cambio de contraseña. También es posible eliminar la cuenta de usuario.
 
 ### Características Técnicas
 
@@ -79,6 +79,7 @@
 
 - **Spotify API**: Para catálogo y reproducción de música
 - **Sistema de Emails**: Para notificaciones y recuperación de contraseña
+- **Stripe**: Para procesamiento de pagos
 
 ---
 
@@ -265,7 +266,7 @@ El servidor estará disponible en `http://127.0.0.1:8080`
 
 ```bash
 cd frontend/gramola_front
-ng serve
+ng serve --host 127.0.0.1
 ```
 
 La aplicación estará disponible en `http://127.0.0.1:4200`
@@ -306,9 +307,29 @@ La aplicación estará disponible en `http://127.0.0.1:4200`
 ---
 
 ## Testing
-> TODO: Añadir instrucciones para ejecutar tests con selenium
+> Puede consultar descripción detallada del escenario y las precondiciones de los tests automáticos en el [README.md de los tests](https://github.com/juanmariabravo/gramola-spotify-2025/blob/main/backend/src/test/java/edu/esi/uclm/gramola_juanmaria/README.md).
 
+Para ejecutar los tests automáticos del backend, es **necesario**:
+- tener en ejecución tanto el servidor backend (http://127.0.0.1:8080) como el servidor frontend (http://127.0.0.1:4200). 
+- tener al menos una reproducción activa de Spotify en un dispositivo vinculado a la cuenta de Spotify utilizada para las pruebas.
+- tener una cuenta de usuario registrada en la aplicación y conocer el correo y la contraseña de dicha cuenta.
+- tener un token de acceso de Spotify válido: se debe obtener de forma manual desde el sessionStorage tras haber iniciado sesión en la aplicación y haberse autenticado con Spotify mediante OAuth2.
 
+Antes de ejecutar los tests, configura correctamente los parámetros o constantes del script de tests automáticos [GramolaJuanmariaApplicationTests.java](https://github.com/juanmariabravo/gramola-spotify-2025/blob/main/backend/src/test/java/edu/esi/uclm/gramola_juanmaria/GramolaJuanmariaApplicationTests.java), de esta manera:
+```java
+class GramolaJuanmariaApplicationTests {
+    private static final String SPOTIFY_TOKEN = "BQD3XQ6p4Yl..."; // Token de acceso de Spotify obtenido manualmente justo antes de ejecutar los tests (para evitar expiración)
+    private static final String URL_BASE = "http://127.0.0.1:4200/"; // URL base del frontend
+    private static final String CORREO = "barexample@gmail.com"; // Correo de la cuenta de usuario registrada en la aplicación
+    private static final String CONTRASENA = "********"; // Contraseña de la cuenta de usuario registrada en la aplicación
+```
+Luego, ejecuta los tests con el siguiente comando desde la carpeta `backend`:
+```bash
+mvn test
+# en Windows PowerShell:
+.\mvnw test
+```
+También es posible ejecutar los tests desde un IDE como Visual Studio Code o IntelliJ IDEA, abriendo el proyecto backend como un proyecto Maven y ejecutando la clase de tests `GramolaJuanmariaApplicationTests.java`.
 
 ---
 
@@ -326,7 +347,7 @@ Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para
 
 ## Contacto
 
-**Proyecto desarrollado por**: Juan María Bravo López
+**Proyecto desarrollado por**: Juan María Bravo López ([Visita mi portfolio](https://juanmariabravo.github.io/))
 
 **Universidad**: Universidad de Castilla-La Mancha (UCLM)
 
