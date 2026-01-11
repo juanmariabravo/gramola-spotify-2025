@@ -3,7 +3,7 @@
 <div align="center">
   <img width="1050" height="709" alt="Gramola Platform" src="https://github.com/user-attachments/assets/f4280c32-469d-46cc-81fd-a1e14348738c" />
   
-  ![Status](https://img.shields.io/badge/status-en%20desarrollo-yellow)
+  ![Status](https://img.shields.io/badge/status-completado-green)
   ![Java](https://img.shields.io/badge/Java-17+-orange)
   ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-green)
   ![Angular](https://img.shields.io/badge/Angular-Latest-red)
@@ -356,5 +356,5 @@ Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para
 ---
 
 <div align="center">
-  <sub>Proyecto en desarrollo - 2025</sub>
+  <sub>Proyecto completado - 2025-2026</sub>
 </div>
