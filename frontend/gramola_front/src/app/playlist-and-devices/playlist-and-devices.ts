@@ -307,6 +307,10 @@ export class PlaylistAndDevices implements OnInit {
           await this.handleSpotifyAuthError(err);
           return;
         }
+        else if (err?.status === 403) { // Si la reproducción ya está activa, devolverá un error 403 Forbidden, pero lo ignoramos
+          this.router.navigate(['/music']);
+          return;
+        }
         // informar al usuario pero permitir continuar (puede que la reproducción ya estuviera activa)
         const msg = err?.error?.error?.message || err?.message || 'Error al iniciar reproducción';
         this.dialogService.alert(msg, 'Error al iniciar reproducción');
