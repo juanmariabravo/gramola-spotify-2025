@@ -293,12 +293,6 @@ export class PlaylistAndDevices implements OnInit {
   }
 
   private proceedWithPlayback() {
-    // guardar selección en sessionStorage
-    sessionStorage.setItem('defaultDeviceId', this.selectedDeviceId!);
-    if (this.selectedPlaylistId) {
-      sessionStorage.setItem('defaultPlaylistId', this.selectedPlaylistId);
-    }
-
     // construir playlistUri si se seleccionó una playlist (formato: spotify:playlist:ID)
     const playlistUri = this.selectedPlaylistId ? `spotify:playlist:${this.selectedPlaylistId}` : undefined;
 
