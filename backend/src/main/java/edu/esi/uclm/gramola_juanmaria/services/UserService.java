@@ -46,9 +46,7 @@ public class UserService {
             this.userDao.save(user); // Guardar en la base de datos
 
             // Devolver el token de confirmación
-            // (code_profesor) return user.getCreationToken().getId();
             System.out.println("Usuario " + email + " registrado correctamente");
-            // Se enviaría un email con el token de confirmación, pero de momento imprimimos aquí el link
             String base = ConfigurationLoader.get().getJsonConfig().getJSONObject("urls").getString("backend_base");
             String confirmUrl = String.format("%s/users/confirm/%s?token=%s",
                 base,

@@ -205,8 +205,8 @@ export class Payments implements OnInit {
                   self.router.navigate(['/music']);
                 }, 2000);
 
-              } else {
-                // Algo salió mal, redirigir a login
+              } else { // Si n o es pago de canción, es de suscripción
+                // Pago de suscripción: redirigir a /login tras 2s
                 setTimeout(() => {
                   self.router.navigate(['/login']);
                 }, 2000);
