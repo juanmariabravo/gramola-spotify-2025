@@ -4,6 +4,7 @@
     Un cliente intenta pagar una canción con una tarjeta rechazada. Se debe mostrar el mensaje de error adecuado en el frontend y no debe registrarse ninguna transacción en el backend.
 - ### Precondiciones:
   * El usuario debe tener una cuenta en la aplicación Gramola con correo {CORREO} y contraseña {CONTRASENA}
+  * El precio por canción en la aplicación Gramola debe estar configurado a 0,50€
   * El usuario debe haber obtenido el {SPOTIFY_TOKEN} en otro navegador antes de ejecutar el test, y debe poner este token en el código del test para que se almacene en sessionStorage.
   * El usuario debe tener activa la reproducción de Spotify en, al menos, uno de sus dispositivos vincualdos a Spotify.
 - ### Pasos que realiza el test:

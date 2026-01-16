@@ -138,8 +138,12 @@ cd gramola-spotify-2025
 
 ```bash
 cd backend
-mvn clean install
+mvn clean install -DskipTests
+# en Windows PowerShell:
+.\mvnw clean install -DskipTests
 ```
+
+> **Nota**: Se omiten los tests durante la instalación porque requieren precondiciones específicas. Para ejecutar los tests, consulta la sección [Testing](#testing).
 
 ### 3. Configurar el Frontend
 
@@ -212,6 +216,10 @@ spring.mail.properties.mail.smtp.starttls.enable=true
 
 # NOTA: Con esta configuración, TODOS los correos saldrán desde tu cuenta (spring.mail.username).
 # Los usuarios pueden registrarse con CUALQUIER correo (Gmail, Hotmail, Yahoo, Outlook, etc.).
+
+# Rutas de las plantillas de correo
+mail.template.confirmacion=CorreoConfirmacion.html
+mail.template.recuperacion=CorreoRecuperacion.html
 ```
 
 #### `config.json`
@@ -237,7 +245,7 @@ Configura las credenciales y precios de Stripe y las urls de Spotify en `backend
 
 ### Frontend Configuration
 
-Edita `frontend/gramola_front/src/environments/environment.ts`:
+Edita `frontend/gramola_front/src/environments/environment.development.ts`:
 
 ```typescript
 export const environment = {
@@ -258,9 +266,12 @@ export const environment = {
 ```bash
 cd backend
 mvn spring-boot:run
+# en Windows PowerShell:
+.\mvnw spring-boot:run
 ```
 
 El servidor estará disponible en `http://127.0.0.1:8080`
+> **Nota**: Si tienes problemas para iniciar el backend, asegúrate de que la base de datos MySQL está corriendo y que el schema `gramola` ha sido creado.
 
 ### Iniciar el Frontend
 
@@ -313,6 +324,7 @@ Para ejecutar los tests automáticos del backend, es **necesario**:
 - tener en ejecución tanto el servidor backend (http://127.0.0.1:8080) como el servidor frontend (http://127.0.0.1:4200). 
 - tener al menos una reproducción activa de Spotify en un dispositivo vinculado a la cuenta de Spotify utilizada para las pruebas.
 - tener una cuenta de usuario registrada en la aplicación y conocer el correo y la contraseña de dicha cuenta.
+- que el precio por canción esté configurado a 0,50 euros (50 céntimos) en la cuenta de usuario utilizada para las pruebas.
 - tener un token de acceso de Spotify válido: se debe obtener de forma manual desde el sessionStorage tras haber iniciado sesión en la aplicación y haberse autenticado con Spotify mediante OAuth2.
 
 Antes de ejecutar los tests, configura correctamente los parámetros o constantes del script de tests automáticos [GramolaJuanmariaApplicationTests.java](https://github.com/juanmariabravo/gramola-spotify-2025/blob/main/backend/src/test/java/edu/esi/uclm/gramola_juanmaria/GramolaJuanmariaApplicationTests.java), de esta manera:
