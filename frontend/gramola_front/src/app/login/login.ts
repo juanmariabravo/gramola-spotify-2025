@@ -74,9 +74,12 @@ export class Login {
         if (status === 0) {
           // Error de red - servidor no disponible
           this.feedbackMessage = 'No se puede conectar con el servidor. Verifica tu conexión a internet o intenta más tarde.';
-        } else if (status === 401 || status === 403) {
+        } else if (status === 401) {
           // Credenciales inválidas
           this.feedbackMessage = 'Email o contraseña inválidos';
+        } else if (status === 403) {
+          // Usuario no verificado
+          this.feedbackMessage = 'Tu cuenta no ha sido verificada. Revisa tu correo para el enlace de verificación.'; 
         } else if (status === 500) {
           this.feedbackMessage = 'Error del servidor. Por favor intenta de nuevo más tarde.';
         } else {
