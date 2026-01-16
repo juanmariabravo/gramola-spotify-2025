@@ -1,8 +1,8 @@
 # Gramola de esipotify - Permite a tus clientes elegir la música de tu bar
 
 <div align="center">
-  <img width="1050" height="709" alt="Gramola Platform" src="https://github.com/user-attachments/assets/f4280c32-469d-46cc-81fd-a1e14348738c" />
-  
+  <img width="1825" height="899" alt="Gramola Home Page" src="https://github.com/user-attachments/assets/6d599055-8cc0-4189-8dc5-b7e4d2c0d9eb" />
+
   ![Status](https://img.shields.io/badge/status-completado-green)
   ![Java](https://img.shields.io/badge/Java-17+-orange)
   ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-green)
